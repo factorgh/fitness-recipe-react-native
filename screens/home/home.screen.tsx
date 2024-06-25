@@ -9,7 +9,7 @@ import React from "react";
 import { Nunito_400Regular, Nunito_700Bold } from "@expo-google-fonts/nunito";
 import { useFonts } from "@expo-google-fonts/raleway";
 import { Ionicons } from "@expo/vector-icons";
-import UserAvatar from "react-native-user-avatar";
+import { Avatar } from "@rneui/themed";
 import CalendarPicker from "react-native-calendar-picker";
 import { Entypo } from "@expo/vector-icons";
 import MealPlanItem from "@/components/mealPlanItem";
@@ -52,7 +52,13 @@ export default function HomeScreen() {
             <View>
               <Ionicons name="notifications-circle" size={35} color="#747474" />
             </View>
-            <UserAvatar src="" size={35} />
+            <Avatar
+              size={32}
+              rounded
+              source={{
+                uri: "https://randomuser.me/api/portraits/men/36.jpg",
+              }}
+            />
           </View>
         </View>
         {/* End of first section */}

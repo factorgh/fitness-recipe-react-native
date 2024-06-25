@@ -1,7 +1,10 @@
+import useUser from "@/hooks/useUser";
 import { Tabs } from "expo-router";
 import { Image } from "react-native";
 
 export default function TabsLayout() {
+  const { user } = useUser();
+  console.log("<---------user on tab screen --------->", user);
   return (
     <Tabs
       screenOptions={({ route }) => {

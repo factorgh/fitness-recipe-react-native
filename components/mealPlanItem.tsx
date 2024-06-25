@@ -5,7 +5,7 @@ import { Nunito_400Regular, Nunito_700Bold } from "@expo-google-fonts/nunito";
 import { useFonts, Raleway_700Bold } from "@expo-google-fonts/raleway";
 import { FontAwesome } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
-import UserAvatar from "react-native-user-avatar";
+import { Avatar } from "@rneui/themed";
 
 export default function MealPlanItem() {
   const [expanded, setExpanded] = useState(false);
@@ -20,7 +20,7 @@ export default function MealPlanItem() {
   const handleExpanded = () => {
     setExpanded((prevState) => !prevState);
   };
-  const expandedStyle = `border-x-4 border-red-300 mt-5  p-5  mx-3 rounded-md h-[220px] `;
+  const expandedStyle = `border-x-4 border-red-300 mt-5  p-5  mx-3 rounded-md h-[250px] `;
   const closedStyle = `border border-red-300 p-5 mt-5 mx-3 rounded-md mb-3`;
   return (
     <View className={expanded ? expandedStyle : closedStyle}>
@@ -53,11 +53,45 @@ export default function MealPlanItem() {
             <Text className="mb-3">Trainees</Text>
             <View className="flex flex-row items-center gap-2">
               <View className="flex flex-row">
-                <UserAvatar />
-                <UserAvatar />
-                <UserAvatar />
+                <Avatar
+                  size={32}
+                  rounded
+                  source={{
+                    uri: "https://randomuser.me/api/portraits/men/36.jpg",
+                  }}
+                />
+                <Avatar
+                  size={32}
+                  rounded
+                  source={{
+                    uri: "https://randomuser.me/api/portraits/men/36.jpg",
+                  }}
+                />
+                <Avatar
+                  size={32}
+                  rounded
+                  source={{
+                    uri: "https://randomuser.me/api/portraits/men/36.jpg",
+                  }}
+                />
+                <Avatar
+                  size={32}
+                  rounded
+                  source={{
+                    uri: "https://randomuser.me/api/portraits/men/36.jpg",
+                  }}
+                />
               </View>
               <Text>and 22 others</Text>
+            </View>
+            {/* Buttons for meal plan */}
+            <View className="flex flex-row gap-2 mt-2 justify-end">
+              <TouchableOpacity className="border border-slate-300 rounded-md">
+                <Text className="text-slate-500 p-2">Delete</Text>
+              </TouchableOpacity>
+              <TouchableOpacity className="border border-slate-300 rounded-md">
+                <Text className="text-slate-500 p-2">Update</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
