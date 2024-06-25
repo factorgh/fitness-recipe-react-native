@@ -1,37 +1,38 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
+import { Tabs } from "expo-router";
+import { Image } from "react-native";
 
-import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
+export default function TabsLayout() {
   return (
     <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
-          ),
-        }}
-      />
+      screenOptions={({ route }) => {
+        return {
+          tabBarIcon: ({ color }) => {
+            let iconName;
+            if (route.name === "index") {
+              iconName = require("@/assets/icons/HouseSimple.png");
+            } else if (route.name === "mealplans/index") {
+              iconName = require("@/assets/icons/BookBookmark.png");
+            } else if (route.name === "trainees/index") {
+              iconName = require("@/assets/icons/User.png");
+            } else if (route.name === "settings/index") {
+              iconName = require("@/assets/icons/settings.png");
+            }
+            return (
+              <Image
+                style={{ width: 25, height: 25, tintColor: color }}
+                source={iconName}
+              />
+            );
+          },
+          headerShown: false,
+          tabBarShowLabel: false,
+        };
+      }}
+    >
+      <Tabs.Screen name="index" />
+      <Tabs.Screen name="mealplans/index" />
+      <Tabs.Screen name="trainees/index" />
+      <Tabs.Screen name="settings/index" />
     </Tabs>
   );
 }

@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import HomeScreen from "@/screens/home/home.screen";
+import AddMealPlan from "@/screens/add-meal";
 
-export default function Home() {
-  return <HomeScreen />;
+export default function AddMeal() {
+  return <AddMealPlan />;
 }
 
 const styles = StyleSheet.create({});
