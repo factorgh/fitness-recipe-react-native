@@ -4,6 +4,8 @@ import { Nunito_400Regular, Nunito_700Bold } from "@expo-google-fonts/nunito";
 import { useFonts, Raleway_700Bold } from "@expo-google-fonts/raleway";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import api from "@/utils/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 
 export default function RoleScreen() {
   const [activeButton, setActiveButton] = useState(null);
@@ -38,8 +40,13 @@ export default function RoleScreen() {
 
   const handleProceed = async () => {
     console.log(role);
-    const response = await api.put("/api/v1/user/single", { role });
+    const response = await api.put("/api/v1/users/single", { role });
     console.log(response.data);
+    await AsyncStorage.setItem("currentUser", JSON.stringify(response.data));
+    if (response.data === "0") {
+      router.push("/(tabs)");
+    } else {
+    }
   };
   return (
     <View className="flex-1  mt-[40px] p-3 ">
@@ -126,7 +133,10 @@ export default function RoleScreen() {
           </Text>
         </TouchableOpacity>
       ) : (
-        <TouchableOpacity className="bg-red-200 items-center mt-[250px] mb-3 p-3 rounded-md">
+        <TouchableOpacity
+          onPress={handleProceed}
+          className="bg-red-200 items-center mt-[250px] mb-3 p-3 rounded-md"
+        >
           <Text
             style={{ fontFamily: "Raleway_700Bold" }}
             className="text-white text-xl  "

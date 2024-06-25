@@ -10,14 +10,14 @@ import {
 } from "react-native";
 import React from "react";
 import { Nunito_400Regular, Nunito_700Bold } from "@expo-google-fonts/nunito";
-import { useFonts, Raleway_700Bold } from "@expo-google-fonts/raleway";
+import { useFonts } from "@expo-google-fonts/raleway";
 import RecipeItem from "@/components/RecipeItem";
 import { AntDesign } from "@expo/vector-icons";
+
 export default function MealPlanScreen() {
   let [fontLoaded, fontError] = useFonts({
     Nunito_400Regular,
     Nunito_700Bold,
-    Raleway_700Bold,
   });
 
   if (!fontLoaded && !fontError) return null;
@@ -69,7 +69,7 @@ export default function MealPlanScreen() {
         <FlatList
           data={DATA}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <RecipeItem />}
+          renderItem={({ item }) => <RecipeItem item={item} />}
         />
       </View>
     </View>

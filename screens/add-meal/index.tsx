@@ -33,7 +33,7 @@ export default function AddMealPlan() {
           </TouchableOpacity>
           <Text
             className="text-xl font-semibold"
-            style={{ fontFamily: "Raleyway_700Bold" }}
+            style={{ fontFamily: "Nunito_700Bold" }}
           >
             Add a meal plan
           </Text>
@@ -101,7 +101,7 @@ export default function AddMealPlan() {
         {activeButton ? (
           <TouchableOpacity className="bg-red-500 items-center mt-5 mb-3 p-3 rounded-md ">
             <Text
-              style={{ fontFamily: "Raleway_700Bold" }}
+              style={{ fontFamily: "Nunito_700Bold" }}
               className="text-white text-xl  "
             >
               Proceed
@@ -110,7 +110,7 @@ export default function AddMealPlan() {
         ) : (
           <TouchableOpacity className="bg-red-200 items-center mt-5 mb-3 p-3 rounded-md">
             <Text
-              style={{ fontFamily: "Raleway_700Bold" }}
+              style={{ fontFamily: "Nunito_700Bold" }}
               className="text-white text-xl  "
             >
               Next

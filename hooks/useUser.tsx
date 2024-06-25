@@ -11,7 +11,7 @@ export default function useUser() {
     const getMe = async () => {
       const user_token = await AsyncStorage.getItem("access_token");
       await axios
-        .get(`${SERVER_URL}/api/v1/user/single`, {
+        .get(`${SERVER_URL}/api/v1/users/single`, {
           headers: {
             Authorization: JSON.parse(user_token!),
           },

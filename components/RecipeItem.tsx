@@ -3,7 +3,7 @@ import { AntDesign } from "@expo/vector-icons";
 import React from "react";
 import { router } from "expo-router";
 
-export default function RecipeItem() {
+export default function RecipeItem({ item }: { item: any }) {
   return (
     <TouchableOpacity
       onPress={() => router.push("/(routes)/meal-detail")}
@@ -15,9 +15,7 @@ export default function RecipeItem() {
       />
       <View className="flex flex-row items-center justify-between p-3">
         <View>
-          <Text className="text-md font-semibold">
-            Vegatebale salads with potato
-          </Text>
+          <Text className="text-md font-semibold">{item.title}</Text>
           <Text>Roastated Potato and Egg Plant</Text>
         </View>
         {/* Rating button */}

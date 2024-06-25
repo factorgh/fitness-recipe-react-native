@@ -7,7 +7,7 @@ import useUser from "@/hooks/useUser";
 
 const index = () => {
   const { user } = useUser();
-  return <Redirect href={!user ? "/(routes)/meal-detail" : "/(tabs)"} />;
+  return <Redirect href={!user ? "/(routes)/onboarding" : "/(tabs)"} />;
 };
 
 export default index;

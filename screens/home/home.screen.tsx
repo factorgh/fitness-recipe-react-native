@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import React from "react";
 import { Nunito_400Regular, Nunito_700Bold } from "@expo-google-fonts/nunito";
-import { useFonts, Raleway_700Bold } from "@expo-google-fonts/raleway";
+import { useFonts } from "@expo-google-fonts/raleway";
 import { Ionicons } from "@expo/vector-icons";
 import UserAvatar from "react-native-user-avatar";
 import CalendarPicker from "react-native-calendar-picker";
@@ -19,7 +19,6 @@ export default function HomeScreen() {
   let [fontLoaded, fontError] = useFonts({
     Nunito_400Regular,
     Nunito_700Bold,
-    Raleway_700Bold,
   });
 
   if (!fontLoaded && !fontError) return null;
