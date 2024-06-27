@@ -28,7 +28,7 @@ export default function MealPlanItem() {
         <View className="flex flex-row gap-[50px]">
           <MaterialCommunityIcons name="food-turkey" size={24} color="black" />
           <Text
-            style={{ fontFamily: "Rale_700Bold " }}
+            style={{ fontFamily: "Raleway_700Bold " }}
             className="text-xl font-mono"
           >
             Poached Eggs

@@ -7,18 +7,17 @@ export default function Trainee() {
     <View>
       <View className="flex flex-row items-center justify-between mx-5 mt-3">
         {/* Avatar */}
-        <View className="w-[50px] h-[50px] rounded-full">
+        <View className=" flex flex-row   ">
           <Avatar
             size={32}
             rounded
             source={{ uri: "https://randomuser.me/api/portraits/men/36.jpg" }}
           />
-        </View>
-
-        {/* Trainee detail */}
-        <View className="">
-          <Text className="font-semibold">John Smith</Text>
-          <Text>Poched eggs meal plan</Text>
+          {/* Trainee detail */}
+          <View className="ml-10">
+            <Text className="font-semibold">John Smith</Text>
+            <Text>Poched eggs meal plan</Text>
+          </View>
         </View>
 
         {/* Update assigned date */}

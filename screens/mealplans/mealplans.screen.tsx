@@ -45,7 +45,7 @@ export default function MealPlanScreen() {
     },
   ];
   return (
-    <View className="mt-[50px] mx-5 ">
+    <View className="mt-[70px] mx-5 ">
       <Text style={{ fontFamily: "Nunito_700Bold" }} className="text-3xl">
         Recipes
       </Text>

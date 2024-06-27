@@ -10,7 +10,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function SettingsScreen() {
   return (
     <View className="mt-[60px]">
-      <Text className="text-3xl font-semibold mx-3 mb-8">Settings</Text>
+      <Text className="text-2xl font-semibold mx-5 mb-5">Settings</Text>
       <View className="border border-slate-200  bg-slate-800 flex w-full  mt-3 mx-3"></View>
 
       <ScrollView>

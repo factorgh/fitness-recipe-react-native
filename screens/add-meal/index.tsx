@@ -62,15 +62,24 @@ export default function AddMealPlan() {
 
   const handleNext = () => {
     let recipeDetails = {
-    
-    }
+      name: mealPlanInfo.name,
+      imageUrl: image,
+      ingredients: inputList,
+      description: mealPlanInfo.description,
+      procedures: mealPlanInfo.procedures,
+    };
+    console.log("<----Meal plan body--->", recipeDetails);
+    router.push({
+      pathname: "/(routes)/add-trainee-to-plan",
+      params: { recipe: JSON.stringify(recipeDetails) },
+    });
   };
 
   if (!fontLoaded && !fontError) return null;
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-      <View className="mt-[50px] mx-5">
+      <View className="mt-[60px] mx-5">
         {/* header section */}
         <View className="flex flex-row items-center justify-between mb-5">
           <TouchableOpacity onPress={() => router.back()}>
@@ -113,19 +122,24 @@ export default function AddMealPlan() {
         <View className="gap-2 mt-3">
           <Text>Enter meal name</Text>
           <View className="border-2 border-slate-300 w-full rounded-md  p-3 h-[50px] flex items-center justify-center">
-            <TextInput className="w-full h-full " />
+            <TextInput
+              onChangeText={(value) =>
+                setMealPlanInfo({ ...mealPlanInfo, name: value })
+              }
+              value={mealPlanInfo.name}
+              className="w-full h-full "
+            />
           </View>
         </View>
         {/* End of meal name */}
         <View className="gap-2 mt-3">
           <Text>Description</Text>
-          <View className="border-2 border-slate-300 w-full rounded-md  h-[100px] p-2 å flex items-center justify-center">
+          <View className="border-2 border-slate-300 w-full rounded-md  h-[100px] p-2  flex items-center justify-center">
             <TextInput
               value={mealPlanInfo.description}
               editable
               multiline
               numberOfLines={4}
-              maxLength={40}
               className="w-[100%] h-[100%]"
               onChangeText={(value) =>
                 setMealPlanInfo({ ...mealPlanInfo, description: value })
@@ -139,7 +153,7 @@ export default function AddMealPlan() {
           <View style={styles.form}>
             <TextInput
               style={styles.input}
-              placeholder="Enter something"
+              placeholder="Enter ingredients"
               value={inputValue}
               onChangeText={setInputValue}
             />
@@ -172,7 +186,6 @@ export default function AddMealPlan() {
               editable={true}
               multiline
               numberOfLines={6}
-              maxLength={40}
               className="w-[100%] h-[100%]"
               onChangeText={(value) =>
                 setMealPlanInfo({ ...mealPlanInfo, procedures: value })
@@ -217,7 +230,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   image: {
-    width: 320,
+    width: "100%",
     height: 100,
     borderRadius: 8,
   },

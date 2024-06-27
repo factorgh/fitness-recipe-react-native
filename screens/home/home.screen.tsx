@@ -1,11 +1,12 @@
 import {
+  FlatList,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Nunito_400Regular, Nunito_700Bold } from "@expo-google-fonts/nunito";
 import { useFonts } from "@expo-google-fonts/raleway";
 import { Ionicons } from "@expo/vector-icons";
@@ -14,8 +15,11 @@ import CalendarPicker from "react-native-calendar-picker";
 import { Entypo } from "@expo/vector-icons";
 import MealPlanItem from "@/components/mealPlanItem";
 import { router } from "expo-router";
+import { SERVER_URL } from "@/utils/utils";
+import Allmeals from "@/components/allmeals/allmeals";
 
 export default function HomeScreen() {
+  const [date, setDate] = useState("");
   let [fontLoaded, fontError] = useFonts({
     Nunito_400Regular,
     Nunito_700Bold,
@@ -34,8 +38,8 @@ export default function HomeScreen() {
     }
   };
 
-  const handleDateChange = (date: any) => {
-    console.log(date);
+  const handleDateChange = (dateSelected: any) => {
+    setDate(dateSelected);
   };
   const greeting = getGreeting();
   return (
@@ -61,6 +65,7 @@ export default function HomeScreen() {
             />
           </View>
         </View>
+
         {/* End of first section */}
         {/* Calendar section */}
         <View className=" mt-8 ">
@@ -73,10 +78,9 @@ export default function HomeScreen() {
             Manage Plans
           </Text>
         </View>
-        <ScrollView className="mt-3">
-          <MealPlanItem />
-          <MealPlanItem />
-        </ScrollView>
+        <View>
+          <Allmeals date={date} />
+        </View>
       </ScrollView>
     </View>
   );

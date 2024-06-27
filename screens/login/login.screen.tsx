@@ -60,12 +60,9 @@ export default function LoginScreen() {
         username: userInfo.username,
       })
       .then(async (res) => {
-        ///Send toast after signUP
+        ///Send toast after login
         console.log(res.data);
-        await AsyncStorage.setItem(
-          "access_token",
-          JSON.stringify(res.data.token)
-        );
+        await AsyncStorage.setItem("access_token", res.data.token);
         setUserInfo({
           password: "",
           username: "",

@@ -6,6 +6,9 @@ import BouncyCheckbox from "react-native-bouncy-checkbox";
 import api from "@/utils/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
+import axios from "axios";
+import { SERVER_URL } from "@/utils/utils";
+import { useToast } from "react-native-toast-notifications";
 
 export default function RoleScreen() {
   const [activeButton, setActiveButton] = useState(null);
@@ -13,6 +16,7 @@ export default function RoleScreen() {
   const [checkBoxState2, setCheckBoxState2] = useState(false);
   const [role, setRole] = useState(0);
 
+  const toast = useToast();
   let [fontLoaded, fontError] = useFonts({
     Nunito_400Regular,
     Nunito_700Bold,
@@ -39,13 +43,29 @@ export default function RoleScreen() {
   const unSelectedRole = `flex-1  border border-slate-400 shadow-sm p-3 rounded-md h-[200px]`;
 
   const handleProceed = async () => {
-    console.log(role);
-    const response = await api.put("/api/v1/users/single", { role });
-    console.log(response.data);
-    await AsyncStorage.setItem("currentUser", JSON.stringify(response.data));
-    if (response.data === "0") {
-      router.push("/(tabs)");
-    } else {
+    ///Get user token from the local storage and append it to
+    try {
+      console.log(role);
+      const token = await AsyncStorage.getItem("access_token");
+      console.log("<-------accessToken-------->", token);
+      const response = await axios
+        .put(
+          `${SERVER_URL}/api/v1/users/single`,
+          { role: role },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `${token}`,
+            },
+          }
+        )
+        .then((res) => {
+          console.log(res.data);
+          router.push("/(tabs)");
+        })
+        .catch((err) => toast.show("Invalid Role", { type: "danger" }));
+    } catch (error) {
+      console.log(error);
     }
   };
   return (

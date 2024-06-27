@@ -5,7 +5,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function useUser() {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
 
   useEffect(function () {
     const getMe = async () => {
@@ -13,13 +12,15 @@ export default function useUser() {
       await axios
         .get(`${SERVER_URL}/api/v1/users/single`, {
           headers: {
-            Authorization: JSON.parse(user_token!),
+            Authorization: `${user_token}`,
           },
         })
         .then((res) => {
-          console.log(res.data);
+          console.log("<------accesTokenBeforeGetMe------>", user_token);
+          console.log("<---------getMeData-------->", res.data);
           setUser(res.data);
-        });
+        })
+        .catch((err) => console.log(err.message));
     };
     getMe();
   }, []);
