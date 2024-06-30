@@ -1,12 +1,9 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
+import MealPlanScreen from "@/screens/mealplan/mealplan.sceen";
 
 export default function MealPlan() {
-  return (
-    <View>
-      <Text>MealPlan</Text>
-    </View>
-  );
+  return <MealPlanScreen />;
 }
 
 const styles = StyleSheet.create({});

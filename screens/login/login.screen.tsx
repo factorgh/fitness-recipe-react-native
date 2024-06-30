@@ -112,7 +112,7 @@ export default function LoginScreen() {
               onChangeText={(value) =>
                 setUserInfo({ ...userInfo, username: value })
               }
-              placeholder="fitness@recipe.com"
+              placeholder="Enter username"
               className="w-[80%] "
             />
           </View>

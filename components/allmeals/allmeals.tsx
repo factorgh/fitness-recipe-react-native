@@ -17,8 +17,6 @@ import { router } from "expo-router";
 export default function Allmeals({ date }: { date: any }) {
   const [data, setData] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-  const [noData, setNoData] = useState(false);
-  const [mode, setMode] = useState("date");
 
   const { user } = useUser();
 
@@ -38,14 +36,17 @@ export default function Allmeals({ date }: { date: any }) {
             },
           })
           .then((response) => {
+            console.log(
+              "<---------response from date filter------------>",
+              response.data.meal
+            );
             setData(response.data);
-            setNoData(response.data.length === 0);
+            setLoading(false);
           })
           .catch((err) => {
-            console.error("Error fetching data:", err);
+            console.error("Error fetching data:", err.message);
 
             setLoading(false);
-            setNoData(true);
           });
       };
       fetchData();
@@ -57,7 +58,7 @@ export default function Allmeals({ date }: { date: any }) {
     <View>
       {loading ? (
         <ActivityIndicator className="mt-10" size="large" color="blue" />
-      ) : noData ? (
+      ) : data.length === 0 ? (
         <View className=" items-center justify-center mt-10 flex flex-col mb-10">
           <Text>No data Available</Text>
           <TouchableOpacity
@@ -69,6 +70,8 @@ export default function Allmeals({ date }: { date: any }) {
         </View>
       ) : (
         <FlatList
+          horizontal
+          showsHorizontalScrollIndicator={false}
           data={data}
           keyExtractor={(item: any) => item.id.toString()}
           renderItem={({ item }) => <MealPlanItem />}

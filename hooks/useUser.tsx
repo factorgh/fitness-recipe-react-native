@@ -3,8 +3,11 @@ import axios from "axios";
 import { SERVER_URL } from "@/utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+type User = {
+  id: string;
+};
 export default function useUser() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User>();
 
   useEffect(function () {
     const getMe = async () => {

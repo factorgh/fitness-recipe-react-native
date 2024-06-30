@@ -13,15 +13,14 @@ export default function SettingsItem({
 }) {
   return (
     <TouchableOpacity onPress={onPress}>
-      <View className="flex flex-row justify-between items-center mx-5 p-2 mt-2">
+      <View className="flex flex-row justify-between items-center mx-5 p-2 mt-5 border border-slate-300 rounded-xl bg-slate-200">
         {/* iCONS */}
         <View className="flex flex-row gap-5">
           {icon}
-          <Text className="text-xl">{text}</Text>
+          <Text className="text-xl text-slate-600">{text}</Text>
         </View>
         <AntDesign name="right" size={24} color="black" />
       </View>
-      <View className="border border-slate-200  bg-slate-300 flex w-full  mt-3 mx-3"></View>
     </TouchableOpacity>
   );
 }

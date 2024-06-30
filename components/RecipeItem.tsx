@@ -16,7 +16,7 @@ export default function RecipeItem({ item }: { item: any }) {
       <View className="flex flex-row items-center justify-between p-3">
         <View>
           <Text className="text-md font-semibold">{item.title}</Text>
-          <Text>Roastated Potato and Egg Plant</Text>
+          <Text className="text-slate-500">Roastated Potato and Egg Plant</Text>
         </View>
         {/* Rating button */}
         <View className="w-[80px] h-[40px]  flex flex-row  items-center rounded-md bg-orange-300 justify-between p-3">

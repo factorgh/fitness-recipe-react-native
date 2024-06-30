@@ -17,6 +17,7 @@ import MealPlanItem from "@/components/mealPlanItem";
 import { router } from "expo-router";
 import { SERVER_URL } from "@/utils/utils";
 import Allmeals from "@/components/allmeals/allmeals";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function HomeScreen() {
   const [date, setDate] = useState("");
@@ -39,50 +40,59 @@ export default function HomeScreen() {
   };
 
   const handleDateChange = (dateSelected: any) => {
+    console.log(dateSelected);
     setDate(dateSelected);
   };
   const greeting = getGreeting();
   return (
-    <View className="mt-[40px] ">
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View className="w-full  mt-[30px] flex flex-row justify-between p-3 ">
-          <Text style={{ fontFamily: "Nunito_700Bold" }} className="text-2xl">
-            {greeting}
-          </Text>
-          <View className="flex flex-row gap-2 items-center">
-            <TouchableOpacity onPress={() => router.push("/(routes)/add-meal")}>
-              <Entypo name="add-to-list" size={30} color="black" />
-            </TouchableOpacity>
-            <View>
-              <Ionicons name="notifications-circle" size={35} color="#747474" />
+    <LinearGradient colors={["#E5ECF9", "#F6F7F9"]}>
+      <View className="mt-[40px] ">
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View className="w-full  mt-[30px] flex flex-row justify-between p-3 ">
+            <Text style={{ fontFamily: "Nunito_700Bold" }} className="text-2xl">
+              {greeting}
+            </Text>
+            <View className="flex flex-row gap-2 items-center">
+              <TouchableOpacity
+                onPress={() => router.push("/(routes)/add-meal")}
+              >
+                <Entypo name="add-to-list" size={30} color="black" />
+              </TouchableOpacity>
+              <View>
+                <Ionicons
+                  name="notifications-circle"
+                  size={35}
+                  color="#747474"
+                />
+              </View>
+              <Avatar
+                size={32}
+                rounded
+                source={{
+                  uri: "https://randomuser.me/api/portraits/men/36.jpg",
+                }}
+              />
             </View>
-            <Avatar
-              size={32}
-              rounded
-              source={{
-                uri: "https://randomuser.me/api/portraits/men/36.jpg",
-              }}
-            />
           </View>
-        </View>
 
-        {/* End of first section */}
-        {/* Calendar section */}
-        <View className=" mt-8 ">
-          <CalendarPicker onDateChange={handleDateChange} />
-        </View>
-        {/* End of calendar section */}
+          {/* End of first section */}
+          {/* Calendar section */}
+          <View className=" mt-8 ">
+            <CalendarPicker onDateChange={handleDateChange} />
+          </View>
+          {/* End of calendar section */}
 
-        <View className="mt-5 mx-3">
-          <Text className="text-2xl" style={{ fontFamily: "Nunito_700Bold" }}>
-            Manage Plans
-          </Text>
-        </View>
-        <View>
-          <Allmeals date={date} />
-        </View>
-      </ScrollView>
-    </View>
+          <View className="mt-5 mx-3">
+            <Text className="text-2xl" style={{ fontFamily: "Nunito_700Bold" }}>
+              Manage Plans
+            </Text>
+          </View>
+          <View>
+            <Allmeals date={date} />
+          </View>
+        </ScrollView>
+      </View>
+    </LinearGradient>
   );
 }
 

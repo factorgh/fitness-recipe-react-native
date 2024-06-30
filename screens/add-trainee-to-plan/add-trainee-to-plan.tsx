@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Button } from "@rneui/base";
@@ -31,6 +31,9 @@ export default function AddTraineeToPlanScreen() {
   const [showTimePicker, setShowTimePicker] = useState(false);
 
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+
+  const { recipe } = useLocalSearchParams();
+  console.log("<--------recipe forwared--------->", recipe);
 
   const handleAddInput = () => {
     if (inputValue.trim() !== "") {
@@ -70,7 +73,11 @@ export default function AddTraineeToPlanScreen() {
 
   const onChangeDate = (event: any, selectedDate: any) => {
     const currentDate = selectedDate || date;
-    setShowDatePicker(Platform.OS === "ios");
+    ////Parse the iso string in to a  date object
+    const formattedDate = new Date(currentDate);
+
+    ///Get actual Date
+    const actualDate = setShowDatePicker(Platform.OS === "ios");
     setDate(currentDate);
   };
 
@@ -82,8 +89,13 @@ export default function AddTraineeToPlanScreen() {
 
   const handleCompletePlan = () => {
     let mealPlan = {
-      recipe: {},
+      recipe: recipe,
+      createdOn: date,
+      createdAt: time,
+
+      user: inputList,
     };
+    console.log("<---------mealPlanItem-Completed------->", mealPlan);
   };
 
   return (
@@ -187,7 +199,7 @@ export default function AddTraineeToPlanScreen() {
           />
         </View>
         <TouchableOpacity
-          onPress={() => router.push("/")}
+          onPress={handleCompletePlan}
           className="bg-red-500 items-center mt-[40px] mb-3 p-3 rounded-md "
         >
           <Text

@@ -128,7 +128,7 @@ export default function LoginScreen() {
               onChangeText={(value) =>
                 setUserInfo({ ...userInfo, fullName: value })
               }
-              placeholder="Eneter full name"
+              placeholder="Enter full name"
               className="w-[80%] "
             />
           </View>

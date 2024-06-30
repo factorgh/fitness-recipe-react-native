@@ -9,7 +9,7 @@ import React from "react";
 import { Nunito_400Regular, Nunito_700Bold } from "@expo-google-fonts/nunito";
 import { useFonts } from "@expo-google-fonts/raleway";
 import { Ionicons } from "@expo/vector-icons";
-import UserAvatar from "react-native-user-avatar";
+
 import CalendarPicker from "react-native-calendar-picker";
 import { Entypo } from "@expo/vector-icons";
 import MealPlanItem from "@/components/mealPlanItem";
@@ -52,7 +52,6 @@ export default function MealPlanScreen() {
             <View>
               <Ionicons name="notifications-circle" size={35} color="#747474" />
             </View>
-            <UserAvatar src="" size={35} />
           </View>
         </View>
         {/* End of first section */}
