@@ -192,9 +192,9 @@ export default function LoginScreen() {
               onPress={() => setPasswordVisbility(!passwordVisibility)}
             >
               {passwordVisibility ? (
-                <Ionicons name="eye-off-outline" size={24} color="#747474" />
-              ) : (
                 <Ionicons name="eye-outline" size={24} color="#747474" />
+              ) : (
+                <Ionicons name="eye-off-outline" size={24} color="#747474" />
               )}
             </TouchableOpacity>
           </View>
