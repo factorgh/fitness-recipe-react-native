@@ -9,13 +9,6 @@ import { Avatar } from "@rneui/themed";
 
 export default function MealPlanItem({}) {
   const [expanded, setExpanded] = useState(false);
-  let [fontLoaded, fontError] = useFonts({
-    Nunito_400Regular,
-    Nunito_700Bold,
-    Raleway_700Bold,
-  });
-
-  if (!fontLoaded && !fontError) return null;
 
   const handleDelete = () => {
     Alert.alert("Confirm delete meal plan ", "Delete meal plan");
@@ -32,7 +25,7 @@ export default function MealPlanItem({}) {
         <View className="flex flex-row gap-[50px]">
           <MaterialCommunityIcons name="food-turkey" size={24} color="black" />
           <Text
-            style={{ fontFamily: "Raleway_700Bold " }}
+            style={{ fontFamily: "Nunito_700Bold " }}
             className="text-xl font-mono"
           >
             Poached Eggs

@@ -1,10 +1,11 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { Avatar } from "@rneui/themed";
+import { router } from "expo-router";
 
 export default function Trainee() {
   return (
-    <View>
+    <TouchableOpacity onPress={() => router.push("/(routes)/trainee-detail")}>
       <View className="flex flex-row items-center justify-between mx-5 mt-3">
         {/* Avatar */}
         <View className=" flex flex-row   ">
@@ -24,7 +25,7 @@ export default function Trainee() {
         <Text>Today</Text>
       </View>
       <View className="border border-red-200  bg-red-200 flex w-full  mt-3 mx-3"></View>
-    </View>
+    </TouchableOpacity>
   );
 }
 

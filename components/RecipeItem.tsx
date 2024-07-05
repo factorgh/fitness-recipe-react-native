@@ -10,7 +10,7 @@ export default function RecipeItem({ item }: { item: any }) {
       className="w-full h-[200px] border border-slate-300 shadow-sm rounded-md mt-5"
     >
       <Image
-        source={require("@/assets/images/onboarding_1.png")}
+        source={require("@/assets/images/recipe.jpeg")}
         className="w-full h-[120px] rounded-t-md"
       />
       <View className="flex flex-row items-center justify-between p-3">

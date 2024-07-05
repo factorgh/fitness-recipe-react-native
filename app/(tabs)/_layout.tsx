@@ -6,7 +6,12 @@ export default function TabsLayout() {
   const { user } = useUser();
   console.log("<---------user on tab screen --------->", user);
   ////GET get user role and check if user is trianer or trainee
-  const isTrainer = 1;
+  // let isTrainer;
+  // if (user?.role === 1) {
+  //   isTrainer = true;
+  // } else {
+  //   isTrainer = false;
+  // }
 
   return (
     <Tabs
@@ -20,8 +25,8 @@ export default function TabsLayout() {
               iconName = require("@/assets/icons/BookBookmark.png");
             } else if (route.name === "trainees/index") {
               iconName = require("@/assets/icons/User.png");
-            } else if (route.name === "mealplan/index") {
-              iconName = require("@/assets/icons/HouseSimple.png");
+              // } else if (route.name === "mealplan/index") {
+              //   iconName = require("@/assets/icons/HouseSimple.png");
             } else if (route.name === "settings/index") {
               iconName = require("@/assets/icons/settings.png");
             }
@@ -37,22 +42,10 @@ export default function TabsLayout() {
         };
       }}
     >
-      <Tabs.Screen
-        options={{ href: isTrainer === 1 ? null : "" }}
-        name="index"
-      />
-      <Tabs.Screen
-        options={{ href: isTrainer === 1 ? null : "" }}
-        name="mealplans/index"
-      />
-      <Tabs.Screen
-        options={{ href: isTrainer === 1 ? null : "" }}
-        name="trainees/index"
-      />
-      <Tabs.Screen
-        options={{ href: isTrainer !== 1 ? null : "" }}
-        name="mealplan/index"
-      />
+      <Tabs.Screen name="index" />
+      <Tabs.Screen name="mealplans/index" />
+      <Tabs.Screen name="trainees/index" />
+
       <Tabs.Screen name="settings/index" />
     </Tabs>
   );

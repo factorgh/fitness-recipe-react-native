@@ -2,10 +2,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { SERVER_URL } from "@/utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { User } from "@/types/User";
 
-type User = {
-  id: string;
-};
 export default function useUser() {
   const [user, setUser] = useState<User>();
 
@@ -20,8 +18,8 @@ export default function useUser() {
         })
         .then((res) => {
           console.log("<------accesTokenBeforeGetMe------>", user_token);
-          console.log("<---------getMeData-------->", res.data);
-          setUser(res.data);
+          console.log("<---------getMeData-------->", res.data.user);
+          setUser(res.data.user);
         })
         .catch((err) => console.log(err.message));
     };

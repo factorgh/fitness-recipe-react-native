@@ -13,6 +13,8 @@ const _layout = () => {
         <Stack.Screen name="(routes)/signup/index" />
         <Stack.Screen name="(routes)/roles/index" />
         <Stack.Screen name="(routes)/add-meal/index" />
+        <Stack.Screen name="(routes)/trainee-detail/index" />
+        <Stack.Screen name="(routes)/assign-meal/index" />
         <Stack.Screen name="(routes)/add-trainee-to-plan/index" />
         <Stack.Screen
           options={{

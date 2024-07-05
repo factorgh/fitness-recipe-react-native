@@ -9,10 +9,10 @@ import React from "react";
 import { Nunito_400Regular, Nunito_700Bold } from "@expo-google-fonts/nunito";
 import { useFonts } from "@expo-google-fonts/raleway";
 import { Ionicons } from "@expo/vector-icons";
+import { Avatar } from "@rneui/themed";
 
 import CalendarPicker from "react-native-calendar-picker";
 import { Entypo } from "@expo/vector-icons";
-import MealPlanItem from "@/components/mealPlanItem";
 import { router } from "expo-router";
 
 export default function MealPlanScreen() {
@@ -46,6 +46,8 @@ export default function MealPlanScreen() {
             {greeting}
           </Text>
           <View className="flex flex-row gap-2 items-center">
+            <Text>T</Text>
+
             <TouchableOpacity onPress={() => router.push("/(routes)/add-meal")}>
               <Entypo name="add-to-list" size={30} color="black" />
             </TouchableOpacity>
