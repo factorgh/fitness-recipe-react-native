@@ -11,11 +11,13 @@ import React from "react";
 import { Nunito_400Regular, Nunito_700Bold } from "@expo-google-fonts/nunito";
 import { useFonts } from "@expo-google-fonts/raleway";
 import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 
 import CalendarPicker from "react-native-calendar-picker";
 import { Entypo } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useEffect } from "react";
+import TraineePlanItem from "@/components/traineePlan";
 
 export default function MealPlanScreen() {
   let [fontLoaded, fontError] = useFonts({
@@ -41,40 +43,60 @@ export default function MealPlanScreen() {
   };
   const greeting = getGreeting();
   return (
-    <View className="mt-[40px] ">
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View className="w-full  mt-[30px] flex flex-row justify-between p-3 ">
-          <Text style={{ fontFamily: "Nunito_700Bold" }} className="text-2xl">
-            {greeting}
-          </Text>
-          <View className="flex flex-row gap-2 items-center">
-            <Image
-              style={{ width: 27, height: 27, borderRadius: 20, padding: 2 }}
-              source={require("@/assets/images/profile.webp")}
-            />
+    <LinearGradient colors={["#E5ECF9", "#F6F7F9"]}>
+      <View className="mt-[40px] ">
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View className="w-full  mt-[30px] flex flex-row justify-between p-3 ">
+            <Text style={{ fontFamily: "Nunito_700Bold" }} className="text-2xl">
+              {greeting}
+            </Text>
+            <View className="flex flex-row gap-2 items-center">
+              <Image
+                style={{ width: 27, height: 27, borderRadius: 20, padding: 2 }}
+                source={require("@/assets/images/profile.webp")}
+              />
 
-            <TouchableOpacity onPress={() => router.push("/(routes)/add-meal")}>
-              <Entypo name="add-to-list" size={30} color="black" />
-            </TouchableOpacity>
-            <View>
-              <Ionicons name="notifications-circle" size={35} color="#747474" />
+              <TouchableOpacity
+                onPress={() => router.push("/(routes)/add-meal")}
+              >
+                <Entypo name="add-to-list" size={30} color="black" />
+              </TouchableOpacity>
+              <View>
+                <Ionicons
+                  name="notifications-circle"
+                  size={35}
+                  color="#747474"
+                />
+              </View>
             </View>
           </View>
-        </View>
-        {/* End of first section */}
-        {/* Calendar section */}
-        <View className=" mt-8 ">
-          <CalendarPicker onDateChange={handleDateChange} />
-        </View>
-        {/* End of calendar section */}
+          {/* End of first section */}
+          {/* Calendar section */}
+          <View className=" mt-8 ">
+            <CalendarPicker onDateChange={handleDateChange} />
+          </View>
+          {/* End of calendar section */}
 
-        <View className="mt-5 mx-3">
-          <Text className="text-2xl" style={{ fontFamily: "Nunito_700Bold" }}>
-            Manage Plans
-          </Text>
-        </View>
-        <ScrollView className="mt-3"></ScrollView>
-      </ScrollView>
-    </View>
+          <View className="mt-5 mx-3">
+            <Text
+              style={{
+                fontFamily: "Nunito_700Bold",
+                marginLeft: 20,
+                fontSize: 20,
+              }}
+            >
+              Upcoming meal plans
+            </Text>
+          </View>
+
+          <ScrollView className="mt-1 mx-3">
+            <TraineePlanItem />
+            <TraineePlanItem />
+            <TraineePlanItem />
+            <TraineePlanItem />
+          </ScrollView>
+        </ScrollView>
+      </View>
+    </LinearGradient>
   );
 }

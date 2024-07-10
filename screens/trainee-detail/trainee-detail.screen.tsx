@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, Feather } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Entypo } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -32,9 +32,9 @@ export default function TraineeDetailScreen() {
             {/* First section  */}
             <View className="flex flex-row items-center justify-between mx-5 mb-5">
               <View className="flex flex-row items-center gap-5">
-                <AntDesign
+                <Feather
                   onPress={() => router.back()}
-                  name="left"
+                  name="corner-up-left"
                   size={24}
                   color="black"
                 />

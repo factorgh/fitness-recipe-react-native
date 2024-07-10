@@ -13,7 +13,7 @@ export default function SettingsItem({
 }) {
   return (
     <TouchableOpacity onPress={onPress}>
-      <View className="flex flex-row justify-between items-center mx-5 p-2 mt-5 border border-slate-300 rounded-xl bg-slate-200">
+      <View className="flex flex-row justify-between items-center mx-5 p-5 mt-5 border border-slate-200 shadow-sm  rounded-md bg-slate-100">
         {/* iCONS */}
         <View className="flex flex-row gap-5">
           {icon}

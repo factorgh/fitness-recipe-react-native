@@ -18,52 +18,46 @@ export default function SettingsScreen() {
         >
           Settings
         </Text>
-        <View className="border border-slate-200  bg-slate-950 flex w-full  mt-3 mx-3"></View>
+        <View className="border border-slate-200  bg-slate-400 flex w-full  mt-3 "></View>
 
         <ScrollView>
-          <View>
+          <View className="h-screen">
             <SettingsItem
-              onPress={() => {}}
+              onPress={() => router.push("/(routes)/profile")}
               icon={
-                <MaterialIcons name="account-circle" size={30} color="black" />
+                <MaterialIcons name="account-circle" size={30} color="gray" />
               }
               text="Profile"
             />
             <SettingsItem
-              onPress={() => {}}
+              onPress={() => router.push("/(routes)/notifications")}
               icon={
                 <MaterialIcons
                   name="notifications-active"
                   size={30}
-                  color="black"
+                  color="gray"
                 />
               }
               text="Notifications"
             />
             <SettingsItem
-              onPress={() => {}}
+              onPress={() => router.push("/(routes)/help-and-support")}
               icon={
                 <MaterialCommunityIcons
                   name="help-network-outline"
                   size={30}
-                  color="black"
+                  color="gray"
                 />
               }
               text="Help & Support "
             />
-            <SettingsItem
-              onPress={() => {}}
-              icon={
-                <FontAwesome name="question-circle-o" size={30} color="black" />
-              }
-              text="About"
-            />
+
             <SettingsItem
               onPress={async () => {
                 await AsyncStorage.removeItem("access_token");
                 router.push("/(routes)/login");
               }}
-              icon={<MaterialIcons name="logout" size={30} color="black" />}
+              icon={<MaterialIcons name="logout" size={30} color="gray" />}
               text="Logout"
             />
           </View>
