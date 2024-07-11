@@ -12,11 +12,13 @@ import { router } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Nunito_700Bold } from "@expo-google-fonts/nunito";
+import { SpeedDial } from '@rneui/themed';
 import ReviewItem from "@/components/ReviewItem";
+import SpeedDialItem from "@/components/speed-dial";
 
 export default function MealDetailScreen() {
   const [isBookmarked, setIsBookMarked] = useState(false);
+  const [open,setOpen] = useState(false);
   ///Bottom sheet Ref
 
   return (
@@ -124,6 +126,7 @@ export default function MealDetailScreen() {
                   5. Lorem ipsum dolor sit amet consectetur adipisicing
                 </Text>
               </View>
+             
               {/* Review detail section */}
               <View className="mt-10">
                 <Text
@@ -136,7 +139,9 @@ export default function MealDetailScreen() {
                 <ReviewItem />
                 <ReviewItem />
                 {/* Review item  */}
+                <SpeedDialItem/>
               </View>
+           
             </View>
           </View>
         </ScrollView>

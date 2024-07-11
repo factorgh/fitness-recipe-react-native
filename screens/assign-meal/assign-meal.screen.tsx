@@ -16,6 +16,7 @@ import axios from "axios";
 import { SERVER_URL } from "@/utils/utils";
 import { Platform } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface User {
   id: string;
@@ -99,6 +100,7 @@ export default function AssignMealScreen() {
   };
 
   return (
+    <SafeAreaView>
     <ScrollView>
       <View className="mt-[60px] mx-5">
         <View className=" flex flex-row justify-between mb-5  ">
@@ -211,6 +213,7 @@ export default function AssignMealScreen() {
         </TouchableOpacity>
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 }
 

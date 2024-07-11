@@ -1,7 +1,5 @@
 import {
   FlatList,
-  SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -15,6 +13,8 @@ import RecipeItem from "@/components/RecipeItem";
 import { AntDesign } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function MealPlanScreen() {
   let [fontLoaded, fontError] = useFonts({
@@ -47,13 +47,14 @@ export default function MealPlanScreen() {
     },
   ];
   return (
+    <SafeAreaView>
     <LinearGradient colors={["#E5ECF9", "#F6F7F9"]}>
       <View className="mt-[70px] mx-5 ">
         <View className="flex flex-row justify-between">
           <Text style={{ fontFamily: "Nunito_700Bold" }} className="text-3xl">
             Recipes
           </Text>
-          <Ionicons name="add" size={30} color="black" />
+          <Ionicons onPress={()=> router.push("/(routes)/create-recipe")} name="add" size={30} color="black" />
         </View>
         <View className="border border-slate-300 rounded-full flex flex-row items-center mt-3 px-2">
           <AntDesign name="search1" size={24} color="black" />
@@ -81,6 +82,7 @@ export default function MealPlanScreen() {
         </View>
       </View>
     </LinearGradient>
+    </SafeAreaView>
   );
 }
 

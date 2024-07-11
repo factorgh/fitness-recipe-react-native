@@ -18,6 +18,7 @@ import { Entypo } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useEffect } from "react";
 import TraineePlanItem from "@/components/traineePlan";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function MealPlanScreen() {
   let [fontLoaded, fontError] = useFonts({
@@ -43,24 +44,23 @@ export default function MealPlanScreen() {
   };
   const greeting = getGreeting();
   return (
+    <SafeAreaView>
     <LinearGradient colors={["#E5ECF9", "#F6F7F9"]}>
       <View className="mt-[40px] ">
         <ScrollView showsVerticalScrollIndicator={false}>
           <View className="w-full  mt-[30px] flex flex-row justify-between p-3 ">
             <Text style={{ fontFamily: "Nunito_700Bold" }} className="text-2xl">
               {greeting}
+            
             </Text>
+           
             <View className="flex flex-row gap-2 items-center">
               <Image
                 style={{ width: 27, height: 27, borderRadius: 20, padding: 2 }}
                 source={require("@/assets/images/profile.webp")}
               />
 
-              <TouchableOpacity
-                onPress={() => router.push("/(routes)/add-meal")}
-              >
-                <Entypo name="add-to-list" size={30} color="black" />
-              </TouchableOpacity>
+              
               <View>
                 <Ionicons
                   name="notifications-circle"
@@ -98,5 +98,6 @@ export default function MealPlanScreen() {
         </ScrollView>
       </View>
     </LinearGradient>
+    </SafeAreaView>
   );
 }

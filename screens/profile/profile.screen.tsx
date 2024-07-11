@@ -6,6 +6,8 @@ import {
   ImageBackground,
   TextInput,
   FlatList,
+  ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
@@ -15,52 +17,62 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import axios from "axios";
-import { SERVER_URL } from "@/utils/utils";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+// import { SERVER_URL } from "@/utils/utils";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
 import { User } from "@/types/User";
+// import useUser from "@/hooks/useUser";
 
 export default function ProfileScreen() {
   const [users, setUsers] = useState<User[]>([]);
   const [value, setValue] = useState("");
   const [filteredValue, setFilteredValue] = useState<User[]>([]);
-  useEffect(function () {
-    async function getAllUser() {
-      const token = await AsyncStorage.getItem("access_token");
-      axios
-        .get(`${SERVER_URL}/api/v1/users`, {
-          headers: {
-            Authorization: `${token}`,
-          },
-        })
-        .then((response) => setUsers(response.data))
-        .catch((err) => console.log(err.message));
-    }
-    getAllUser();
-  }, []);
 
-  // Filter effect
-  useEffect(
-    function () {
-      // First filter
-      if (value === "") {
-        setFilteredValue([]);
-      } else if (value) {
-        const filtered = users?.filter((user) =>
-          user.username.toLowerCase().includes(value.toLowerCase())
-        );
-        setFilteredValue(filtered);
-      } else {
-        setFilteredValue(users);
-      }
-    },
-    [value, users]
-  );
+//   const {user} = useUser();
+//   console.log("<-------User on profile Screen------->",user)
+//   useEffect(function () {
+//     async function getAllUser() {
+//       const token = await AsyncStorage.getItem("access_token");
+//       axios
+//         .get(`${SERVER_URL}/api/v1/users`, {
+//           headers: {
+//             Authorization: `${token}`,
+//           },
+//         })
+//         .then((response) => setUsers(response.data.users))
+//         .catch((err) => console.log(err.message));
+//     }
+//     getAllUser();
+//   }, []);
 
+// //   // Filter effect
+//   useEffect(
+//     function () {
+//       // First filter
+//       if (value === "") {
+//         setFilteredValue([]);
+//       } else if (value) {
+//         const filtered = users?.filter((user) =>
+//           user.username.toLowerCase().includes(value.toLowerCase())
+//         );
+//         setFilteredValue(filtered);
+//       } else {
+//         setFilteredValue(users);
+//       }
+//     },
+//     [value, users]
+//   );
+
+// const handleTrainerSelect = (name: string)=>{
+//   console.log(name)
+//   setFilteredValue([])
+// }
+
+  console.log("<-----------------all users------------------>", users[0])
   return (
     <SafeAreaView>
       <LinearGradient className="h-screen" colors={["#E5ECF9", "#F6F7F9"]}>
         {/* First view */}
-
+        <ScrollView showsVerticalScrollIndicator={false}>
         <ImageBackground
           source={require("@/assets/images/bg_profile.jpg")}
           style={{ height: 180 }}
@@ -110,27 +122,7 @@ export default function ProfileScreen() {
         ></View>
 
         {/* Update trainer section  */}
-        <View style={{ marginTop: 10 }}>
-          <Text
-            className="text-slate-900 text-lg ml-5 mb-3 "
-            style={{ fontFamily: "Nunito_700Bold" }}
-          >
-            Update your trainer info
-          </Text>
-          <View>
-            <TextInput
-              value={value}
-              onChangeText={setValue}
-              placeholder="search trainer by username"
-              className="border border-slate-300 mx-3 p-2 rounded-lg"
-            />
-            <FlatList
-              data={filteredValue}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => <Text>{item?.username}</Text>}
-            />
-          </View>
-        </View>
+
         {/* Other details */}
         <Text
           className="text-slate-900 text-lg ml-5 mb-3 mt-10"
@@ -178,6 +170,7 @@ export default function ProfileScreen() {
             </View>
           </View>
         </View>
+        </ScrollView>
       </LinearGradient>
     </SafeAreaView>
   );

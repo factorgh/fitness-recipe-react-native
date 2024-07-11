@@ -135,7 +135,7 @@ export default function AddMealPlan() {
           </View>
           {/* End of meal name */}
           <View className="gap-2 mt-3">
-            <Text>Description</Text>
+            <Text>Nutritional Information</Text>
             <View className="border-2 border-slate-300 w-full rounded-md  h-[100px] p-2  flex items-center justify-center">
               <TextInput
                 value={mealPlanInfo.description}

@@ -12,6 +12,7 @@ import Trainee from "@/components/trainee";
 import { FAB } from "@rneui/themed";
 import { router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function TraineesScreen() {
   const [activeTab, setActiveTab] = useState("button1");
@@ -23,6 +24,7 @@ export default function TraineesScreen() {
     setActiveTab(tab);
   };
   return (
+    <SafeAreaView>
     <LinearGradient colors={["#E5ECF9", "#F6F7F9"]}>
       <View className="mt-[60px]">
         <Text
@@ -84,6 +86,7 @@ export default function TraineesScreen() {
         </View>
       </View>
     </LinearGradient>
+    </SafeAreaView>
   );
 }
 

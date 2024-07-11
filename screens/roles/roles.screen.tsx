@@ -9,6 +9,7 @@ import { router } from "expo-router";
 import axios from "axios";
 import { SERVER_URL } from "@/utils/utils";
 import { useToast } from "react-native-toast-notifications";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function RoleScreen() {
   const [activeButton, setActiveButton] = useState(null);
@@ -69,6 +70,7 @@ export default function RoleScreen() {
     }
   };
   return (
+    <LinearGradient className="h-screen" colors={["#E5ECF9", "#F6F7F9"]}>
     <View className="flex-1  mt-[40px] p-3 ">
       <View className="p-3 mb-5">
         <Text
@@ -166,6 +168,7 @@ export default function RoleScreen() {
         </TouchableOpacity>
       )}
     </View>
+    </LinearGradient>
   );
 }
 

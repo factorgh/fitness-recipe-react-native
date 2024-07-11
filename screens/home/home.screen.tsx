@@ -1,5 +1,5 @@
 import {
-  FlatList,
+ 
   ScrollView,
   StyleSheet,
   Text,
@@ -18,6 +18,7 @@ import { router } from "expo-router";
 import { SERVER_URL } from "@/utils/utils";
 import Allmeals from "@/components/allmeals/allmeals";
 import { LinearGradient } from "expo-linear-gradient";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
   const [date, setDate] = useState("");
@@ -45,8 +46,9 @@ export default function HomeScreen() {
   };
   const greeting = getGreeting();
   return (
+    <SafeAreaView>
     <LinearGradient colors={["#E5ECF9", "#F6F7F9"]}>
-      <View className="mt-[40px] ">
+      <View className="mt-[40px] h-screen ">
         <ScrollView showsVerticalScrollIndicator={false}>
           <View className="w-full  mt-[30px] flex flex-row justify-between p-3 ">
             <Text style={{ fontFamily: "Nunito_700Bold" }} className="text-2xl">
@@ -93,6 +95,7 @@ export default function HomeScreen() {
         </ScrollView>
       </View>
     </LinearGradient>
+    </SafeAreaView>
   );
 }
 

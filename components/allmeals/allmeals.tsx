@@ -17,6 +17,7 @@ import { router } from "expo-router";
 export default function Allmeals({ date }: { date: any }) {
   const [data, setData] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+ 
 
   const { user } = useUser();
 
@@ -40,7 +41,7 @@ export default function Allmeals({ date }: { date: any }) {
               "<---------response from date filter------------>",
               response.data.meal
             );
-            setData(response.data);
+            setData(response.data.meal);
             setLoading(false);
           })
           .catch((err) => {

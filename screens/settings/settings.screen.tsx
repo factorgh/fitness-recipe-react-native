@@ -7,9 +7,11 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SettingsScreen() {
   return (
+    <SafeAreaView>
     <LinearGradient style={{ height: "100%" }} colors={["#E5ECF9", "#F6F7F9"]}>
       <View className="mt-[60px]">
         <Text
@@ -64,6 +66,7 @@ export default function SettingsScreen() {
         </ScrollView>
       </View>
     </LinearGradient>
+    </SafeAreaView>
   );
 }
 

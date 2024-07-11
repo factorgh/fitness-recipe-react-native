@@ -16,6 +16,7 @@ import axios from "axios";
 import { SERVER_URL } from "@/utils/utils";
 import { Platform } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface User {
   id: string;
@@ -87,6 +88,21 @@ export default function AddTraineeToPlanScreen() {
     setTime(currentTime);
   };
 
+// Publish image to aws bucket 
+const handlePublishToAWS = async(file: string)=>{
+  ///get extention 
+  const fileExt = file.split(".").pop(); ///ex. .png , .jpeg
+
+  ///Configure upload params 
+  const params = {
+    Bucket: "fitness-recipe-app",
+    Key:`fitnes-recipe-${Date.now()}.${fileExt}`,
+    Body: await fetch(file).then(res => res.blob()), ////Convert file to a blob format
+    ACL: "public-read",
+    
+  }
+}
+
   const handleCompletePlan = () => {
     let mealPlan = {
       recipe: recipe,
@@ -99,6 +115,7 @@ export default function AddTraineeToPlanScreen() {
   };
 
   return (
+    <SafeAreaView>
     <ScrollView>
       <View className="mt-[60px] mx-5">
         <View className=" flex flex-row justify-between mb-5  ">
@@ -110,7 +127,7 @@ export default function AddTraineeToPlanScreen() {
         </View>
         {/* End of header section */}
         {/* Date picker section */}
-        <Text className="font-semibold">Add Time</Text>
+        <Text className="font-semibold">Add Date</Text>
         <View className="border border-slate-300 rounded-md flex flex-row justify-between p-2 ">
           <TextInput value={date.toLocaleDateString()} placeholder="dd/mm/yy" />
           <MaterialIcons
@@ -131,7 +148,7 @@ export default function AddTraineeToPlanScreen() {
 
         {/* End of date picker section */}
 
-        <Text className="mt-5 font-semibold">Add Date</Text>
+        <Text className="mt-5 font-semibold">Add Time</Text>
         <View className="border border-slate-300 rounded-md flex flex-row justify-between p-2 ">
           <TextInput
             value={time.toLocaleTimeString()}
@@ -211,6 +228,7 @@ export default function AddTraineeToPlanScreen() {
         </TouchableOpacity>
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 }
 

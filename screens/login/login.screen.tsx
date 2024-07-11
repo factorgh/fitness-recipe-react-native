@@ -1,5 +1,5 @@
 import {
-  StyleSheet,
+ 
   Text,
   TextInput,
   TouchableOpacity,

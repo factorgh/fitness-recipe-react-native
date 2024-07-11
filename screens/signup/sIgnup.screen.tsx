@@ -218,14 +218,14 @@ export default function LoginScreen() {
             </Text>
           )}
         </TouchableOpacity>
-        <View className="flex flex-row p-2 items-center justify-center gap-2 ">
+        {/* <View className="flex flex-row p-2 items-center justify-center gap-2 ">
           <TouchableOpacity>
             <FontAwesome name="google" size={30} color="black" />
           </TouchableOpacity>
           <TouchableOpacity>
             <Entypo name="facebook-with-circle" size={30} color="blue" />
           </TouchableOpacity>
-        </View>
+        </View> */}
         <View className="flex flex-row mt-5 items-center justify-center ">
           <Text className="mr-2">Already have an acccount ?</Text>
           <TouchableOpacity onPress={() => router.push("/login")}>
