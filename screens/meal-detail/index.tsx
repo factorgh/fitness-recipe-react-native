@@ -3,18 +3,19 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useCallback, useRef, useState } from "react";
+import React, {  useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { SpeedDial } from '@rneui/themed';
+
 import ReviewItem from "@/components/ReviewItem";
 import SpeedDialItem from "@/components/speed-dial";
+import { Colors } from "react-native/Libraries/NewAppScreen";
 
 export default function MealDetailScreen() {
   const [isBookmarked, setIsBookMarked] = useState(false);
@@ -22,16 +23,17 @@ export default function MealDetailScreen() {
   ///Bottom sheet Ref
 
   return (
+    
     <LinearGradient colors={["#E5ECF9", "#F6F7F9"]}>
-      <SafeAreaView>
+   
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={{ marginHorizontal: 10, height: "100%" }}>
+          <View style={{  height: "100%" }}>
             <Image
-              style={{ width: "100%", height: 230, borderRadius: 16 }}
+              style={{ width: "100%", height: 230,}}
               source={require("@/assets/images/recipe.jpeg")}
             />
 
-            <View style={{ height: "100%" }} className="">
+            <View style={{ height: "100%",marginTop:-15,borderRadius:20,backgroundColor:"#fff",paddingHorizontal:10 }} className="">
               <View className="flex flex-row justify-between items-center mt-5 p-2">
                 <Text
                   style={{ fontFamily: "Nunito_700Bold" }}
@@ -135,18 +137,33 @@ export default function MealDetailScreen() {
                 >
                   Reviews
                 </Text>
-                <ReviewItem />
-                <ReviewItem />
-                <ReviewItem />
+               
                 {/* Review item  */}
-                <SpeedDialItem/>
+               
+               
+
+                <View className="w-full">
+                  <TextInput
+                  numberOfLines={4}
+                  placeholder="Write a comment ..."
+                  style={{
+                    borderWidth:1,
+                    padding:10,
+                    borderRadius:10,
+                    textAlignVertical:"top",
+                    borderColor:Colors.GRAY,
+                    marginBottom:80
+                  }} />
+                </View>
+                <SpeedDialItem />
               </View>
            
             </View>
           </View>
         </ScrollView>
-      </SafeAreaView>
+   
     </LinearGradient>
+  
   );
 }
 const styles = StyleSheet.create({
@@ -160,3 +177,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
+

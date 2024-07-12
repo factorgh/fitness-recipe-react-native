@@ -14,6 +14,8 @@ import { router } from "expo-router";
 import { FAB } from "@rneui/base";
 import MealPlanItem from "@/components/mealPlanItem";
 import { LinearGradient } from "expo-linear-gradient";
+import TraineePendingCard from "@/components/trainee-pending-card";
+import TraineeCompletedCard from "@/components/trainee-completed-card";
 
 export default function TraineeDetailScreen() {
   const [activeTab, setActiveTab] = useState("button1");
@@ -26,7 +28,7 @@ export default function TraineeDetailScreen() {
   };
   return (
     <SafeAreaView>
-      <LinearGradient colors={["#E5ECF9", "#F6F7F9"]}>
+      <LinearGradient className="h-screen" colors={["#E5ECF9", "#F6F7F9"]}>
         <ScrollView>
           <View className="mt-8">
             {/* First section  */}
@@ -73,22 +75,30 @@ export default function TraineeDetailScreen() {
               </TouchableOpacity>
             </View>
             {/* fILTER DETAILS */}
-            <View className="mt-3">
+            <View className="mt- mb-32">
+          
               <ScrollView>
                 {activeTab === "button1" ? (
                   <>
-                    <View>
-                      <MealPlanItem />
-                      <MealPlanItem />
-                      <MealPlanItem />
+                    <View className="mx-3 mt-5">
+                      <TraineePendingCard/>
+                      <TraineePendingCard/>
+                      <TraineePendingCard/>
+                      <TraineePendingCard/>
                     </View>
                   </>
                 ) : (
                   <>
-                    <MealPlanItem />
+                   <View className="mx-3">
+                  <TraineeCompletedCard/>
+                  <TraineeCompletedCard/>
+                  <TraineeCompletedCard/>
+                  <TraineeCompletedCard/>
+                  </View>
                   </>
                 )}
               </ScrollView>
+              </View>
 
               <FAB
                 size="large"
@@ -97,7 +107,7 @@ export default function TraineeDetailScreen() {
                 title="+"
                 color="red"
               />
-            </View>
+            
           </View>
         </ScrollView>
       </LinearGradient>

@@ -3,48 +3,47 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, {  useState } from "react";
 import { AntDesign, Feather } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+
+import { Colors } from "react-native/Libraries/NewAppScreen";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import ReviewItem from "@/components/ReviewItem";
-import { router } from "expo-router";
-
-export default function TraineePlanDetailScreen() {
+export default function MealDetailScreen() {
   const [isBookmarked, setIsBookMarked] = useState(false);
+  const [open,setOpen] = useState(false);
   ///Bottom sheet Ref
 
   return (
+    <SafeAreaView>
     <LinearGradient colors={["#E5ECF9", "#F6F7F9"]}>
-      <SafeAreaView>
+   
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={{ marginHorizontal: 10, height: "100%" }}>
+          <View style={{  height: "100%" }}>
             <Image
-              style={{ width: "100%", height: 230, borderRadius: 16 }}
+              style={{ width: "100%", height: 230,}}
               source={require("@/assets/images/recipe.jpeg")}
             />
-
             <TouchableOpacity
               onPress={() => router.back()}
               style={{
-                width: 40,
-                height: 40,
-                borderRadius: 30,
-                backgroundColor: "white",
+               
                 position: "absolute",
                 top: 30,
                 left: 10,
                 padding: 8,
               }}
             >
-              <Feather name="corner-up-left" size={24} color="black" />
+             <Feather name="arrow-left-circle" size={30} color="white" />
             </TouchableOpacity>
-            <View style={{ height: "100%" }} className="">
+            <View style={{ height: "100%",marginTop:-15,borderRadius:20,backgroundColor:"#fff",paddingHorizontal:10 }} className="">
               <View className="flex flex-row justify-between items-center mt-5 p-2">
                 <Text
                   style={{ fontFamily: "Nunito_700Bold" }}
@@ -139,24 +138,64 @@ export default function TraineePlanDetailScreen() {
                   5. Lorem ipsum dolor sit amet consectetur adipisicing
                 </Text>
               </View>
+             
               {/* Review detail section */}
               <View className="mt-10">
                 <Text
                   style={{ fontFamily: "Nunito_700Bold" }}
                   className="text-xl font-semibold mb-3 mx-2"
                 >
-                  Reviews
+                  Review
                 </Text>
-                <ReviewItem />
-                <ReviewItem />
-                <ReviewItem />
+               
                 {/* Review item  */}
+               
+               
+
+                <View className="w-full">
+                  <TextInput
+                  numberOfLines={4}
+                  placeholder="Write a comment ..."
+                  style={{
+                    borderWidth:1,
+                    padding:10,
+                    borderRadius:10,
+                    textAlignVertical:"top",
+                    borderColor:Colors.GRAY,
+                  
+                  }} />
+                </View>
+                <TouchableOpacity
+            onPress={()=> console.log("review submitted")}
+            className="bg-red-500 items-center mt-5 mb-3 p-3 rounded-md "
+          >
+            <Text
+              style={{ fontFamily: "Nunito_700Bold" }}
+              className="text-white text-xl  "
+            >
+              Submit
+            </Text>
+          </TouchableOpacity>
+                <TouchableOpacity
+            onPress={()=> console.log("review submitted")}
+            className="bg-blue-500 items-center mt-5 mb-3 p-3 rounded-md "
+          >
+            <Text
+              style={{ fontFamily: "Nunito_700Bold" }}
+              className="text-white text-xl  "
+            >
+              Mark as complete
+            </Text>
+          </TouchableOpacity>
               </View>
+           
             </View>
           </View>
         </ScrollView>
-      </SafeAreaView>
+   
     </LinearGradient>
+    </SafeAreaView>
+  
   );
 }
 const styles = StyleSheet.create({
@@ -170,3 +209,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
+
