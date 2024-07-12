@@ -49,7 +49,7 @@ export default function MealPlanScreen() {
   return (
     <SafeAreaView>
     <LinearGradient colors={["#E5ECF9", "#F6F7F9"]}>
-      <View className="mt-[70px] mx-5 ">
+      <View className="mt-[30px] mx-5 ">
         <View className="flex flex-row justify-between">
           <Text style={{ fontFamily: "Nunito_700Bold" }} className="text-3xl">
             Recipes

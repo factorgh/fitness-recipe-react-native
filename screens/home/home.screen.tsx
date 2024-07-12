@@ -48,7 +48,7 @@ export default function HomeScreen() {
   return (
     <SafeAreaView>
     <LinearGradient colors={["#E5ECF9", "#F6F7F9"]}>
-      <View className="mt-[40px] h-screen ">
+      <View className="h-screen  ">
         <ScrollView showsVerticalScrollIndicator={false}>
           <View className="w-full  mt-[30px] flex flex-row justify-between p-3 ">
             <Text style={{ fontFamily: "Nunito_700Bold" }} className="text-2xl">

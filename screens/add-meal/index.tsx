@@ -17,11 +17,15 @@ import { AntDesign } from "@expo/vector-icons";
 import { router } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
+import * as FileSystem from 'expo-file-system';
+import { Recipe } from "@/types/Recipe";
+import { Alert } from "react-native";
+
 
 export default function AddMealPlan() {
   const [inputValue, setInputValue] = useState("");
-  const [inputList, setInputList] = useState<string[]>([]);
-  const [image, setImage] = useState<string>("");
+  const [inputList, setInputList] = useState("");
+  const [image, setImage] = useState<string | null>(null);
 
   const [mealPlanInfo, setMealPlanInfo] = useState({
     imageUrl: "",
@@ -37,34 +41,60 @@ export default function AddMealPlan() {
 
   const handleAddInput = () => {
     if (inputValue.trim() !== "") {
-      setInputList([...inputList, inputValue]);
+      const updatedList = inputList ? `${inputList}, ${inputValue}` : inputValue;
+      setInputList(updatedList);
       setInputValue("");
     }
   };
 
-  const handleDelete = (item: any) => {
-    const newFilter = inputList.filter((tab) => tab !== item);
-    setInputList(newFilter);
+  const handleDelete = (item: string) => {
+    const inputArray = inputList.split(', ').filter(tab => tab !== item);
+    setInputList(inputArray.join(', '));
   };
 
+
   ///Handle Image Upload
-  const pickImage = async () => {
-    let results = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+  const chooseImage = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (permissionResult.granted === false) {
+      alert('Permission to access camera roll is required!');
+      return;
+    }
+
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-    console.log(results);
-    if (!results.canceled) {
-      setImage(results.assets[0].uri);
+
+    if (!result.canceled) {
+      const sourceUri = result.assets[0].uri;
+      const destUri = `${FileSystem.cacheDirectory}image.jpg`;
+      console.log('Source URI: ', sourceUri);
+      console.log('Destination URI: ', destUri);
+
+      try {
+        // Copy the image to the cache directory
+        await FileSystem.copyAsync({
+          from: sourceUri,
+          to: destUri,
+        });
+
+        setImage(destUri);
+       
+      } catch (error) {
+        console.error('Error saving image: ', error);
+        Alert.alert('Save Error', 'Failed to save image');
+      }
     }
   };
 
   const handleNext = () => {
     let recipeDetails = {
       name: mealPlanInfo.name,
-      imageUrl: image,
+      thumbNail: image,
       ingredients: inputList,
       description: mealPlanInfo.description,
       procedures: mealPlanInfo.procedures,
@@ -81,7 +111,7 @@ export default function AddMealPlan() {
   return (
     <SafeAreaView>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View className="mt-[60px] mx-5">
+        <View className="mt-[30px] mx-5">
           {/* header section */}
           <View className="flex flex-row items-center justify-between mb-5">
             <TouchableOpacity onPress={() => router.back()}>
@@ -101,7 +131,7 @@ export default function AddMealPlan() {
           <Text>Add thumbnail image</Text>
           {image ? (
             <TouchableOpacity
-              onPress={pickImage}
+              onPress={chooseImage}
               className="w-full rounded-md  h-[100px] flex "
             >
               {image && (
@@ -113,7 +143,7 @@ export default function AddMealPlan() {
               )}
             </TouchableOpacity>
           ) : (
-            <TouchableOpacity onPress={pickImage} className="gap-2">
+            <TouchableOpacity onPress={chooseImage} className="gap-2">
               <View className="border-2 border-slate-300 w-full rounded-md  h-[100px] flex items-center justify-center">
                 <AntDesign name="clouduploado" size={35} color="black" />
               </View>
@@ -138,6 +168,7 @@ export default function AddMealPlan() {
             <Text>Nutritional Information</Text>
             <View className="border-2 border-slate-300 w-full rounded-md  h-[100px] p-2  flex items-center justify-center">
               <TextInput
+              style={{textAlignVertical:"top"}}
                 value={mealPlanInfo.description}
                 editable
                 multiline
@@ -164,7 +195,7 @@ export default function AddMealPlan() {
             <FlatList
               showsHorizontalScrollIndicator={false}
               horizontal
-              data={inputList}
+              data={inputList ? inputList.split(', ') : []}
               keyExtractor={(item, index) => index.toString()}
               renderItem={({ item }) => (
                 <View className="border flex flex-row items-center justify-between border-slate-300 p-2 rounded-md ml-1 w-[100px] flex-wrap">
@@ -184,6 +215,7 @@ export default function AddMealPlan() {
             <Text>Procedures</Text>
             <View className="border-2 border-slate-300 w-full rounded-md  h-[100px] flex items-center justify-center p-2">
               <TextInput
+               style={{textAlignVertical:"top"}}
                 value={mealPlanInfo.procedures}
                 editable={true}
                 multiline

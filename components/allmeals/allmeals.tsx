@@ -58,9 +58,9 @@ export default function Allmeals({ date }: { date: any }) {
   return (
     <View>
       {loading ? (
-        <ActivityIndicator className="mt-10" size="large" color="blue" />
+        <ActivityIndicator className="mt-10 " size="large" color="blue" />
       ) : data.length === 0 ? (
-        <View className=" items-center justify-center mt-10 flex flex-col mb-10">
+        <View className=" items-center justify-center mt-10 flex flex-col mb-20">
           <Text>No data Available</Text>
           <TouchableOpacity
             onPress={() => router.push("/(routes)/add-meal")}

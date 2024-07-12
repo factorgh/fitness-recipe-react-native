@@ -7,7 +7,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Avatar } from "@rneui/themed";
 
-export default function MealPlanItem({}) {
+export default function MealPlanItem() {
   const [expanded, setExpanded] = useState(false);
 
   const handleDelete = () => {
