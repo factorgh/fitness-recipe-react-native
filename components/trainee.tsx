@@ -24,7 +24,7 @@ export default function Trainee() {
         {/* Update assigned date */}
         <Text>Today</Text>
       </View>
-      <View className="border border-red-200  bg-red-200 flex w-full  mt-3 mx-3"></View>
+      <View className="border border-slate-400 flex w-full  mt-3"></View>
     </TouchableOpacity>
   );
 }

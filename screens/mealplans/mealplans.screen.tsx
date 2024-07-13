@@ -1,5 +1,6 @@
 import {
   FlatList,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -49,7 +50,7 @@ export default function MealPlanScreen() {
   return (
     <SafeAreaView>
     <LinearGradient colors={["#E5ECF9", "#F6F7F9"]}>
-      <View className="mt-[30px] mx-5 ">
+      <ScrollView  showsVerticalScrollIndicator={false} className="mt-[30px] mx-5 ">
         <View className="flex flex-row justify-between">
           <Text style={{ fontFamily: "Nunito_700Bold" }} className="text-3xl">
             Recipes
@@ -72,15 +73,16 @@ export default function MealPlanScreen() {
           </TouchableOpacity>
         </View>
 
-        <View className="mt-3 rounded-md">
+        <View className="mt-3 rounded-md mb-5">
           <FlatList
+           nestedScrollEnabled
             showsVerticalScrollIndicator={false}
             data={DATA}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => <RecipeItem item={item} />}
           />
         </View>
-      </View>
+      </ScrollView>
     </LinearGradient>
     </SafeAreaView>
   );

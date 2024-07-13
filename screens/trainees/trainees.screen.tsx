@@ -63,7 +63,7 @@ export default function TraineesScreen() {
           <ScrollView>
             {activeTab === "button1" ? (
               <>
-                <View>
+                <View className="mx-3">
                   <Trainee />
                   <Trainee />
                   <Trainee />
@@ -77,12 +77,6 @@ export default function TraineesScreen() {
             )}
           </ScrollView>
 
-          <FAB
-            onPress={() => router.push("/(routes)/add-meal")}
-            placement="right"
-            title="+"
-            color="red"
-          />
         </View>
       </View>
     </LinearGradient>

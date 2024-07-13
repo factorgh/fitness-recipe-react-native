@@ -1,6 +1,8 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import { AntDesign, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function TraineeCompletedDetailScreen() {
     const [expanded, setExpanded] = useState(false);
@@ -8,46 +10,46 @@ export default function TraineeCompletedDetailScreen() {
     const handleExpanded = () => {
         setExpanded((prevState) => !prevState);
       };
-    const expandedStyle = `border-x-4 border-red-300 mt-5  p-5  mx-3 rounded-md h-[250px] `;
-    const closedStyle = `border border-red-300 p-5 mt-5 mx-3 rounded-md mb-3`;
+    const expandedStyle = `  bg-slate-300 border border-slate-300 mt-5  p-5  mx-3 rounded-md h-[250px]  `;
+    const closedStyle = `   bg-slate-300 h-16 rounded-md p-2 flex-row items-center justify-center  mx-5 mt-5 `;
   return (
-    <View>
-      <View>
+
+    <SafeAreaView>
+       <LinearGradient className='h-screen' colors={["#E5ECF9", "#F6F7F9"]}>
+      <View className='mt-16 flex-row pl-5 items-center ' >
       <AntDesign name="left" size={24} color="black" />
-      <Text style={{fontFamily:"Nunito_400Regular"}}>Poached Eggs Meal Plan</Text>
+      <Text className='ml-10 text-xl text-slate-800' style={{fontFamily:"Nunito_700Bold"}}>Poached Eggs Meal Plan</Text>
       </View>
       {/* Divider */}
-      <View className='bg-slate-500 w-full h-1 mt-5 mb-5'>
+      <View className="border border-slate-200  bg-slate-400 flex w-full  mt-8 "></View>
+      
     {/* Meal content */}
-    <View className='bg-slate-50 h-16 rounded-md p-2'>
-        <Text style={{fontFamily:"Nunito_400Regular"}} >10:30 AM | Today</Text>
+    <View className='bg-slate-300 h-16 rounded-md p-2 flex-row items-center justify-center mx-5 mt-5 '>
+        <Text className='mr-3 text-md' style={{fontFamily:"Nunito_400Regular"}} >10:30 AM  </Text>
+        <Text>|</Text>
+        <Text  className='ml-3 text-md'  style={{fontFamily:"Nunito_400Regular"}} > Today</Text>
     </View>
     {/* Drop Down for Ingredients */}
     <View className={expanded ? expandedStyle : closedStyle}>
-      <TouchableOpacity onPress={handleExpanded}>
-        <View className="flex flex-row gap-[50px]">
+      <TouchableOpacity className='flex-row items-center justify-between' onPress={handleExpanded}>
+    
           <Text
-            style={{ fontFamily: "Nunito_700Bold " }}
-            className="text-xl font-mono"
+            style={{ fontFamily: "Nunito_400Regular " }}
+            className="text-md mr-32 "
           >
-            Poached Eggs
+            Ingredients
           </Text>
           {expanded ? (
-            <AntDesign name="up" size={20} color="black" />
+            <AntDesign name="down" size={15} color="black" />
           ) : (
-            <AntDesign name="down" size={20} color="black" />
+            <AntDesign name="down" size={15} color="black" />
           )}
-        </View>
+        
       </TouchableOpacity>
       {/* Expanded Section */}
       {expanded && (
         <View>
-          <View className="border border-slate-200 rounded-md h-[0px] mt-3 mb-3"></View>
-          <View className="flex flex-row items-center gap-10">
-            <FontAwesome name="calendar-times-o" size={24} color="black" />
-            <Text>10:30 AM</Text>
-          </View>
-          <View className="border border-slate-200 rounded-md h-[0px] mt-3 mb-3"></View>
+          <View className="border border-slate-800 rounded-md h-[0px] mt-3 mb-3"></View>
           <View>
             <Text className="mb-3">Trainees</Text>
             <View className="flex flex-row items-center gap-2">
@@ -57,16 +59,49 @@ export default function TraineeCompletedDetailScreen() {
               <Text>and 22 others</Text>
             </View>
             {/* Buttons for meal plan */}
-            <View className="flex flex-row gap-2 mt-2 justify-end">
-              
-            </View>
           </View>
         </View>
       )}
       {/* End of expanded section */}
     </View>
-      </View>
-    </View> 
+    {/* End of dropdown for ingredients */}
+    {/* Dropdown for procedures */}
+    <View className={expanded ? expandedStyle : closedStyle}>
+      <TouchableOpacity className='flex-row items-center justify-between' onPress={handleExpanded}>
+    
+          <Text
+            style={{ fontFamily: "Nunito_400Regular " }}
+            className="text-md mr-32 "
+          >
+            Procedures
+          </Text>
+          {expanded ? (
+            <AntDesign name="down" size={15} color="black" />
+          ) : (
+            <AntDesign name="down" size={15} color="black" />
+          )}
+        
+      </TouchableOpacity>
+      {/* Expanded Section */}
+      {expanded && (
+        <View>
+          <View className="border border-slate-800 rounded-md h-[0px] mt-3 mb-3"></View>
+          <View>
+            <Text className="mb-3">Trainees</Text>
+            <View className="flex flex-row items-center gap-2">
+              <View className="flex flex-row">
+             
+              </View>
+              <Text>and 22 others</Text>
+            </View>
+            {/* Buttons for meal plan */}
+          </View>
+        </View>
+      )}
+      {/* End of expanded section */}
+    </View>
+      </LinearGradient>
+    </SafeAreaView> 
   )
 }
 
