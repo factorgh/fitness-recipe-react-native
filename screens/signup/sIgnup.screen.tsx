@@ -82,7 +82,7 @@ export default function LoginScreen() {
         username: userInfo.username,
       })
       .then(async (res) => {
-        ///Send toast after signuP
+        ///Send toast after signup
         console.log(res.data);
         await AsyncStorage.setItem("access_token", res.data.token);
         setButtonSpinner(false);

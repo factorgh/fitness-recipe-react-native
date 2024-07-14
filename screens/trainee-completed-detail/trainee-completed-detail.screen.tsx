@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { AntDesign, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 
 export default function TraineeCompletedDetailScreen() {
     const [expanded, setExpanded] = useState(false);
@@ -17,7 +18,7 @@ export default function TraineeCompletedDetailScreen() {
     <SafeAreaView>
        <LinearGradient className='h-screen' colors={["#E5ECF9", "#F6F7F9"]}>
       <View className='mt-16 flex-row pl-5 items-center ' >
-      <AntDesign name="left" size={24} color="black" />
+      <AntDesign onPress={()=> router.back()} name="left" size={24} color="black" />
       <Text className='ml-10 text-xl text-slate-800' style={{fontFamily:"Nunito_700Bold"}}>Poached Eggs Meal Plan</Text>
       </View>
       {/* Divider */}

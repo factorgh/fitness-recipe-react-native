@@ -19,7 +19,6 @@ import { Platform } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as FileSystem from 'expo-file-system';
-import { Base64 } from 'js-base64';
 import { s3Bucket } from "@/utils/S3.config";
 
 
