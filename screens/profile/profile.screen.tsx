@@ -16,16 +16,25 @@ import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
 // import { SERVER_URL } from "@/utils/utils";
 // import AsyncStorage from "@react-native-async-storage/async-storage";
+import { thumbnail } from '@cloudinary/url-gen/actions/resize';
+
 import { User } from "@/types/User";
+import { cld, uploadImage } from "@/lib/cloudinary";
+import { AdvancedImage } from "cloudinary-react-native";
+
 // import useUser from "@/hooks/useUser";
 
 export default function ProfileScreen() {
   const [users, setUsers] = useState<User[]>([]);
-  const [value, setValue] = useState("");
-  const [filteredValue, setFilteredValue] = useState<User[]>([]);
+  const [image,setImage] = useState<string |null> (null);
+  const [remoteImage,setRemoteImage] = useState<string |null> (null);
+
+  // const [value, setValue] = useState("");
+  // const [filteredValue, setFilteredValue] = useState<User[]>([]);
 
 //   const {user} = useUser();
 //   console.log("<-------User on profile Screen------->",user)
@@ -67,6 +76,45 @@ export default function ProfileScreen() {
 //   setFilteredValue([])
 // }
 
+const chooseImage = async () => {
+  const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  
+  if (permissionResult.granted === false) {
+    alert('Permission to access camera roll is required!');
+    return;
+  }
+
+  let result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    allowsEditing: true,
+    aspect: [4, 3],
+    quality: 1,
+  });
+
+  console.log(result)
+  if (!result.canceled) {
+    const sourceUri = result.assets[0].uri;
+    console.log("<---------imagepath------------>",sourceUri)
+    setImage(sourceUri);
+
+  }
+}
+
+// Handle Image Upload
+const updateProfile = async()=>{
+  // Upload Image to cloudinary
+  const response = await uploadImage(image!);
+  console.log(response.public_id);
+  // Set to remote image
+  // Save to DB
+}
+
+let remoteCldImage;
+  if (remoteImage) {
+    remoteCldImage = cld.image(remoteImage);
+    remoteCldImage.resize(thumbnail().width(300).height(300));
+  }
+
   console.log("<-----------------all users------------------>", users[0])
   return (
     <SafeAreaView>
@@ -84,8 +132,8 @@ export default function ProfileScreen() {
             size={24}
             color="white"
           />
-          <Image
-            style={{
+         <View>
+          {image?<Image style={{
               width: 100,
               height: 100,
               borderRadius: 50,
@@ -93,11 +141,24 @@ export default function ProfileScreen() {
               top: 130,
               left: 150,
             }}
-            source={require("@/assets/images/profile.webp")}
-          />
+            source={{uri: image}}
+          /> 
+
+           :remoteCldImage? <AdvancedImage  className="w-48 aspect-square self-center rounded-full " cldImg={remoteCldImage!} /> 
+           :<View 
+            className="bg-slate-300"
+          style={{
+            width: 100,
+            height: 100,
+            borderRadius: 50,
+            position: "absolute",
+            top: 130,
+            left: 150}}>
+            </View>}
+         </View>
         </ImageBackground>
         {/* user details section */}
-        <View className="flex-col items-center mt-16 mb-10">
+        <View className="flex-col items-center mt-16 mb-5">
           <Text
             className="text-slate-500"
             style={{ fontFamily: "Nunito_700Bold" }}
@@ -111,6 +172,10 @@ export default function ProfileScreen() {
             adroit360@gmail.com
           </Text>
         </View>
+        {/* Change profile pic section */}
+        <TouchableOpacity onPress={chooseImage}>
+          <Text  style={{ fontFamily: "Nunito_400Regular" }} className="text-blue-500 mb-5 text-center items-center justify-center">Change profile</Text>
+        </TouchableOpacity>
         {/* Line break through  */}
         <View
           style={{
@@ -169,7 +234,19 @@ export default function ProfileScreen() {
               </Text>
             </View>
           </View>
+         
         </View>
+        <TouchableOpacity
+            onPress={updateProfile}
+            className="bg-red-500 items-center mt-5 mb-3 p-3 rounded-md mx-5" 
+          >
+            <Text
+              style={{ fontFamily: "Nunito_700Bold" }}
+              className="text-white text-xl  "
+            >
+             Update Profile
+            </Text>
+          </TouchableOpacity>
         </ScrollView>
       </LinearGradient>
     </SafeAreaView>

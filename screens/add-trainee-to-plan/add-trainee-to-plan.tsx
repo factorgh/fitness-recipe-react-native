@@ -18,78 +18,47 @@ import { SERVER_URL } from "@/utils/utils";
 import { Platform } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { SafeAreaView } from "react-native-safe-area-context";
-import * as FileSystem from 'expo-file-system';
-import { Base64 } from 'js-base64';
-import { s3Bucket } from "@/utils/S3.config";
+import { User } from "@/types/User";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { uploadImage } from "@/lib/cloudinary";
+// import * as FileSystem from "expo-file-system";
+// import { s3Bucket } from "@/utils/S3.config";
 
-
-
-interface User {
-  id: string;
-  name: string;
-}
 export default function AddTraineeToPlanScreen() {
-  const [inputValue, setInputValue] = useState("");
-  const [suggestions, setSuggestions] = useState<User[]>([]);
   const [inputList, setInputList] = useState<string[]>([]);
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
 
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+
+  // New state
+  const [searchInput, setSearchInput] = useState("");
+  const [users, setUsers] = useState<User[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
 
   const { recipe } = useLocalSearchParams();
 
-
   let recipeDetails = null;
-  if (typeof recipe === 'string') {
+  if (typeof recipe === "string") {
     try {
       recipeDetails = JSON.parse(recipe);
-      console.log("<-----thumnail------>",recipeDetails.thumbNail)
+      console.log("<-----thumnail------>", recipeDetails.thumbNail);
     } catch (error) {
-      console.error('Error parsing recipe:', error);
+      console.error("Error parsing recipe:", error);
     }
   } else {
-    console.error('Recipe is not a valid string:', recipe);
+    console.error("Recipe is not a valid string:", recipe);
   }
   console.log("<--------recipe forwared--------->", recipe);
 
-  const handleAddInput = () => {
-    if (inputValue.trim() !== "") {
-      setInputList([...inputList, inputValue]);
-      setInputValue("");
-    }
-  };
-
+  // Handle Delete
   const handleDelete = (item: any) => {
-    const newFilter = inputList.filter((tab) => tab !== item);
-    setInputList(newFilter);
+    const newFilter = filteredUsers.filter((tab) => tab !== item);
+    setSelectedUsers(newFilter);
   };
   /////Fetch suggestions on input change
-
-  useEffect(() => {
-    if (inputValue.length > 2) {
-      fetchSuggestions(inputValue);
-    } else {
-      setSuggestions([]);
-    }
-  }, [inputValue]);
-
-  const fetchSuggestions = async (query: any) => {
-    await axios
-      .get(`${SERVER_URL}/api/v1/users/filter?name=${query}`)
-      .then((res) => {
-        setSuggestions(res.data);
-      })
-      .catch((err) => console.log(err.message));
-  };
-
-  const handleSelectSuggestion = (user: any) => {
-    setSelectedUsers([...selectedUsers, user]);
-    setInputValue("");
-    setSuggestions([]);
-  };
 
   const onChangeDate = (event: any, selectedDate: any) => {
     const currentDate = selectedDate || date;
@@ -106,98 +75,110 @@ export default function AddTraineeToPlanScreen() {
     setShowTimePicker(Platform.OS === "ios");
     setTime(currentTime);
   };
-/////Handling of base 64 transformation to blob before upload
+  /////Handling of base 64 transformation to blob before upload
 
-  async function readBase64File(file: string): Promise<string> {
-    const base64Data = await FileSystem.readAsStringAsync(file, { encoding: FileSystem.EncodingType.Base64 });
-    return cleanBase64(base64Data);
-}
+  //   async function readBase64File(file: string): Promise<string> {
+  //     const base64Data = await FileSystem.readAsStringAsync(file, { encoding: FileSystem.EncodingType.Base64 });
+  //     return cleanBase64(base64Data);
+  // }
 
-function cleanBase64(base64Data: string): string {
-    // Remove any non-base64 characters, such as newlines or spaces
-    base64Data = base64Data.replace(/[^A-Za-z0-9+/=]/g, '');
+  // function cleanBase64(base64Data: string): string {
+  //     // Remove any non-base64 characters, such as newlines or spaces
+  //     base64Data = base64Data.replace(/[^A-Za-z0-9+/=]/g, '');
 
-    // Add padding if necessary
-    const pad = base64Data.length % 4;
-    if (pad) {
-        base64Data += new Array(5 - pad).join('=');
-    }
+  //     // Add padding if necessary
+  //     const pad = base64Data.length % 4;
+  //     if (pad) {
+  //         base64Data += new Array(5 - pad).join('=');
+  //     }
 
-    return base64Data;
-}
-// actual changing to blob
-function base64ToUint8Array(base64Data: string): Uint8Array {
-  const binaryString = atob(base64Data);
-  const len = binaryString.length;
-  const bytes = new Uint8Array(len);
-  for (let i = 0; i < len; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
-  }
-  return bytes;
-}
+  //     return base64Data;
+  // }
+  // // // actual changing to blob
+  // function base64ToUint8Array(base64Data: string): Uint8Array {
+  //   const binaryString = atob(base64Data);
+  //   const len = binaryString.length;
+  //   const bytes = new Uint8Array(len);
+  //   for (let i = 0; i < len; i++) {
+  //       bytes[i] = binaryString.charCodeAt(i);
+  //   }
+  //   return bytes;
+  // }
 
+  //   s3Bucket.upload(params, (err: any, data: { Location: any; }) => {
+  //     if (err) {
+  //       console.error('Error uploading to S3: ', err);
+  //       Alert.alert('Upload Failed', 'Failed to upload image to S3');
+  //     } else {
+  //       console.log('Successfully uploaded to S3: ', data.Location);
+  //       Alert.alert('Upload Successful', 'Image uploaded successfully');
+  //     }
+  //   });
+  // } catch (error) {
+  //   console.error('Error reading file: ', error);
+  //   Alert.alert('File Read Failed', 'Failed to read the file');
+  // }
+  // }
 
+  ///LOGIC FOR FETCH AND SEARCH OF TRAINEES
+  useEffect(() => {
+    const loadUsers = async () => {
+      // Get token to allow for permission to fetch trainees
+      const token = await AsyncStorage.getItem("access_token");
+      await axios
+        .get(`${SERVER_URL}/api/v1/users`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${token}`,
+          },
+        })
+        .then((res) => {
+          console.log("<----------all users ------------>", res.data);
+          setUsers(res.data.users);
+        })
+        .catch((err) => console.log(err)); // Initialize filteredUsers with all users
+    };
+    loadUsers();
+  }, []);
 
-// Publish image to aws bucket 
-const handlePublishToAWS = async(file: string)=>{
-  try{
-         // Verify if the file exists
-         const fileInfo = await FileSystem.getInfoAsync(file);
-         if (!fileInfo.exists) {
-           console.error('File does not exist: ', file);
-           Alert.alert('File Error', 'File does not exist');
-           return;
-         }
-         
-   
-  ///get extention 
-  const fileExt = file.split(".").pop(); ///ex. .png , .jpe
-
- // Read the file as a base64 string
- const base64Data = await FileSystem.readAsStringAsync(file, { encoding: FileSystem.EncodingType.Base64 });
-
-
-  const params = {
-    Bucket: "fitness-recipe-app",
-    Key:`fitnes-recipe-${Date.now()}.${fileExt}`,
-    Body: base64ToUint8Array(base64Data), //////Convert file to a base64 format
-    ContentEncoding: 'base64',
-    ContentType: 'image/jpeg', 
-    ACL: "public-read",
-    
-  }
-
-
-  s3Bucket.upload(params, (err: any, data: { Location: any; }) => {
-    if (err) {
-      console.error('Error uploading to S3: ', err);
-      Alert.alert('Upload Failed', 'Failed to upload image to S3');
+  // Handle Search Users
+  const handleSearch = (text: any) => {
+    console.log(text);
+    setSearchInput(text);
+    if (text) {
+      const filtered = users.filter((user) =>
+        user.username.toLowerCase().includes(text.toLowerCase())
+      );
+      setFilteredUsers(filtered);
     } else {
-      console.log('Successfully uploaded to S3: ', data.Location);
-      Alert.alert('Upload Successful', 'Image uploaded successfully');
+      setFilteredUsers(users); // Reset to all users if search input is empty
     }
-  });
-} catch (error) {
-  console.error('Error reading file: ', error);
-  Alert.alert('File Read Failed', 'Failed to read the file');
-}
-}
+  };
 
-  const handleCompletePlan = () => {
+  // Handle Select Users
+  const handleSelectUser = (user: User) => {
+    setSelectedUsers((prevSelectedUsers) => [...prevSelectedUsers, user]);
+    setSearchInput("");
+    setFilteredUsers(users); // Reset to all users after selection
+  };
+
+  // Handle complete meal plan
+  const handleCompletePlan = async () => {
+    // Before upload ,get image url before sending to db
+    const response = await uploadImage(recipeDetails.thumbNail);
+    console.log(response);
     let mealPlan = {
       recipe: recipe,
       createdOn: date,
       createdAt: time,
 
-      user: inputList,
+      user: selectedUsers,
     };
     console.log("<---------mealPlanItem-Completed------->", mealPlan);
-    handlePublishToAWS(recipeDetails.thumbNail)
   };
 
   return (
     <SafeAreaView>
-    <ScrollView>
       <View className="mt-[60px] mx-5">
         <View className=" flex flex-row justify-between mb-5  ">
           <TouchableOpacity onPress={() => router.back()}>
@@ -260,32 +241,32 @@ const handlePublishToAWS = async(file: string)=>{
             <TextInput
               style={styles.input}
               placeholder="Search trainee by name or add new"
-              value={inputValue}
-              onChangeText={setInputValue}
+              value={searchInput}
+              onChangeText={handleSearch}
             />
-            <Button title="Add" onPress={handleAddInput} />
           </View>
-          {suggestions.length > 0 && (
-            <View style={styles.suggestionsContainer}>
-              {suggestions.map((suggestion) => (
-                <TouchableOpacity
-                  key={suggestion.id}
-                  style={styles.suggestionItem}
-                  onPress={() => handleSelectSuggestion(suggestion)}
-                >
-                  <Text style={styles.suggestionText}>{suggestion.name}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
+          <View className="border border-slate-300 ps-2">
+            {filteredUsers.length > 0 && (
+              <FlatList
+                data={filteredUsers}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                  <TouchableOpacity onPress={() => handleSelectUser(item)}>
+                    <Text style={styles.userItem}>{item.username}</Text>
+                  </TouchableOpacity>
+                )}
+                style={styles.searchResults}
+              />
+            )}
+          </View>
           <FlatList
             showsHorizontalScrollIndicator={false}
             horizontal
-            data={inputList}
+            data={selectedUsers}
             keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => (
+            renderItem={({ item }: { item: User }) => (
               <View className="border flex flex-row items-center justify-between border-slate-300 p-2 rounded-md ml-1 w-[100px] flex-wrap">
-                <Text style={styles.listItemText}>{item}</Text>
+                <Text style={styles.listItemText}>{item.username}</Text>
                 <AntDesign
                   name="close"
                   size={15}
@@ -308,7 +289,6 @@ const handlePublishToAWS = async(file: string)=>{
           </Text>
         </TouchableOpacity>
       </View>
-    </ScrollView>
     </SafeAreaView>
   );
 }
@@ -356,5 +336,19 @@ const styles = StyleSheet.create({
   },
   suggestionText: {
     fontSize: 16,
+  },
+  searchResults: {
+    maxHeight: 150, // Adjust as needed
+  },
+  userItem: {
+    padding: 10,
+    borderBottomColor: "gray",
+    borderBottomWidth: 1,
+  },
+  selectedUsersContainer: {
+    marginTop: 20,
+  },
+  selectedUserItem: {
+    padding: 5,
   },
 });

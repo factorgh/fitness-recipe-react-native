@@ -14,9 +14,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 
 import CalendarPicker from "react-native-calendar-picker";
-import { Entypo } from "@expo/vector-icons";
-import { router } from "expo-router";
-import { useEffect } from "react";
+
 import TraineePlanItem from "@/components/traineePlan";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -45,59 +43,65 @@ export default function MealPlanScreen() {
   const greeting = getGreeting();
   return (
     <SafeAreaView>
-    <LinearGradient colors={["#E5ECF9", "#F6F7F9"]}>
-      <View className="mt-[40px] ">
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View className="w-full  mt-[30px] flex flex-row justify-between p-3 ">
-            <Text style={{ fontFamily: "Nunito_700Bold" }} className="text-2xl">
-              {greeting}
-            
-            </Text>
-           
-            <View className="flex flex-row gap-2 items-center">
-              <Image
-                style={{ width: 27, height: 27, borderRadius: 20, padding: 2 }}
-                source={require("@/assets/images/profile.webp")}
-              />
+      <LinearGradient colors={["#E5ECF9", "#F6F7F9"]}>
+        <View className="mt-[40px] ">
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <View className="w-full  mt-[30px] flex flex-row justify-between p-3 ">
+              <Text
+                style={{ fontFamily: "Nunito_700Bold" }}
+                className="text-2xl"
+              >
+                {greeting}
+              </Text>
 
-              
-              <View>
-                <Ionicons
-                  name="notifications-circle"
-                  size={35}
-                  color="#747474"
+              <View className="flex flex-row gap-2 items-center">
+                <Image
+                  style={{
+                    width: 27,
+                    height: 27,
+                    borderRadius: 20,
+                    padding: 2,
+                  }}
+                  source={require("@/assets/images/profile.webp")}
                 />
+
+                <View>
+                  <Ionicons
+                    name="notifications-circle"
+                    size={35}
+                    color="#747474"
+                  />
+                </View>
               </View>
             </View>
-          </View>
-          {/* End of first section */}
-          {/* Calendar section */}
-          <View className=" mt-8 ">
-            <CalendarPicker onDateChange={handleDateChange} />
-          </View>
-          {/* End of calendar section */}
+            {/* End of first section */}
+            {/* Calendar section */}
+            <View className=" mt-8 ">
+              <CalendarPicker onDateChange={handleDateChange} />
+            </View>
+            {/* End of calendar section */}
 
-          <View className="mt-5 mx-3">
-            <Text
-              style={{
-                fontFamily: "Nunito_700Bold",
-                marginLeft: 20,
-                fontSize: 20,
-              }}
-            >
-              Upcoming meal plans
-            </Text>
-          </View>
+            <View className="mt-5 mx-3">
+              <Text
+                style={{
+                  fontFamily: "Nunito_700Bold",
+                  marginLeft: 20,
+                  fontSize: 20,
+                }}
+              >
+                Upcoming meal plans
+              </Text>
+            </View>
 
-          <ScrollView className="mt-1 mx-3">
-            <TraineePlanItem />
-            <TraineePlanItem />
-            <TraineePlanItem />
-            <TraineePlanItem />
+            <ScrollView className="mt-1 mx-3">
+              <TraineePlanItem />
+              <TraineePlanItem />
+              <TraineePlanItem />
+              <TraineePlanItem />
+            </ScrollView>
           </ScrollView>
-        </ScrollView>
-      </View>
-    </LinearGradient>
+        </View>
+      </LinearGradient>
     </SafeAreaView>
   );
 }

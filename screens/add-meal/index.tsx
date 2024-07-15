@@ -17,10 +17,9 @@ import { AntDesign } from "@expo/vector-icons";
 import { router } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from "expo-file-system";
 import { Recipe } from "@/types/Recipe";
 import { Alert } from "react-native";
-
 
 export default function AddMealPlan() {
   const [inputValue, setInputValue] = useState("");
@@ -41,24 +40,26 @@ export default function AddMealPlan() {
 
   const handleAddInput = () => {
     if (inputValue.trim() !== "") {
-      const updatedList = inputList ? `${inputList}, ${inputValue}` : inputValue;
+      const updatedList = inputList
+        ? `${inputList}, ${inputValue}`
+        : inputValue;
       setInputList(updatedList);
       setInputValue("");
     }
   };
 
   const handleDelete = (item: string) => {
-    const inputArray = inputList.split(', ').filter(tab => tab !== item);
-    setInputList(inputArray.join(', '));
+    const inputArray = inputList.split(", ").filter((tab) => tab !== item);
+    setInputList(inputArray.join(", "));
   };
-
 
   ///Handle Image Upload
   const chooseImage = async () => {
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+
     if (permissionResult.granted === false) {
-      alert('Permission to access camera roll is required!');
+      alert("Permission to access camera roll is required!");
       return;
     }
 
@@ -72,8 +73,8 @@ export default function AddMealPlan() {
     if (!result.canceled) {
       const sourceUri = result.assets[0].uri;
       const destUri = `${FileSystem.cacheDirectory}image.jpg`;
-      console.log('Source URI: ', sourceUri);
-      console.log('Destination URI: ', destUri);
+      console.log("Source URI: ", sourceUri);
+      console.log("Destination URI: ", destUri);
 
       try {
         // Copy the image to the cache directory
@@ -83,15 +84,24 @@ export default function AddMealPlan() {
         });
 
         setImage(destUri);
-       
       } catch (error) {
-        console.error('Error saving image: ', error);
-        Alert.alert('Save Error', 'Failed to save image');
+        console.error("Error saving image: ", error);
+        Alert.alert("Save Error", "Failed to save image");
       }
     }
   };
 
   const handleNext = () => {
+    // Check for all input availability(Defensive mechanism)
+    // if (
+    //   !mealPlanInfo.description ||
+    //   !mealPlanInfo.imageUrl ||
+    //   !mealPlanInfo.name ||
+    //   !mealPlanInfo.procedures ||
+    //   !inputList
+    // )
+    //   return;
+
     let recipeDetails = {
       name: mealPlanInfo.name,
       thumbNail: image,
@@ -128,7 +138,7 @@ export default function AddMealPlan() {
           {/* End of header section */}
           {/* Thumbnail */}
 
-          <Text>Add thumbnail image</Text>
+          <Text className="mb-2">Add thumbnail image</Text>
           {image ? (
             <TouchableOpacity
               onPress={chooseImage}
@@ -168,7 +178,7 @@ export default function AddMealPlan() {
             <Text>Nutritional Information</Text>
             <View className="border-2 border-slate-300 w-full rounded-md  h-[100px] p-2  flex items-center justify-center">
               <TextInput
-              style={{textAlignVertical:"top"}}
+                style={{ textAlignVertical: "top" }}
                 value={mealPlanInfo.description}
                 editable
                 multiline
@@ -195,7 +205,7 @@ export default function AddMealPlan() {
             <FlatList
               showsHorizontalScrollIndicator={false}
               horizontal
-              data={inputList ? inputList.split(', ') : []}
+              data={inputList ? inputList.split(", ") : []}
               keyExtractor={(item, index) => index.toString()}
               renderItem={({ item }) => (
                 <View className="border flex flex-row items-center justify-between border-slate-300 p-2 rounded-md ml-1 w-[100px] flex-wrap">
@@ -215,7 +225,7 @@ export default function AddMealPlan() {
             <Text>Procedures</Text>
             <View className="border-2 border-slate-300 w-full rounded-md  h-[100px] flex items-center justify-center p-2">
               <TextInput
-               style={{textAlignVertical:"top"}}
+                style={{ textAlignVertical: "top" }}
                 value={mealPlanInfo.procedures}
                 editable={true}
                 multiline
