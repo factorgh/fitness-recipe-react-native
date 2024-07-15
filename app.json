@@ -24,7 +24,6 @@
         "backgroundColor": "#FFBF46"
       },
       "package": "com.facctorgh.fitnessrecipe"
-      
     },
     "web": {
       "bundler": "metro",
@@ -32,9 +31,7 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router",
-      "expo-build-properties"
-     
+      "expo-router"
     ],
     "experiments": {
       "typedRoutes": true
