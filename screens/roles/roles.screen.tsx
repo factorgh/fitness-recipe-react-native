@@ -71,103 +71,109 @@ export default function RoleScreen() {
   };
   return (
     <LinearGradient className="h-screen" colors={["#E5ECF9", "#F6F7F9"]}>
-    <View className="flex-1  mt-[40px] p-3 ">
-      <View className="p-3 mb-5">
-        <Text
-          style={{ fontFamily: "Nunito_400Regular" }}
-          className="text-3xl font-semibold "
-        >
-          Select your role
-        </Text>
-        <Text
-          style={{ fontFamily: "Nunito_400Regular" }}
-          className="text-slate-500 mt-2"
-        >
-          Identify yourself :Trainer or Trainee
-        </Text>
-        <View className="border border-red-700 rounded-md h-[0px] mt-6"></View>
-      </View>
-
-      {/* Role section */}
-
-      <View className="flex flex-row gap-5 mt-8 ">
-        <TouchableOpacity
-          onPress={() => handleRoleSelect("button1")}
-          className={activeButton === "button1" ? selectedRole : unSelectedRole}
-        >
-          <BouncyCheckbox
-            size={25}
-            fillColor="red"
-            isChecked={checkBoxState1}
-            unFillColor="#FFFFFF"
-            iconStyle={{ borderColor: "red" }}
-            innerIconStyle={{ borderWidth: 2 }}
-          />
-          <View className="w-full h-[120px]">
-            <Image
-              style={{ width: 150, height: 100 }}
-              className="rounded-md mt-5"
-              resizeMode="cover"
-              source={require("@/assets/images/role2.png")}
-            />
-          </View>
-          <Text style={{ fontFamily: "Nunito_400Regular", marginTop: 5 }}>
-            Trainer
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => handleRoleSelect("button2")}
-          className={activeButton === "button2" ? selectedRole : unSelectedRole}
-        >
-          <BouncyCheckbox
-            size={25}
-            fillColor="red"
-            isChecked={checkBoxState2}
-            unFillColor="#FFFFFF"
-            iconStyle={{ borderColor: "red" }}
-            innerIconStyle={{ borderWidth: 2 }}
-          />
-          <View className="w-full h-[120px]">
-            <Image
-              style={{ width: 150, height: 100 }}
-              className="rounded-md mt-5"
-              resizeMode="cover"
-              source={require("@/assets/images/role1.png")}
-            />
+      <View className="flex-1  mt-[40px] p-3 flex-col justify-between">
+        <View>
+          <View className="p-3 mb-5">
+            <Text
+              style={{ fontFamily: "Nunito_400Regular" }}
+              className="text-3xl font-semibold "
+            >
+              Select your role
+            </Text>
+            <Text
+              style={{ fontFamily: "Nunito_400Regular" }}
+              className="text-slate-500 mt-2"
+            >
+              Identify yourself :Trainer or Trainee
+            </Text>
+            <View className="border border-red-700 rounded-md h-[0px] mt-6"></View>
           </View>
 
-          <Text style={{ fontFamily: "Nunito_400Regular", marginTop: 5 }}>
-            Trainee
-          </Text>
-        </TouchableOpacity>
+          {/* Role section */}
+
+          <View className="flex flex-row gap-5 mt-8 ">
+            <TouchableOpacity
+              onPress={() => handleRoleSelect("button1")}
+              className={
+                activeButton === "button1" ? selectedRole : unSelectedRole
+              }
+            >
+              <BouncyCheckbox
+                size={25}
+                fillColor="red"
+                isChecked={checkBoxState1}
+                unFillColor="#FFFFFF"
+                iconStyle={{ borderColor: "red" }}
+                innerIconStyle={{ borderWidth: 2 }}
+              />
+              <View className="w-full h-[120px]">
+                <Image
+                  style={{ width: 150, height: 100 }}
+                  className="rounded-md mt-5"
+                  resizeMode="cover"
+                  source={require("@/assets/images/role2.png")}
+                />
+              </View>
+              <Text style={{ fontFamily: "Nunito_400Regular", marginTop: 5 }}>
+                Trainer
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleRoleSelect("button2")}
+              className={
+                activeButton === "button2" ? selectedRole : unSelectedRole
+              }
+            >
+              <BouncyCheckbox
+                size={25}
+                fillColor="red"
+                isChecked={checkBoxState2}
+                unFillColor="#FFFFFF"
+                iconStyle={{ borderColor: "red" }}
+                innerIconStyle={{ borderWidth: 2 }}
+              />
+              <View className="w-full h-[120px]">
+                <Image
+                  style={{ width: 150, height: 100 }}
+                  className="rounded-md mt-5"
+                  resizeMode="cover"
+                  source={require("@/assets/images/role1.png")}
+                />
+              </View>
+
+              <Text style={{ fontFamily: "Nunito_400Regular", marginTop: 5 }}>
+                Trainee
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        {/* End of role section */}
+        {activeButton ? (
+          <TouchableOpacity
+            onPress={handleProceed}
+            className="bg-red-500 items-center  mb-1 p-3 rounded-md "
+          >
+            <Text
+              style={{ fontFamily: "Raleway_700Bold" }}
+              className="text-white text-xl  "
+            >
+              Proceed
+            </Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            onPress={handleProceed}
+            className="bg-red-200 items-center  mb-1 p-3 rounded-md"
+          >
+            <Text
+              style={{ fontFamily: "Raleway_700Bold" }}
+              className="text-white text-xl  "
+            >
+              Proceed
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
-      {/* End of role section */}
-      {activeButton ? (
-        <TouchableOpacity
-          onPress={handleProceed}
-          className="bg-red-500 items-center mt-[250px] mb-3 p-3 rounded-md "
-        >
-          <Text
-            style={{ fontFamily: "Raleway_700Bold" }}
-            className="text-white text-xl  "
-          >
-            Proceed
-          </Text>
-        </TouchableOpacity>
-      ) : (
-        <TouchableOpacity
-          onPress={handleProceed}
-          className="bg-red-200 items-center mt-[250px] mb-3 p-3 rounded-md"
-        >
-          <Text
-            style={{ fontFamily: "Raleway_700Bold" }}
-            className="text-white text-xl  "
-          >
-            Proceed
-          </Text>
-        </TouchableOpacity>
-      )}
-    </View>
     </LinearGradient>
   );
 }

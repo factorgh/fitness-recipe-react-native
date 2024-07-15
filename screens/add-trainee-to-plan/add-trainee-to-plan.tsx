@@ -44,7 +44,7 @@ export default function AddTraineeToPlanScreen() {
   if (typeof recipe === "string") {
     try {
       recipeDetails = JSON.parse(recipe);
-      console.log("<-----thumnail------>", recipeDetails.thumbNail);
+      console.log("<-----thumnail------>", recipeDetails.img_url);
     } catch (error) {
       console.error("Error parsing recipe:", error);
     }
@@ -165,10 +165,14 @@ export default function AddTraineeToPlanScreen() {
   // Handle complete meal plan
   const handleCompletePlan = async () => {
     // Before upload ,get image url before sending to db
-    const response = await uploadImage(recipeDetails.thumbNail);
-    console.log(response);
+    const response = await uploadImage(recipeDetails.img_url);
+    console.log(response.public_id);
+    // Recipe object
+    const recipeInfo = {
+      name: recipeDetails.name,
+    };
     let mealPlan = {
-      recipe: recipe,
+      recipe: { ...recipeDetails, img_url: response.public_id },
       createdOn: date,
       createdAt: time,
 
@@ -279,7 +283,7 @@ export default function AddTraineeToPlanScreen() {
         </View>
         <TouchableOpacity
           onPress={handleCompletePlan}
-          className="bg-red-500 items-center mt-[40px] mb-3 p-3 rounded-md "
+          className="bg-red-500 items-center mt-[40px] mb- p-3 rounded-md "
         >
           <Text
             style={{ fontFamily: "Nunito_700Bold" }}

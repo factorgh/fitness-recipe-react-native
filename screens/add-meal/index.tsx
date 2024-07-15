@@ -93,18 +93,11 @@ export default function AddMealPlan() {
 
   const handleNext = () => {
     // Check for all input availability(Defensive mechanism)
-    // if (
-    //   !mealPlanInfo.description ||
-    //   !mealPlanInfo.imageUrl ||
-    //   !mealPlanInfo.name ||
-    //   !mealPlanInfo.procedures ||
-    //   !inputList
-    // )
-    //   return;
+    // if (!mealPlanInfo.name || !mealPlanInfo.imageUrl) return;
 
     let recipeDetails = {
       name: mealPlanInfo.name,
-      thumbNail: image,
+      img_url: image,
       ingredients: inputList,
       description: mealPlanInfo.description,
       procedures: mealPlanInfo.procedures,
