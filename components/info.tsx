@@ -169,3 +169,48 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
+
+/////Handling of base 64 transformation to blob before upload
+
+//   async function readBase64File(file: string): Promise<string> {
+//     const base64Data = await FileSystem.readAsStringAsync(file, { encoding: FileSystem.EncodingType.Base64 });
+//     return cleanBase64(base64Data);
+// }
+
+// function cleanBase64(base64Data: string): string {
+//     // Remove any non-base64 characters, such as newlines or spaces
+//     base64Data = base64Data.replace(/[^A-Za-z0-9+/=]/g, '');
+
+//     // Add padding if necessary
+//     const pad = base64Data.length % 4;
+//     if (pad) {
+//         base64Data += new Array(5 - pad).join('=');
+//     }
+
+//     return base64Data;
+// }
+// // // actual changing to blob
+// function base64ToUint8Array(base64Data: string): Uint8Array {
+//   const binaryString = atob(base64Data);
+//   const len = binaryString.length;
+//   const bytes = new Uint8Array(len);
+//   for (let i = 0; i < len; i++) {
+//       bytes[i] = binaryString.charCodeAt(i);
+//   }
+//   return bytes;
+// }
+
+//   s3Bucket.upload(params, (err: any, data: { Location: any; }) => {
+//     if (err) {
+//       console.error('Error uploading to S3: ', err);
+//       Alert.alert('Upload Failed', 'Failed to upload image to S3');
+//     } else {
+//       console.log('Successfully uploaded to S3: ', data.Location);
+//       Alert.alert('Upload Successful', 'Image uploaded successfully');
+//     }
+//   });
+// } catch (error) {
+//   console.error('Error reading file: ', error);
+//   Alert.alert('File Read Failed', 'Failed to read the file');
+// }
+// }

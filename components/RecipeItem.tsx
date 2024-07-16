@@ -11,18 +11,23 @@ export default function RecipeItem({ item }: { item: Recipe }) {
   const thumbNailImage = cld.image(item.thumbNail);
   return (
     <TouchableOpacity
-      onPress={() => router.push("/(routes)/meal-detail")}
+      onPress={() =>
+        router.push({
+          pathname: "/(routes)/meal-detail",
+          params: { item: JSON.stringify(item) },
+        })
+      }
       className="w-full h-[200px] border border-slate-300 shadow-sm rounded-md mt-5"
     >
-      <AdvancedImage cldImg={thumbNailImage} />
-      <Image
-        source={require("@/assets/images/recipe.jpeg")}
-        className="w-full h-[120px] rounded-t-md"
+      <AdvancedImage
+        className="w-full h-[120px] rounded-t-md "
+        cldImg={thumbNailImage}
       />
+
       <View className="flex flex-row items-center justify-between p-3">
-        <View>
+        <View className="w-52">
           <Text className="text-md font-semibold">{item.name}</Text>
-          <Text className="text-slate-500">Roastated Potato and Egg Plant</Text>
+          <Text className="text-slate-500 text-[12px]">{item.description}</Text>
         </View>
         {/* Rating button */}
         <View className="w-[80px] h-[40px]  flex flex-row  items-center rounded-md bg-orange-300 justify-between p-3">

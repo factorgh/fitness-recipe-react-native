@@ -21,34 +21,44 @@ import { SERVER_URL } from "@/utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Recipe } from "@/types/Recipe";
 import { Toast } from "react-native-toast-notifications";
+import Loader from "@/components/loader";
 
 export default function MealPlanScreen() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    //Set loading to true
+    setLoading(true);
+
     const fetchRecipes = async () => {
-      try {
-        const token = await AsyncStorage.getItem("access_token");
-        const response = await axios.get(`${SERVER_URL}/api/v1/recipe`, {
+      const token = await AsyncStorage.getItem("access_token");
+      console.log("<------token at recipe------>", token);
+      await axios
+        .get(`${SERVER_URL}/api/v1/recipe/owner`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `${token}`,
           },
-        });
-        setRecipes(response.data);
-      } catch (error) {
-        Toast.show("Failed to fetch recipes.");
-        setError("Failed to fetch recipes.");
-      } finally {
-        setLoading(false);
-      }
+        })
+        .then((res) => {
+          console.log(res.data.receipe);
+
+          setRecipes(res.data.receipe);
+        })
+        .catch((err) => {
+          setLoading(false);
+          Toast.show("No recipes created.");
+          setError("Failed to fetch recipes.");
+        })
+        .finally(() => setLoading(false));
     };
 
     fetchRecipes();
   }, []);
 
+  console.log("<------recipe deatils-------->", recipes);
   return (
     <SafeAreaView>
       <LinearGradient className="h-screen" colors={["#E5ECF9", "#F6F7F9"]}>
@@ -83,7 +93,9 @@ export default function MealPlanScreen() {
             </TouchableOpacity>
           </View>
 
-          {recipes.length > 0 ? (
+          {loading ? (
+            <Loader />
+          ) : recipes.length > 0 ? (
             <View className="mt-3 rounded-md mb-5">
               <FlatList
                 nestedScrollEnabled

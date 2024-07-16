@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Alert,
   FlatList,
   ScrollView,
@@ -21,6 +22,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { User } from "@/types/User";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { uploadImage } from "@/lib/cloudinary";
+import { Toast } from "react-native-toast-notifications";
 // import * as FileSystem from "expo-file-system";
 // import { s3Bucket } from "@/utils/S3.config";
 
@@ -39,6 +41,8 @@ export default function AddTraineeToPlanScreen() {
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
 
   const { recipe } = useLocalSearchParams();
+
+  const [isLoading, setIsLoading] = useState(false);
 
   let recipeDetails = null;
   if (typeof recipe === "string") {
@@ -75,56 +79,13 @@ export default function AddTraineeToPlanScreen() {
     setShowTimePicker(Platform.OS === "ios");
     setTime(currentTime);
   };
-  /////Handling of base 64 transformation to blob before upload
-
-  //   async function readBase64File(file: string): Promise<string> {
-  //     const base64Data = await FileSystem.readAsStringAsync(file, { encoding: FileSystem.EncodingType.Base64 });
-  //     return cleanBase64(base64Data);
-  // }
-
-  // function cleanBase64(base64Data: string): string {
-  //     // Remove any non-base64 characters, such as newlines or spaces
-  //     base64Data = base64Data.replace(/[^A-Za-z0-9+/=]/g, '');
-
-  //     // Add padding if necessary
-  //     const pad = base64Data.length % 4;
-  //     if (pad) {
-  //         base64Data += new Array(5 - pad).join('=');
-  //     }
-
-  //     return base64Data;
-  // }
-  // // // actual changing to blob
-  // function base64ToUint8Array(base64Data: string): Uint8Array {
-  //   const binaryString = atob(base64Data);
-  //   const len = binaryString.length;
-  //   const bytes = new Uint8Array(len);
-  //   for (let i = 0; i < len; i++) {
-  //       bytes[i] = binaryString.charCodeAt(i);
-  //   }
-  //   return bytes;
-  // }
-
-  //   s3Bucket.upload(params, (err: any, data: { Location: any; }) => {
-  //     if (err) {
-  //       console.error('Error uploading to S3: ', err);
-  //       Alert.alert('Upload Failed', 'Failed to upload image to S3');
-  //     } else {
-  //       console.log('Successfully uploaded to S3: ', data.Location);
-  //       Alert.alert('Upload Successful', 'Image uploaded successfully');
-  //     }
-  //   });
-  // } catch (error) {
-  //   console.error('Error reading file: ', error);
-  //   Alert.alert('File Read Failed', 'Failed to read the file');
-  // }
-  // }
 
   ///LOGIC FOR FETCH AND SEARCH OF TRAINEES
   useEffect(() => {
     const loadUsers = async () => {
       // Get token to allow for permission to fetch trainees
       const token = await AsyncStorage.getItem("access_token");
+      console.log("<------tokenForUsers", token);
       await axios
         .get(`${SERVER_URL}/api/v1/users`, {
           headers: {
@@ -164,21 +125,47 @@ export default function AddTraineeToPlanScreen() {
 
   // Handle complete meal plan
   const handleCompletePlan = async () => {
+    setIsLoading(true);
+
     // Before upload ,get image url before sending to db
     const response = await uploadImage(recipeDetails.img_url);
     console.log(response.public_id);
-    // Recipe object
-    const recipeInfo = {
-      name: recipeDetails.name,
-    };
+
+    // Extract user IDs from selectedUsers array
+    const userIDs = selectedUsers.map((user) => user.id);
     let mealPlan = {
       recipe: { ...recipeDetails, img_url: response.public_id },
-      createdOn: date,
-      createdAt: time,
+      date_picked: date,
+      time_picked: time,
 
-      user: selectedUsers,
+      user: userIDs,
     };
     console.log("<---------mealPlanItem-Completed------->", mealPlan);
+
+    /////Get access token
+    const token = await AsyncStorage.getItem("access_token");
+    // console.log("<-------tokenBeforeMealPlan-------------->", access_token);
+
+    ////Send meal plan to backend
+    await axios
+      .post(`${SERVER_URL}/api/v1/mealplans`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`,
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+        Toast.show("Meal plan created!!!");
+        //// Redirect the user to home page
+        router.push("/(tabs)/mealplans");
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        Toast.show("An error occured");
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -281,17 +268,23 @@ export default function AddTraineeToPlanScreen() {
             )}
           />
         </View>
-        <TouchableOpacity
-          onPress={handleCompletePlan}
-          className="bg-red-500 items-center mt-[40px] mb- p-3 rounded-md "
-        >
-          <Text
-            style={{ fontFamily: "Nunito_700Bold" }}
-            className="text-white text-xl  "
+        <View>
+          <TouchableOpacity
+            onPress={handleCompletePlan}
+            className="bg-red-500 items-center mt-5 mb-3 p-3 rounded-md "
           >
-            complete plan
-          </Text>
-        </TouchableOpacity>
+            {isLoading ? (
+              <ActivityIndicator size="small" color={"white"} />
+            ) : (
+              <Text
+                style={{ fontFamily: "Nunito_700Bold" }}
+                className="text-white text-xl  "
+              >
+                Complete plan
+              </Text>
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );

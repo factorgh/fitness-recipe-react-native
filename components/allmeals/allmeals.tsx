@@ -13,11 +13,11 @@ import { SERVER_URL } from "@/utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useUser from "@/hooks/useUser";
 import { router } from "expo-router";
+import { Toast } from "react-native-toast-notifications";
 
 export default function Allmeals({ date }: { date: any }) {
   const [data, setData] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
- 
 
   const { user } = useUser();
 
@@ -45,7 +45,7 @@ export default function Allmeals({ date }: { date: any }) {
             setLoading(false);
           })
           .catch((err) => {
-            console.error("Error fetching data:", err.message);
+            Toast.show("No data Available");
 
             setLoading(false);
           });

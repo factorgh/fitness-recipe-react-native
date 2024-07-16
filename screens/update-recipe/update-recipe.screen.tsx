@@ -24,7 +24,7 @@ import axios from "axios";
 import { SERVER_URL } from "@/utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function CreateRecipeScreen() {
+export default function UpdateRecipeScreen() {
   const [inputValue, setInputValue] = useState("");
   const [inputList, setInputList] = useState("");
   const [image, setImage] = useState<string>("");
@@ -130,7 +130,7 @@ export default function CreateRecipeScreen() {
                 className="text-2xl font-semibold"
                 style={{ fontFamily: "Nunito_700Bold" }}
               >
-                Create recipe
+                Update recipe
               </Text>
               <Text></Text>
             </View>
@@ -250,7 +250,7 @@ export default function CreateRecipeScreen() {
                   style={{ fontFamily: "Nunito_700Bold" }}
                   className="text-white text-xl  "
                 >
-                  Complete recipe
+                  Update recipe
                 </Text>
               )}
             </TouchableOpacity>
