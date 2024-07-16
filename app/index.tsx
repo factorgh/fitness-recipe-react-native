@@ -4,16 +4,9 @@ import useUser from "@/hooks/useUser";
 import Loader from "@/components/loader";
 
 const index = () => {
-  const { user, isLoading } = useUser();
+  const { user } = useUser();
 
-  return;
-  <>
-    {isLoading ? (
-      <Loader />
-    ) : (
-      <Redirect href={!user ? "/(routes)/onboarding" : "/(tabs)"} />
-    )}
-  </>;
+  return <Redirect href={!user ? "/(routes)/onboarding" : "/(tabs)"} />;
 };
 
 export default index;

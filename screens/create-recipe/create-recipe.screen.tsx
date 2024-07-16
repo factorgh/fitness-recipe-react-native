@@ -161,7 +161,7 @@ export default function CreateRecipeScreen() {
 
             {/* End of thumbnail */}
             <View className="gap-2 mt-3">
-              <Text>Enter meal name</Text>
+              <Text>Enter recipe name</Text>
               <View className="border-2 border-slate-300 w-full rounded-md  p-3 h-[50px] flex items-center justify-center">
                 <TextInput
                   onChangeText={(value) =>
