@@ -1,109 +1,142 @@
 import {
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-    Button,
-    FlatList,
-    Image,
-  } from "react-native";
-  import React, { useState } from "react";
-  import { LinearGradient } from "expo-linear-gradient";
-  
-  import { Nunito_400Regular, Nunito_700Bold } from "@expo-google-fonts/nunito";
-  import { useFonts, Raleway_700Bold } from "@expo-google-fonts/raleway";
-  import { AntDesign, Feather } from "@expo/vector-icons";
-  import { router } from "expo-router";
-  import * as ImagePicker from "expo-image-picker";
-  import { SafeAreaView } from "react-native-safe-area-context";
-  
-  export default function CreateRecipeScreen () {
-    const [inputValue, setInputValue] = useState("");
-    const [inputList, setInputList] = useState<string[]>([]);
-    const [image, setImage] = useState<string>("");
-  
-    const [mealPlanInfo, setMealPlanInfo] = useState({
-      imageUrl: "",
-      name: "",
-      description: "",
-      procedures: "",
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  Button,
+  FlatList,
+  Image,
+  ActivityIndicator,
+} from "react-native";
+import React, { useState } from "react";
+import { LinearGradient } from "expo-linear-gradient";
+
+import { Nunito_400Regular, Nunito_700Bold } from "@expo-google-fonts/nunito";
+import { useFonts, Raleway_700Bold } from "@expo-google-fonts/raleway";
+import { AntDesign, Feather } from "@expo/vector-icons";
+import { router } from "expo-router";
+import * as ImagePicker from "expo-image-picker";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { uploadImage } from "@/lib/cloudinary";
+import axios from "axios";
+import { SERVER_URL } from "@/utils/utils";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+export default function CreateRecipeScreen() {
+  const [inputValue, setInputValue] = useState("");
+  const [inputList, setInputList] = useState("");
+  const [image, setImage] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [mealPlanInfo, setMealPlanInfo] = useState({
+    imageUrl: "",
+    name: "",
+    description: "",
+    procedures: "",
+  });
+  let [fontLoaded, fontError] = useFonts({
+    Nunito_400Regular,
+    Nunito_700Bold,
+    Raleway_700Bold,
+  });
+
+  const handleAddInput = () => {
+    if (inputValue.trim() !== "") {
+      const updatedList = inputList
+        ? `${inputList}, ${inputValue}`
+        : inputValue;
+      setInputList(updatedList);
+      setInputValue("");
+    }
+  };
+
+  const handleDelete = (item: string) => {
+    const inputArray = inputList.split(", ").filter((tab) => tab !== item);
+    setInputList(inputArray.join(", "));
+  };
+
+  ///Handle Image Upload
+  const pickImage = async () => {
+    let results = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
     });
-    let [fontLoaded, fontError] = useFonts({
-      Nunito_400Regular,
-      Nunito_700Bold,
-      Raleway_700Bold,
-    });
-  
-    const handleAddInput = () => {
-      if (inputValue.trim() !== "") {
-        setInputList([...inputList, inputValue]);
-        setInputValue("");
-      }
+    console.log(results);
+    if (!results.canceled) {
+      setImage(results.assets[0].uri);
+    }
+  };
+
+  const handleCreate = async () => {
+    //Starting creating state
+    setIsLoading(true);
+
+    /////Get access token
+    const token = await AsyncStorage.getItem("access_token");
+    ///Upload image to cloudinary
+    const response = await uploadImage(image);
+    // Update image
+
+    let recipeDetails = {
+      name: mealPlanInfo.name,
+      thumbNail: response.public_id,
+      ingredients: inputList,
+      description: mealPlanInfo.description,
+      procedures: mealPlanInfo.procedures,
+      rating: 0,
     };
-  
-    const handleDelete = (item: any) => {
-      const newFilter = inputList.filter((tab) => tab !== item);
-      setInputList(newFilter);
-    };
-  
-    ///Handle Image Upload
-    const pickImage = async () => {
-      let results = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
+    console.log("<----Meal plan body--->", recipeDetails);
+
+    ////Save to db
+    await axios
+      .post(`${SERVER_URL}/api/v1/recipe`, recipeDetails, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`,
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+        router.back();
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        console.log(err);
       });
-      console.log(results);
-      if (!results.canceled) {
-        setImage(results.assets[0].uri);
-      }
-    };
-  
-    const handleNext = () => {
-      let recipeDetails = {
-        name: mealPlanInfo.name,
-        imageUrl: image,
-        ingredients: inputList,
-        description: mealPlanInfo.description,
-        procedures: mealPlanInfo.procedures,
-      };
-      console.log("<----Meal plan body--->", recipeDetails);
-    //   router.push({
-    //     pathname: "/(routes)/add-trainee-to-plan",
-    //     params: { recipe: JSON.stringify(recipeDetails) },
-    //   });
-    };
-  
-    if (!fontLoaded && !fontError) return null;
-  
-    return (
-      <SafeAreaView>
-           <LinearGradient colors={["#E5ECF9", "#F6F7F9"]}>
+  };
+
+  if (!fontLoaded && !fontError) return null;
+
+  return (
+    <SafeAreaView>
+      <LinearGradient colors={["#E5ECF9", "#F6F7F9"]}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View className="mt-[30px] mx-5">
             {/* header section */}
             <View className="flex flex-row items-center justify-between mb-5">
-            <Feather
-            style={{  }}
-            onPress={() => router.back()}
-            name="corner-up-left"
-            size={24}
-            color="black"
-          />
+              <Feather
+                style={{}}
+                onPress={() => router.back()}
+                name="corner-up-left"
+                size={24}
+                color="black"
+              />
               <Text
                 className="text-2xl font-semibold"
                 style={{ fontFamily: "Nunito_700Bold" }}
               >
                 Create recipe
               </Text>
-           <Text></Text>
+              <Text></Text>
             </View>
             {/* End of header section */}
             {/* Thumbnail */}
-  
+
             <Text>Add thumbnail image</Text>
             {image ? (
               <TouchableOpacity
@@ -125,7 +158,7 @@ import {
                 </View>
               </TouchableOpacity>
             )}
-  
+
             {/* End of thumbnail */}
             <View className="gap-2 mt-3">
               <Text>Enter meal name</Text>
@@ -144,6 +177,7 @@ import {
               <Text>Nutritional Information</Text>
               <View className="border-2 border-slate-300 w-full rounded-md  h-[100px] p-2  flex items-center justify-center">
                 <TextInput
+                  style={{ textAlignVertical: "top" }}
                   value={mealPlanInfo.description}
                   editable
                   multiline
@@ -170,7 +204,7 @@ import {
               <FlatList
                 showsHorizontalScrollIndicator={false}
                 horizontal
-                data={inputList}
+                data={inputList ? inputList.split(", ") : []}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item }) => (
                   <View className="border flex flex-row items-center justify-between border-slate-300 p-2 rounded-md ml-1 w-[100px] flex-wrap">
@@ -190,6 +224,7 @@ import {
               <Text>Procedures</Text>
               <View className="border-2 border-slate-300 w-full rounded-md  h-[100px] flex items-center justify-center p-2">
                 <TextInput
+                  style={{ textAlignVertical: "top" }}
                   value={mealPlanInfo.procedures}
                   editable={true}
                   multiline
@@ -203,54 +238,57 @@ import {
             </View>
             {/* End of procedures*/}
             {/* Next button */}
-  
+
             <TouchableOpacity
-              onPress={handleNext}
+              onPress={handleCreate}
               className="bg-red-500 items-center mt-5 mb-3 p-3 rounded-md "
             >
-              <Text
-                style={{ fontFamily: "Nunito_700Bold" }}
-                className="text-white text-xl  "
-              >
-                Complete recipe
-              </Text>
+              {isLoading ? (
+                <ActivityIndicator size="small" color={"white"} />
+              ) : (
+                <Text
+                  style={{ fontFamily: "Nunito_700Bold" }}
+                  className="text-white text-xl  "
+                >
+                  Complete recipe
+                </Text>
+              )}
             </TouchableOpacity>
           </View>
         </ScrollView>
-        </LinearGradient>
-      </SafeAreaView>
-    );
-  }
-  
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      padding: 20,
-    },
-    form: {
-      flexDirection: "row",
-      marginBottom: 20,
-    },
-    input: {
-      flex: 1,
-      borderColor: "#ccc",
-      borderWidth: 1,
-      padding: 10,
-      marginRight: 10,
-      borderRadius: 5,
-    },
-    image: {
-      width: "100%",
-      height: 100,
-      borderRadius: 8,
-    },
-    listItem: {
-      padding: 10,
-      borderBottomColor: "#ccc",
-      borderBottomWidth: 1,
-    },
-    listItemText: {
-      fontSize: 16,
-    },
-  });
-  
+      </LinearGradient>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+  form: {
+    flexDirection: "row",
+    marginBottom: 20,
+  },
+  input: {
+    flex: 1,
+    borderColor: "#ccc",
+    borderWidth: 1,
+    padding: 10,
+    marginRight: 10,
+    borderRadius: 5,
+  },
+  image: {
+    width: "100%",
+    height: 100,
+    borderRadius: 8,
+  },
+  listItem: {
+    padding: 10,
+    borderBottomColor: "#ccc",
+    borderBottomWidth: 1,
+  },
+  listItemText: {
+    fontSize: 16,
+  },
+});

@@ -6,9 +6,11 @@ import { User } from "@/types/User";
 
 export default function useUser() {
   const [user, setUser] = useState<User>();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(function () {
     const getMe = async () => {
+      setIsLoading(true);
       const user_token = await AsyncStorage.getItem("access_token");
       await axios
         .get(`${SERVER_URL}/api/v1/users/single`, {
@@ -20,11 +22,16 @@ export default function useUser() {
           console.log("<------accesTokenBeforeGetMe------>", user_token);
           console.log("<---------getMeData-------->", res.data.user);
           setUser(res.data.user);
+          setIsLoading(false);
         })
-        .catch((err) => console.log(err.message));
+        .catch((err) => {
+          console.log(err.message);
+
+          setIsLoading(false);
+        });
     };
     getMe();
   }, []);
 
-  return { user };
+  return { user, isLoading };
 }
