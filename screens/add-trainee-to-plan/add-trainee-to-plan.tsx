@@ -53,7 +53,7 @@ export default function AddTraineeToPlanScreen() {
       console.error("Error parsing recipe:", error);
     }
   } else {
-    console.error("Recipe is not a valid string:", recipe);
+    Toast.show("Recipe not available");
   }
   console.log("<--------recipe forwared--------->", recipe);
 

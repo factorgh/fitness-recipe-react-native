@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  RefreshControl,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Nunito_400Regular, Nunito_700Bold } from "@expo-google-fonts/nunito";
@@ -27,6 +28,14 @@ export default function MealPlanScreen() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
 
   useEffect(() => {
     //Set loading to true
@@ -56,13 +65,16 @@ export default function MealPlanScreen() {
     };
 
     fetchRecipes();
-  }, []);
+  }, [refreshing]);
 
   console.log("<------recipe deatils-------->", recipes);
   return (
     <SafeAreaView>
       <LinearGradient className="h-screen" colors={["#E5ECF9", "#F6F7F9"]}>
         <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
           showsVerticalScrollIndicator={false}
           className="mt-[30px] mx-5 h-screen"
         >

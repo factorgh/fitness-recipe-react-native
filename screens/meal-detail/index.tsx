@@ -12,14 +12,18 @@ import { AntDesign } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import StarRating from "react-native-star-rating-widget";
 
 import ReviewItem from "@/components/ReviewItem";
 import SpeedDialItem from "@/components/speed-dial";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import { AdvancedImage } from "cloudinary-react-native";
 import { cld } from "@/lib/cloudinary";
+import { Toast } from "react-native-toast-notifications";
 
 export default function MealDetailScreen() {
+  const [rating, setRating] = useState(0);
+  const [submit, setSubmit] = useState("");
   const [isBookmarked, setIsBookMarked] = useState(false);
   const { item } = useLocalSearchParams();
   console.log(item);
@@ -80,15 +84,10 @@ export default function MealDetailScreen() {
               )}
             </View>
             {/* Review section */}
-            <View className="flex flex-row items-center gap-2">
-              <View className="flex flex-row gap-2 p-2">
-                <AntDesign name="star" size={20} color="gold" />
-                <AntDesign name="star" size={20} color="gold" />
-                <AntDesign name="star" size={20} color="gold" />
-                <AntDesign name="star" size={20} color="gold" />
-                <AntDesign name="staro" size={20} color="gold" />
-              </View>
-              <Text className="text-slate-500 text-sm">4.5(32Reviews)</Text>
+            <View className="flex flex-row items-center gap-2 mb-2">
+              <StarRating starSize={24} onChange={setRating} rating={rating} />
+
+              <Text className="text-slate-500 text-sm text-bold">{rating}</Text>
             </View>
             {/* Description section  */}
             <View className="p-2 ">
@@ -105,7 +104,7 @@ export default function MealDetailScreen() {
                 style={{ fontFamily: "Nunito_700Bold" }}
                 className="text-xl font-semibold"
               >
-                Ingrdeients
+                Ingredients
               </Text>
               <View className="bg-slate-900 h-1 rounded-md w-28 mb-2 "></View>
               <View>
@@ -154,7 +153,10 @@ export default function MealDetailScreen() {
               </View>
               <TouchableOpacity
                 style={{ marginBottom: 80 }}
-                onPress={() => console.log("review submitted")}
+                onPress={() => {
+                  Toast.show("Review submitted");
+                  router.back();
+                }}
                 className="bg-blue-500 items-center mt-5 mb-3 p-3 rounded-md "
               >
                 <Text
