@@ -76,7 +76,7 @@ export default function MealPlanScreen() {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
           showsVerticalScrollIndicator={false}
-          className="mt-[30px] mx-5 h-screen"
+          className="mt-[30px] mx-5 mb-16 h-screen"
         >
           <View className="flex flex-row justify-between">
             <Text style={{ fontFamily: "Nunito_700Bold" }} className="text-3xl">
@@ -94,6 +94,9 @@ export default function MealPlanScreen() {
             <TextInput className="w-full p-3 " placeholder="search by name" />
           </View>
           <View className="h-[60px]    flex flex-row gap-2   items-center  ">
+            <TouchableOpacity className="border bg-red-400  border-slate-300 rounded-md p-2 flex flex-row items-center">
+              <Text className="text-white">All</Text>
+            </TouchableOpacity>
             <TouchableOpacity className="border border-slate-300 rounded-md p-2 flex flex-row items-center">
               <Text>Popularity</Text>
             </TouchableOpacity>

@@ -13,7 +13,7 @@ import React, { useEffect, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Button } from "@rneui/base";
+
 import axios from "axios";
 import { SERVER_URL } from "@/utils/utils";
 import { Platform } from "react-native";
@@ -21,7 +21,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { User } from "@/types/User";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { uploadImage } from "@/lib/cloudinary";
+
 import { Toast } from "react-native-toast-notifications";
 // import * as FileSystem from "expo-file-system";
 // import { s3Bucket } from "@/utils/S3.config";
@@ -40,22 +40,22 @@ export default function AddTraineeToPlanScreen() {
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
 
-  const { recipe } = useLocalSearchParams();
+  const { recipe_id } = useLocalSearchParams();
 
   const [isLoading, setIsLoading] = useState(false);
-
+  console.log("<--recipeId-->", recipe_id);
   let recipeDetails = null;
-  if (typeof recipe === "string") {
+  if (typeof recipe_id === "string") {
     try {
-      recipeDetails = JSON.parse(recipe);
-      console.log("<-----thumnail------>", recipeDetails.img_url);
+      recipeDetails = JSON.parse(recipe_id);
+      console.log("<-----thumnail------>", recipeDetails);
     } catch (error) {
       console.error("Error parsing recipe:", error);
     }
   } else {
     Toast.show("Recipe not available");
   }
-  console.log("<--------recipe forwared--------->", recipe);
+  console.log("<--------recipe forwared--------->", recipe_id);
 
   // Handle Delete
   const handleDelete = (item: any) => {
@@ -71,12 +71,14 @@ export default function AddTraineeToPlanScreen() {
 
     ///Get actual Date
     const actualDate = setShowDatePicker(Platform.OS === "ios");
+    console.log(currentDate);
     setDate(currentDate);
   };
 
   const onChangeTime = (event: any, selectedTime: any) => {
     const currentTime = selectedTime || time;
     setShowTimePicker(Platform.OS === "ios");
+    console.log(currentTime, selectedTime);
     setTime(currentTime);
   };
 
@@ -95,6 +97,10 @@ export default function AddTraineeToPlanScreen() {
         })
         .then((res) => {
           console.log("<----------all users ------------>", res.data);
+          // // Filter trainees only
+          // const trainee = res.data.users?.role.filter(
+          //   (user: User) => user.role !== 1
+          // );
           setUsers(res.data.users);
         })
         .catch((err) => console.log(err)); // Initialize filteredUsers with all users
@@ -122,48 +128,48 @@ export default function AddTraineeToPlanScreen() {
     setSearchInput("");
     setFilteredUsers(users); // Reset to all users after selection
   };
-
-  // Handle complete meal plan
-  const handleCompletePlan = async () => {
+  //  Creating a meal plan
+  const handlePlan = async () => {
+    // Set loading state
     setIsLoading(true);
 
-    // Before upload ,get image url before sending to db
-    const response = await uploadImage(recipeDetails.img_url);
-    console.log(response.public_id);
+    ///Get user token
+    const token = await AsyncStorage.getItem("access_token");
+    console.log("<--token-->", token);
 
-    // Extract user IDs from selectedUsers array
-    const userIDs = selectedUsers.map((user) => user.id);
-    let mealPlan = {
-      recipe: { ...recipeDetails, img_url: response.public_id },
+    //Extract userId from selectedUser
+    const userIds = selectedUsers.map((user) => user.id);
+    console.log("<--userIds-->", userIds);
+
+    // Create meal plan object
+    const mealPlan = {
+      recipe: recipeDetails,
       date_picked: date,
       time_picked: time,
-
-      user: userIDs,
+      users: userIds,
     };
-    console.log("<---------mealPlanItem-Completed------->", mealPlan);
 
-    /////Get access token
-    const token = await AsyncStorage.getItem("access_token");
-    // console.log("<-------tokenBeforeMealPlan-------------->", access_token);
-
-    ////Send meal plan to backend
-    await axios
-      .post(`${SERVER_URL}/api/v1/mealplans`, {
+    // Send post create meal plan endpoint
+    axios
+      .post(`${SERVER_URL}/api/v1/mealplans`, mealPlan, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `${token}`,
         },
       })
       .then((res) => {
+        //check meal exisitence
         console.log(res.data);
-        Toast.show("Meal plan created!!!");
-        //// Redirect the user to home page
-        router.push("/(tabs)/mealplans");
+        // Navigate user to home screen
+        router.push("/(tabs)");
+        Toast.show("Meal plan created ");
+
+        // Notify trainees here
         setIsLoading(false);
       })
       .catch((err) => {
+        Toast.show(err);
         console.log(err);
-        Toast.show("An error occured");
         setIsLoading(false);
       });
   };
@@ -270,7 +276,7 @@ export default function AddTraineeToPlanScreen() {
         </View>
         <View>
           <TouchableOpacity
-            onPress={handleCompletePlan}
+            onPress={handlePlan}
             className="bg-red-500 items-center mt-5 mb-3 p-3 rounded-md "
           >
             {isLoading ? (

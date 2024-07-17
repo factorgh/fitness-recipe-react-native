@@ -44,7 +44,7 @@ export default function LoginScreen() {
   const [error, setError] = useState({
     password: "",
     fullName: "",
-    phoneNumber: "",
+    phone: "",
     email: "",
     username: "",
   });
@@ -57,7 +57,7 @@ export default function LoginScreen() {
     console.log({
       name: userInfo.fullName,
       password: userInfo.password,
-      phoneNumber: userInfo.phoneNumber,
+      phone: userInfo.phoneNumber,
       email: userInfo.email,
       username: userInfo.username,
     });

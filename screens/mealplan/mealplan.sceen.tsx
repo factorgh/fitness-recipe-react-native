@@ -7,11 +7,13 @@ import {
   Alert,
   Image,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { Nunito_400Regular, Nunito_700Bold } from "@expo-google-fonts/nunito";
 import { useFonts } from "@expo-google-fonts/raleway";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import BottomSheet from "@gorhom/bottom-sheet";
 
 import CalendarPicker from "react-native-calendar-picker";
 
@@ -19,6 +21,7 @@ import TraineePlanItem from "@/components/traineePlan";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function MealPlanScreen() {
+  const [showPopup, setShowPopup] = useState(false);
   let [fontLoaded, fontError] = useFonts({
     Nunito_400Regular,
     Nunito_700Bold,
@@ -93,9 +96,7 @@ export default function MealPlanScreen() {
               </Text>
             </View>
 
-            <ScrollView className="mt-1 mx-3">
-              <TraineePlanItem />
-              <TraineePlanItem />
+            <ScrollView className="mt-1 mx-3 mb-5">
               <TraineePlanItem />
               <TraineePlanItem />
             </ScrollView>

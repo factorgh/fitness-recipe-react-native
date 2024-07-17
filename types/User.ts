@@ -9,4 +9,5 @@ export type User = {
   reset_token: string;
   updatedAt: string;
   role: number;
+  phone: string;
 };
