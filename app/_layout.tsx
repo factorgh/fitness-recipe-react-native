@@ -18,6 +18,7 @@ const _layout = () => {
         <Stack.Screen name="(routes)/profile/index" />
         <Stack.Screen name="(routes)/create-recipe/index" />
         <Stack.Screen name="(routes)/update-recipe/index" />
+        <Stack.Screen name="(routes)/new-user/index" />
         <Stack.Screen name="(routes)/notifications/index" />
         <Stack.Screen name="(routes)/trainee-completed-detail/index" />
         <Stack.Screen name="(routes)/trainee-pending-detail/index" />

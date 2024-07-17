@@ -97,12 +97,12 @@ export default function MealPlanScreen() {
             <TouchableOpacity className="border bg-red-400  border-slate-300 rounded-md p-2 flex flex-row items-center">
               <Text className="text-white">All</Text>
             </TouchableOpacity>
-            <TouchableOpacity className="border border-slate-300 rounded-md p-2 flex flex-row items-center">
+            {/* <TouchableOpacity className="border border-slate-300 rounded-md p-2 flex flex-row items-center">
               <Text>Popularity</Text>
-            </TouchableOpacity>
-            <TouchableOpacity className="border border-slate-300 rounded-md p-2 flex flex-row items-center ">
+            </TouchableOpacity> */}
+            {/* <TouchableOpacity className="border border-slate-300 rounded-md p-2 flex flex-row items-center ">
               <Text>Relevance</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <TouchableOpacity className="border border-slate-300 rounded-md p-2 flex flex-row items-center ">
               <Text>Bookmarked</Text>
             </TouchableOpacity>

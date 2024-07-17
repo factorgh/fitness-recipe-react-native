@@ -1,10 +1,30 @@
 import React, { useState } from "react";
 import { SpeedDial } from "@rneui/base";
-import { View } from "react-native";
+import { Alert, View } from "react-native";
 import { router } from "expo-router";
 
 export default function SpeedDialItem({ item }: { item: any }) {
   const [open, setOpen] = useState(false);
+
+  const showAlert = () =>
+    Alert.alert(
+      "Delete recipe",
+      "Are sure you want to delete this recipe",
+      [
+        {
+          text: "Cancel",
+          onPress: () => Alert.alert("Cancel Pressed"),
+          style: "cancel",
+        },
+      ],
+      {
+        cancelable: true,
+        onDismiss: () =>
+          Alert.alert(
+            "This alert was dismissed by tapping outside of the alert dialog."
+          ),
+      }
+    );
   return (
     <SpeedDial
       overlayColor="transparent"
@@ -28,6 +48,11 @@ export default function SpeedDialItem({ item }: { item: any }) {
             params: { recipe: JSON.stringify(item) },
           })
         }
+      />
+      <SpeedDial.Action
+        icon={{ name: "delete", color: "#fff" }}
+        title="Delete"
+        onPress={showAlert}
       />
     </SpeedDial>
   );
