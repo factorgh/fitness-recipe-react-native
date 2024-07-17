@@ -15,6 +15,12 @@ import useUser from "@/hooks/useUser";
 import { router } from "expo-router";
 import { Toast } from "react-native-toast-notifications";
 
+// Uitlity function
+const setToMidnight = (date: Date) => {
+  const newDate = new Date(date);
+  newDate.setUTCHours(0, 0, 0, 0);
+  return newDate;
+};
 export default function Allmeals({ date }: { date: any }) {
   const [data, setData] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -26,11 +32,12 @@ export default function Allmeals({ date }: { date: any }) {
     function () {
       const fetchData = async () => {
         setLoading(true);
+        const newDate = setToMidnight(date);
 
         const token = await AsyncStorage.getItem("access_token");
         console.log("<-------tokenOnAllMeals-------->", token);
         await axios
-          .get(`${SERVER_URL}/api/v1/mealplans/trainer/${date}`, {
+          .get(`${SERVER_URL}/api/v1/mealplans/trainer/${newDate}`, {
             headers: {
               "Content-Type": "application/json",
               Authorization: `${token}`,
@@ -39,7 +46,7 @@ export default function Allmeals({ date }: { date: any }) {
           .then((response) => {
             console.log(
               "<---------response from date filter------------>",
-              response.data.meal
+              response.data
             );
             setData(response.data.meal);
             setLoading(false);
@@ -75,7 +82,7 @@ export default function Allmeals({ date }: { date: any }) {
           showsHorizontalScrollIndicator={false}
           data={data}
           keyExtractor={(item: any) => item.id.toString()}
-          renderItem={({ item }) => <MealPlanItem />}
+          renderItem={({ item }: { item: any }) => <MealPlanItem item={item} />}
         />
       )}
     </View>

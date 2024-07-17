@@ -1,5 +1,4 @@
 import {
- 
   ScrollView,
   StyleSheet,
   Text,
@@ -22,12 +21,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
   const [date, setDate] = useState("");
-  let [fontLoaded, fontError] = useFonts({
-    Nunito_400Regular,
-    Nunito_700Bold,
-  });
+  // let [fontLoaded, fontError] = useFonts({
+  //   Nunito_400Regular,
+  //   Nunito_700Bold,
+  // });
 
-  if (!fontLoaded && !fontError) return null;
+  // if (!fontLoaded && !fontError) return null;
 
   const getGreeting = () => {
     const currentHour = new Date().getHours();
@@ -47,54 +46,60 @@ export default function HomeScreen() {
   const greeting = getGreeting();
   return (
     <SafeAreaView>
-    <LinearGradient colors={["#E5ECF9", "#F6F7F9"]}>
-      <View className="h-screen  ">
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View className="w-full  mt-[30px] flex flex-row justify-between p-3 ">
-            <Text style={{ fontFamily: "Nunito_700Bold" }} className="text-2xl">
-              {greeting}
-            </Text>
-            <View className="flex flex-row gap-2 items-center">
-              <TouchableOpacity
-                onPress={() => router.push("/(routes)/add-meal")}
+      <LinearGradient colors={["#E5ECF9", "#F6F7F9"]}>
+        <View className="h-screen">
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <View className="w-full  mt-[30px] flex flex-row justify-between p-3 ">
+              <Text
+                style={{ fontFamily: "Nunito_700Bold" }}
+                className="text-2xl"
               >
-                <Entypo name="add-to-list" size={30} color="black" />
-              </TouchableOpacity>
-              <View>
-                <Ionicons
-                  name="notifications-circle"
-                  size={35}
-                  color="#747474"
+                {greeting}
+              </Text>
+              <View className="flex flex-row gap-2 items-center">
+                <TouchableOpacity
+                  onPress={() => router.push("/(routes)/add-meal")}
+                >
+                  <Entypo name="add-to-list" size={30} color="black" />
+                </TouchableOpacity>
+                <View>
+                  <Ionicons
+                    name="notifications-circle"
+                    size={35}
+                    color="#747474"
+                  />
+                </View>
+                <Avatar
+                  size={32}
+                  rounded
+                  source={{
+                    uri: "https://randomuser.me/api/portraits/men/36.jpg",
+                  }}
                 />
               </View>
-              <Avatar
-                size={32}
-                rounded
-                source={{
-                  uri: "https://randomuser.me/api/portraits/men/36.jpg",
-                }}
-              />
             </View>
-          </View>
 
-          {/* End of first section */}
-          {/* Calendar section */}
-          <View className=" mt-8 ">
-            <CalendarPicker onDateChange={handleDateChange} />
-          </View>
-          {/* End of calendar section */}
+            {/* End of first section */}
+            {/* Calendar section */}
+            <View className=" mt-8 ">
+              <CalendarPicker onDateChange={handleDateChange} />
+            </View>
+            {/* End of calendar section */}
 
-          <View className="mt-5 mx-3">
-            <Text className="text-2xl" style={{ fontFamily: "Nunito_700Bold" }}>
-              Manage Plans
-            </Text>
-          </View>
-          <View>
-            <Allmeals date={date} />
-          </View>
-        </ScrollView>
-      </View>
-    </LinearGradient>
+            <View className="mt-5 mx-3">
+              <Text
+                className="text-2xl"
+                style={{ fontFamily: "Nunito_700Bold" }}
+              >
+                Manage Plans
+              </Text>
+            </View>
+            <View>
+              <Allmeals date={date} />
+            </View>
+          </ScrollView>
+        </View>
+      </LinearGradient>
     </SafeAreaView>
   );
 }
