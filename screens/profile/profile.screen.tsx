@@ -21,6 +21,7 @@ import axios from "axios";
 // import { SERVER_URL } from "@/utils/utils";
 // import AsyncStorage from "@react-native-async-storage/async-storage";
 import { thumbnail } from "@cloudinary/url-gen/actions/resize";
+import { Fontisto } from "@expo/vector-icons";
 
 import { User } from "@/types/User";
 import { cld, uploadImage } from "@/lib/cloudinary";
@@ -125,12 +126,14 @@ export default function ProfileScreen() {
       email: userInfo.email,
     };
     // Save to DB
-    await axios.put(`${SERVER_URL}/api/v1/users/single`, updateObject, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${token}`,
-      },
-    });
+    await axios
+      .put(`${SERVER_URL}/api/v1/users/single`, updateObject, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`,
+        },
+      })
+      .then((res) => {});
   };
 
   let remoteCldImage;
@@ -142,7 +145,7 @@ export default function ProfileScreen() {
   console.log("<-----------------all users------------------>", users[0]);
   return (
     <SafeAreaView>
-      <LinearGradient className="h-screen" colors={["#E5ECF9", "#F6F7F9"]}>
+      <LinearGradient className="h-full" colors={["#E5ECF9", "#F6F7F9"]}>
         {/* First view */}
         <ScrollView showsVerticalScrollIndicator={false}>
           <ImageBackground
@@ -237,7 +240,7 @@ export default function ProfileScreen() {
             style={{ marginLeft: 20 }}
           >
             <View className="bg-slate-200 shadow-sm w-full h-16 p-3  rounded-md  flex-row items-center ">
-              <FontAwesome name="phone" size={35} color="gray" />
+              <FontAwesome name="phone" size={24} color="gray" />
               <View style={{ marginLeft: 10, width: "80%" }}>
                 <TextInput
                   defaultValue={user?.phone}
@@ -252,7 +255,7 @@ export default function ProfileScreen() {
             </View>
             {/* Full name */}
             <View className="bg-slate-200 shadow-sm w-full h-16 p-3  rounded-md  flex-row items-center ">
-              <Ionicons name="person" size={24} color="gray" />
+              <Fontisto name="email" size={24} color="black" />
               <View style={{ marginLeft: 10, width: "80%" }}>
                 <TextInput
                   value={userInfo.email}

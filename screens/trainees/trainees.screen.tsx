@@ -6,13 +6,15 @@ import {
   TextInput,
   ScrollView,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import Trainee from "@/components/trainee";
-import { FAB } from "@rneui/themed";
-import { router } from "expo-router";
+
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
+import axios from "axios";
+import { SERVER_URL } from "@/utils/utils";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function TraineesScreen() {
   const [activeTab, setActiveTab] = useState("button1");
@@ -23,63 +25,77 @@ export default function TraineesScreen() {
   const handlePress = (tab: any) => {
     setActiveTab(tab);
   };
+
+  // Get user traineees
+  useEffect(() => {
+    async function getTrainees() {
+      const token = await AsyncStorage.getItem("access_token");
+      const res = await axios.post(`${SERVER_URL}/api/v1/mealplans`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`,
+        },
+      });
+    }
+    getTrainees;
+  }, []);
+
   return (
     <SafeAreaView>
-    <LinearGradient colors={["#E5ECF9", "#F6F7F9"]}>
-      <View className="mt-[60px]">
-        <Text
-          style={{ fontFamily: "Nunito_700Bold" }}
-          className="mx-3 font-semibold text-3xl mb-5"
-        >
-          Trainees
-        </Text>
-        {/* Fiter section */}
-        <View className="flex flex-row w-[100%] ">
-          <TouchableOpacity
-            className="w-[50%]  flex flex-col items-center justify-center"
-            onPress={() => handlePress("button1")}
+      <LinearGradient colors={["#E5ECF9", "#F6F7F9"]}>
+        <View className="mt-[60px]">
+          <Text
+            style={{ fontFamily: "Nunito_700Bold" }}
+            className="mx-3 font-semibold text-3xl mb-5"
           >
-            <Text>My Trainees</Text>
-            <View
-              className={activeTab === "button1" ? active : inactive}
-            ></View>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="w-[50%] flex flex-col items-center justify-center"
-            onPress={() => handlePress("button2")}
-          >
-            <Text>Assigned Trainees </Text>
-            <View
-              className={activeTab === "button2" ? active : inactive}
-            ></View>
-          </TouchableOpacity>
+            Trainees
+          </Text>
+          {/* Fiter section */}
+          <View className="flex flex-row w-[100%] ">
+            <TouchableOpacity
+              className="w-[50%]  flex flex-col items-center justify-center"
+              onPress={() => handlePress("button1")}
+            >
+              <Text>My Trainees</Text>
+              <View
+                className={activeTab === "button1" ? active : inactive}
+              ></View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              className="w-[50%] flex flex-col items-center justify-center"
+              onPress={() => handlePress("button2")}
+            >
+              <Text>Assigned Trainees </Text>
+              <View
+                className={activeTab === "button2" ? active : inactive}
+              ></View>
+            </TouchableOpacity>
+          </View>
+          {/* End of filter section */}
+          <View className="border border-slate-500 rounded-full flex flex-row items-center mb-5 mt-5 px-2 mx-8">
+            <AntDesign name="search1" size={24} color="black" />
+            <TextInput className="w-full p-2 " placeholder="search by name" />
+          </View>
+          <View className="mt-3">
+            <ScrollView>
+              {activeTab === "button1" ? (
+                <>
+                  <View className="mx-3">
+                    <Trainee />
+                    <Trainee />
+                    <Trainee />
+                    <Trainee />
+                  </View>
+                </>
+              ) : (
+                <>
+                  <Trainee />
+                </>
+              )}
+            </ScrollView>
+          </View>
         </View>
-        {/* End of filter section */}
-        <View className="border border-slate-500 rounded-full flex flex-row items-center mb-5 mt-5 px-2 mx-8">
-          <AntDesign name="search1" size={24} color="black" />
-          <TextInput className="w-full p-2 " placeholder="search by name" />
-        </View>
-        <View className="mt-3">
-          <ScrollView>
-            {activeTab === "button1" ? (
-              <>
-                <View className="mx-3">
-                  <Trainee />
-                  <Trainee />
-                  <Trainee />
-                  <Trainee />
-                </View>
-              </>
-            ) : (
-              <>
-                <Trainee />
-              </>
-            )}
-          </ScrollView>
-
-        </View>
-      </View>
-    </LinearGradient>
+      </LinearGradient>
     </SafeAreaView>
   );
 }
