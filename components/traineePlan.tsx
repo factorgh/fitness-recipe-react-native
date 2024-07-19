@@ -5,11 +5,11 @@ import { AntDesign } from "@expo/vector-icons";
 
 import { FontAwesome } from "@expo/vector-icons";
 import { router } from "expo-router";
-export default function TraineePlanItem() {
+export default function TraineePlanItem({ item }: { item: any }) {
   return (
     <TouchableOpacity
       onPress={() => router.push("/(routes)/trainee-plan-detail")}
-      className=" flex-1 flex-row gap-5  p-1 border border-slate-300 shadow-sm rounded-md  mt-5"
+      className=" flex-1 flex-row w-[350px]  p-2 gap-5 border border-slate-300 shadow-sm rounded-md  mt-5"
     >
       {/* Image section */}
       <Image

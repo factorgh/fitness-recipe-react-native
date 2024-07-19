@@ -18,16 +18,15 @@ export default function SpeedDialItem({ item }: { item: any }) {
     const token = await AsyncStorage.getItem("access_token");
     // Perform your delete operation here (e.g., API call, state update)
     await axios
-      .delete(
-        `${SERVER_URL}/api/v1/recipe/delete/recipe/`,
-
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${token}`,
-          },
-        }
-      )
+      .delete(`${SERVER_URL}/api/v1/recipe/delete/recipe/`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`,
+        },
+        data: {
+          id: itemId, // Replace with the actual id you want to send
+        },
+      })
       .then((res) => Toast.show("Item deleted successfully"))
       .catch((err) => Toast.show("Error deleting item"));
   };

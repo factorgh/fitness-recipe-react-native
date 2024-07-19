@@ -1,9 +1,13 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React from "react";
+import { router } from "expo-router";
 
 export default function NotificationItem() {
   return (
-    <View className=" h-24 p-3 mx-3 bg-slate-100 shadow-xl rounded-md mt-5 flex-row items-start mb-3 ">
+    <TouchableOpacity
+      onPress={() => router.push("/(tabs)")}
+      className=" h-24 p-3 mx-3 bg-slate-100 shadow-xl rounded-md mt-5 flex-row items-start mb-3 "
+    >
       {/* Notification user preview */}
       <View className="rounded-full w-8 h-8  bg-red-300 flex items-center justify-center mr-3">
         <Text
@@ -34,7 +38,7 @@ export default function NotificationItem() {
           Complete your first mission today!
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 

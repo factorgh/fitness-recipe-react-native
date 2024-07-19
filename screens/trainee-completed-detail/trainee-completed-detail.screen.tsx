@@ -61,7 +61,7 @@ export default function TraineeCompletedDetailScreen() {
             onPress={handleExpanded}
           >
             <Text
-              style={{ fontFamily: "Nunito_400Regular " }}
+              style={{ fontFamily: "Nunito_400Regular" }}
               className="text-md mr-32 "
             >
               Ingredients

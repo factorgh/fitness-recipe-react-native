@@ -4,30 +4,29 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Alert,
-  Image,
 } from "react-native";
-import React, { useState } from "react";
-import { Nunito_400Regular, Nunito_700Bold } from "@expo-google-fonts/nunito";
-import { useFonts } from "@expo-google-fonts/raleway";
+import React, { useEffect, useState } from "react";
+
 import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import BottomSheet from "@gorhom/bottom-sheet";
-
+import { Avatar } from "@rneui/themed";
 import CalendarPicker from "react-native-calendar-picker";
+import { Entypo } from "@expo/vector-icons";
 
-import TraineePlanItem from "@/components/traineePlan";
+import { router } from "expo-router";
+
+import Allmeals from "@/components/allmeals/allmeals";
+import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AllmealsTrainee from "@/components/allmeals/allmeals-trainee";
 
 export default function MealPlanScreen() {
-  const [showPopup, setShowPopup] = useState(false);
-  let [fontLoaded, fontError] = useFonts({
-    Nunito_400Regular,
-    Nunito_700Bold,
-  });
+  const [date, setDate] = useState("");
+  // let [fontLoaded, fontError] = useFonts({
+  //   Nunito_400Regular,
+  //   Nunito_700Bold,
+  // });
 
-  if (!fontLoaded && !fontError) return null;
+  // if (!fontLoaded && !fontError) return null;
 
   const getGreeting = () => {
     const currentHour = new Date().getHours();
@@ -40,69 +39,50 @@ export default function MealPlanScreen() {
     }
   };
 
-  const handleDateChange = (date: any) => {
-    console.log(date);
+  const handleDateChange = (dateSelected: any) => {
+    console.log(dateSelected);
+    setDate(dateSelected);
   };
   const greeting = getGreeting();
   return (
     <SafeAreaView>
-      <LinearGradient colors={["#E5ECF9", "#F6F7F9"]}>
-        <View className="mt-[40px] ">
-          <ScrollView showsVerticalScrollIndicator={false}>
-            <View className="w-full  mt-[30px] flex flex-row justify-between p-3 ">
-              <Text
-                style={{ fontFamily: "Nunito_700Bold" }}
-                className="text-2xl"
-              >
-                {greeting}
-              </Text>
-
-              <View className="flex flex-row gap-2 items-center">
-                <Image
-                  style={{
-                    width: 27,
-                    height: 27,
-                    borderRadius: 20,
-                    padding: 2,
-                  }}
-                  source={require("@/assets/images/profile.webp")}
+      <LinearGradient className="h-full" colors={["#E5ECF9", "#F6F7F9"]}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View className="w-full  mt-[15px] flex flex-row justify-between p-3 ">
+            <Text style={{ fontFamily: "Nunito_700Bold" }} className="text-2xl">
+              {greeting}
+            </Text>
+            <View className="flex flex-row gap-2 items-center">
+              <View className="rounded-full w-8 h-8 bg-slate-300"></View>
+              <View>
+                <Ionicons
+                  name="notifications-circle"
+                  size={35}
+                  color="#747474"
                 />
-
-                <View>
-                  <Ionicons
-                    name="notifications-circle"
-                    size={35}
-                    color="#747474"
-                  />
-                </View>
               </View>
             </View>
-            {/* End of first section */}
-            {/* Calendar section */}
-            <View className=" mt-8 ">
-              <CalendarPicker onDateChange={handleDateChange} />
-            </View>
-            {/* End of calendar section */}
+          </View>
 
-            <View className="mt-5 mx-3">
-              <Text
-                style={{
-                  fontFamily: "Nunito_700Bold",
-                  marginLeft: 20,
-                  fontSize: 20,
-                }}
-              >
-                Upcoming meal plans
-              </Text>
-            </View>
+          {/* End of first section */}
+          {/* Calendar section */}
+          <View className=" mt-3 ">
+            <CalendarPicker onDateChange={handleDateChange} />
+          </View>
+          {/* End of calendar section */}
 
-            <ScrollView className="mt-1 mx-3 mb-5">
-              <TraineePlanItem />
-              <TraineePlanItem />
-            </ScrollView>
-          </ScrollView>
-        </View>
+          <View className="mt-5 mx-3">
+            <Text className="text-2xl" style={{ fontFamily: "Nunito_700Bold" }}>
+              Upcoming meal plans
+            </Text>
+          </View>
+          <View>
+            <AllmealsTrainee date={date} />
+          </View>
+        </ScrollView>
       </LinearGradient>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({});

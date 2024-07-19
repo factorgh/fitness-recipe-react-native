@@ -9,6 +9,7 @@ import { router } from "expo-router";
 import axios from "axios";
 import { SERVER_URL } from "@/utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Toast } from "react-native-toast-notifications";
 
 // Define TypeScript types
 interface MealUser {
@@ -51,18 +52,20 @@ export default function MealPlanItem({ item }: { item: any }) {
     /////Get access token
     const token = await AsyncStorage.getItem("access_token");
     // Perform your delete operation here (e.g., API call, state update)
-    await axios.delete(
-      `${SERVER_URL}/api/v1/mealplans/delete/trainer/meal/`,
-
-      {
+    await axios
+      .delete(`${SERVER_URL}/api/v1/mealplans/delete/trainer/meal/`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `${token}`,
         },
-      }
-    );
-    console.log(`Item with id ${itemId} deleted`);
+        data: {
+          id: itemId, // Replace with the actual id you want to send
+        },
+      })
+      .then((res) => Toast.show("Item deleted successfully"))
+      .catch((err) => Toast.show("Error deleting item"));
   };
+
   // Function to show the confirmation alert
   const showDeleteAlert = (itemId: any) => {
     Alert.alert(
