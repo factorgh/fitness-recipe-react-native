@@ -68,6 +68,7 @@ export default function AllmealsTrainee({ date }: { date: any }) {
         </View>
       ) : (
         <FlatList
+          showsVerticalScrollIndicator={false}
           data={data}
           keyExtractor={(item: any) => item.id.toString()}
           renderItem={({ item }: { item: any }) => (
@@ -84,6 +85,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
+    justifyContent: "center",
   },
   emptyContainer: {
     flex: 1,
