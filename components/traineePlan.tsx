@@ -2,19 +2,36 @@ import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import React from "react";
 import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
+import { format } from "date-fns";
 
 import { FontAwesome } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { cld } from "@/lib/cloudinary";
+import { AdvancedImage } from "cloudinary-react-native";
 export default function TraineePlanItem({ item }: { item: any }) {
+  // Date and time formatting
+  function formatTime(isoString: any) {
+    const date = new Date(isoString);
+    return format(date, "hh:mm:ss a"); // 'hh:mm:ss a' formats to 12-hour time with AM/PM
+  }
+
+  function formatDate(isoString: string) {
+    const date = new Date(isoString);
+    return format(date, "MM/dd/yy"); // 'MM/dd/yy' formats to '12/07/24'
+  }
+
+  console.log(item);
+  const thumbNailImage = cld.image(item.recipe.thumbNail);
   return (
     <TouchableOpacity
       onPress={() => router.push("/(routes)/trainee-plan-detail")}
       className=" flex-1 flex-row w-[400px]  p-2 gap-5 border border-slate-300 shadow-sm rounded-md  mt-5"
     >
       {/* Image section */}
-      <Image
+
+      <AdvancedImage
         style={{ width: 90, height: 100, borderRadius: 12 }}
-        source={require("@/assets/images/recipe.jpeg")}
+        cldImg={thumbNailImage}
       />
 
       {/* Description section with time and date attached  */}
@@ -22,24 +39,24 @@ export default function TraineePlanItem({ item }: { item: any }) {
         {/* Description  */}
         <View className="mt-2">
           <Text style={{ fontFamily: "Nunito_700Bold", marginBottom: 5 }}>
-            Vegetable Salads with potato{" "}
+            {item.recipe.name}
           </Text>
           <Text
             className="text-slate-500 text-sm"
             style={{ fontFamily: "Nunito_400Regular" }}
           >
-            Roasted potato and Eggplant
+            {item.recipe.description}
           </Text>
         </View>
         {/* Time and date */}
         <View className="flex flex-row justify-between items-center mb-2">
-          <View className="flex flex-row gap-2 items-center">
+          <View className="flex flex-row gap-2 mr-3 items-center">
             <Entypo name="back-in-time" size={15} color="black" />
-            <Text>10:30 AM</Text>
+            <Text>{formatTime(item.time_picked)}</Text>
           </View>
           <View className="flex flex-row gap-2 items-center">
             <FontAwesome name="calendar-times-o" size={15} color="black" />
-            <Text>12/07/24</Text>
+            <Text>{formatDate(item.date_picked)}</Text>
           </View>
         </View>
       </View>

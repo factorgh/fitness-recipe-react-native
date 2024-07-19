@@ -46,9 +46,9 @@ export default function AllmealsTrainee({ date }: { date: any }) {
         );
         console.log(
           "<---------response from date filter------------>",
-          response.data
+          response.data.meal
         );
-        setData(response.data.meal);
+        setData(response.data.meal.map((item: any) => item.meal_plan));
       } catch (err) {
         Toast.show("No data Available");
       } finally {
@@ -58,6 +58,7 @@ export default function AllmealsTrainee({ date }: { date: any }) {
     fetchData();
   }, [date]);
 
+  console.log(data);
   return (
     <View style={styles.container}>
       {loading ? (

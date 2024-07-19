@@ -71,7 +71,7 @@ export default function UpdateRecipeScreen() {
     }
   };
 
-  const handleCreate = async () => {
+  const handleUpdate = async () => {
     //Starting creating state
     setIsLoading(true);
 
@@ -240,7 +240,7 @@ export default function UpdateRecipeScreen() {
             {/* Next button */}
 
             <TouchableOpacity
-              onPress={handleCreate}
+              onPress={handleUpdate}
               className="bg-red-500 items-center mt-5 mb-3 p-3 rounded-md "
             >
               {isLoading ? (

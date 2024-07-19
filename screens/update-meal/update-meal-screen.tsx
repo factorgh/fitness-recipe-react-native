@@ -154,6 +154,7 @@ export default function UpdateRecipeScreen() {
         console.log(res.data);
         Toast.show("recipe updated");
         const traineeSec = {
+          id: mealDetails.recipe.id,
           date_picked: mealDetails.date_picked,
           time_picked: mealDetails.time_picked,
           meal_users: mealDetails.meal_users,
@@ -161,7 +162,7 @@ export default function UpdateRecipeScreen() {
         router.push({
           pathname: "/(routes)/add-trainee-to-plan",
           params: {
-            mealPlan: JSON.stringify(traineeSec),
+            recipe_id: JSON.stringify(traineeSec),
           },
         });
 
