@@ -3,62 +3,67 @@ import {
   FlatList,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import TraineePlanItem from "../traineePlan";
+import MealPlanItem from "../mealPlanItem";
 import axios from "axios";
 import { SERVER_URL } from "@/utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useUser from "@/hooks/useUser";
+import { router } from "expo-router";
 import { Toast } from "react-native-toast-notifications";
+import TraineePlanItem from "../traineePlan";
 
-// Utility function
+// Uitlity function
 const setToMidnight = (date: Date) => {
   const newDate = new Date(date);
   newDate.setUTCHours(0, 0, 0, 0);
   return newDate;
 };
-
-export default function AllmealsTrainee({ date }: { date: any }) {
+export default function Allmeals({ date }: { date: any }) {
   const [data, setData] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   const { user } = useUser();
 
-  // Fetch All meal plans
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      const newDate = setToMidnight(date);
+  ///GELL All meal plans
+  useEffect(
+    function () {
+      const fetchData = async () => {
+        setLoading(true);
+        const newDate = setToMidnight(date);
+        console.log("<---------fomattedDateTrainee------>", newDate);
 
-      const token = await AsyncStorage.getItem("access_token");
-      console.log("<-------tokenOnAllMeals-------->", token);
-      try {
-        const response = await axios.get(
-          `${SERVER_URL}/api/v1/mealplans/trainee/${newDate}`,
-          {
+        const token = await AsyncStorage.getItem("access_token");
+        console.log("<-------tokenOnAllMeals-------->", token);
+        await axios
+          .get(`${SERVER_URL}/api/v1/mealplans/trainee/${newDate}`, {
             headers: {
               "Content-Type": "application/json",
               Authorization: `${token}`,
             },
-          }
-        );
-        console.log(
-          "<---------response from date filter------------>",
-          response.data.meal
-        );
-        setData(response.data.meal.map((item: any) => item.meal_plan));
-      } catch (err) {
-        Toast.show("No data Available");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [date]);
+          })
+          .then((response) => {
+            console.log(
+              "<---------response from date filter------------>",
+              response.data
+            );
+            setData(response.data.meal);
+            setLoading(false);
+          })
+          .catch((err) => {
+            Toast.show("No data Available");
 
-  console.log(data);
+            setLoading(false);
+          });
+      };
+      fetchData();
+    },
+    [date]
+  );
+
   return (
     <View style={styles.container}>
       {loading ? (

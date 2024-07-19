@@ -33,7 +33,19 @@ export default function MealPlanScreen() {
           <Text style={styles.greetingText}>{greeting}</Text>
           <View style={styles.notificationContainer}>
             <View style={styles.notificationCircle} />
-            <Ionicons name="notifications-circle" size={35} color="#747474" />
+            <View
+              style={{
+                width: 70,
+                backgroundColor: "red",
+                height: 30,
+                display: "flex",
+                borderRadius: 15,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ fontSize: 2 }}>Trainer</Text>
+            </View>
           </View>
         </View>
 
@@ -67,7 +79,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   greetingText: {
-    fontFamily: "Nunito_700Bold",
+    fontFamily: "Nunito_400Regular",
     fontSize: 24,
   },
   notificationContainer: {

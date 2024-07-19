@@ -8,6 +8,8 @@ import { FontAwesome } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { cld } from "@/lib/cloudinary";
 import { AdvancedImage } from "cloudinary-react-native";
+import { truncateText } from "@/utils/fomatters";
+
 export default function TraineePlanItem({ item }: { item: any }) {
   // Date and time formatting
   function formatTime(isoString: any) {
@@ -50,7 +52,7 @@ export default function TraineePlanItem({ item }: { item: any }) {
             className="text-slate-500 text-sm"
             style={{ fontFamily: "Nunito_400Regular" }}
           >
-            {item.recipe.description}
+            {truncateText(item.recipe.description, 20)}
           </Text>
         </View>
         {/* Time and date */}

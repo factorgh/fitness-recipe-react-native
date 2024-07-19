@@ -5,6 +5,7 @@ import { router } from "expo-router";
 import { AdvancedImage } from "cloudinary-react-native";
 import { Recipe } from "@/types/Recipe";
 import { cld } from "@/lib/cloudinary";
+import { truncateText } from "@/utils/fomatters";
 
 export default function RecipeItem({ item }: { item: Recipe }) {
   // Ensure item.thumbNail is a string (public ID)
@@ -27,7 +28,9 @@ export default function RecipeItem({ item }: { item: Recipe }) {
       <View className="flex flex-row items-center justify-between p-3">
         <View className="w-52">
           <Text className="text-md font-semibold">{item.name}</Text>
-          <Text className="text-slate-500 text-[12px]">{item.description}</Text>
+          <Text className="text-slate-500 text-[12px]">
+            {truncateText(item.description, 20)}
+          </Text>
         </View>
         {/* Rating button */}
         <View className="w-[80px] h-[40px]  flex flex-row  items-center rounded-md bg-orange-300 justify-between p-3">

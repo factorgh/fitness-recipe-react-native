@@ -33,6 +33,7 @@ export default function Allmeals({ date }: { date: any }) {
       const fetchData = async () => {
         setLoading(true);
         const newDate = setToMidnight(date);
+        console.log("<---------fomattedDateTrainer------>", newDate);
 
         const token = await AsyncStorage.getItem("access_token");
         console.log("<-------tokenOnAllMeals-------->", token);
