@@ -91,9 +91,6 @@ export default function TraineesScreen() {
                 <>
                   <View className="mx-3">
                     <Trainee />
-                    <Trainee />
-                    <Trainee />
-                    <Trainee />
                   </View>
                 </>
               ) : (

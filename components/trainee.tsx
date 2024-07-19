@@ -9,11 +9,7 @@ export default function Trainee() {
       <View className="flex flex-row items-center justify-between mx-5 mt-3">
         {/* Avatar */}
         <View className=" flex flex-row   ">
-          <Avatar
-            size={32}
-            rounded
-            source={{ uri: "https://randomuser.me/api/portraits/men/36.jpg" }}
-          />
+          <View className="rounded-full w-8 h-8 bg-slate-300"></View>
           {/* Trainee detail */}
           <View className="ml-10">
             <Text className="font-semibold">John Smith</Text>

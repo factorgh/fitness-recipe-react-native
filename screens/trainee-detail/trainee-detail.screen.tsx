@@ -40,10 +40,7 @@ export default function TraineeDetailScreen() {
                   size={24}
                   color="black"
                 />
-                <Image
-                  style={{ height: 50, width: 50, borderRadius: 30 }}
-                  source={require("@/assets/images/profile.webp")}
-                />
+                <View className="rounded-full w-12 h-12 bg-slate-300"></View>
                 <Text
                   style={{ fontFamily: "Nunito_700Bold" }}
                   className="text-slate-500 "
@@ -76,38 +73,32 @@ export default function TraineeDetailScreen() {
             </View>
             {/* fILTER DETAILS */}
             <View className="mt- mb-32">
-          
               <ScrollView>
                 {activeTab === "button1" ? (
                   <>
                     <View className="mx-3 mt-5">
-                      <TraineePendingCard/>
-                      <TraineePendingCard/>
-                      <TraineePendingCard/>
-                      <TraineePendingCard/>
+                      <TraineePendingCard />
+                      <TraineePendingCard />
                     </View>
                   </>
                 ) : (
                   <>
-                   <View className="mx-3">
-                  <TraineeCompletedCard/>
-                  <TraineeCompletedCard/>
-                  <TraineeCompletedCard/>
-                  <TraineeCompletedCard/>
-                  </View>
+                    <View className="mx-3">
+                      <TraineeCompletedCard />
+                      <TraineeCompletedCard />
+                    </View>
                   </>
                 )}
               </ScrollView>
-              </View>
+            </View>
 
-              <FAB
-                size="large"
-                onPress={() => router.push("/(routes)/assign-meal")}
-                placement="right"
-                title="+"
-                color="red"
-              />
-            
+            <FAB
+              size="large"
+              onPress={() => router.push("/(routes)/assign-meal")}
+              placement="right"
+              title="+"
+              color="red"
+            />
           </View>
         </ScrollView>
       </LinearGradient>
