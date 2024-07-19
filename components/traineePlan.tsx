@@ -24,7 +24,12 @@ export default function TraineePlanItem({ item }: { item: any }) {
   const thumbNailImage = cld.image(item.recipe.thumbNail);
   return (
     <TouchableOpacity
-      onPress={() => router.push("/(routes)/trainee-plan-detail")}
+      onPress={() =>
+        router.push({
+          pathname: "/(routes)/trainee-plan-detail",
+          params: { item: JSON.stringify(item.recipe) },
+        })
+      }
       className=" flex-1 flex-row w-[400px]  p-2 gap-5 border border-slate-300 shadow-sm rounded-md  mt-5"
     >
       {/* Image section */}
