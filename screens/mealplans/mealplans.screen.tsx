@@ -1,6 +1,5 @@
 import {
   FlatList,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -38,7 +37,7 @@ export default function MealPlanScreen() {
   }, []);
 
   useEffect(() => {
-    //Set loading to true
+    // Set loading to true
     setLoading(true);
 
     const fetchRecipes = async () => {
@@ -71,61 +70,61 @@ export default function MealPlanScreen() {
   return (
     <SafeAreaView>
       <LinearGradient className="h-screen" colors={["#E5ECF9", "#F6F7F9"]}>
-        <ScrollView
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          showsVerticalScrollIndicator={false}
-          className="mt-[30px] mx-5 mb-16 h-screen"
-        >
-          <View className="flex flex-row justify-between">
-            <Text style={{ fontFamily: "Nunito_700Bold" }} className="text-3xl">
-              Recipes
-            </Text>
-            <Ionicons
-              onPress={() => router.push("/(routes)/create-recipe")}
-              name="add"
-              size={30}
-              color="black"
-            />
-          </View>
-          <View className="border border-slate-300 rounded-full flex flex-row items-center mt-3 px-2">
-            <AntDesign name="search1" size={24} color="black" />
-            <TextInput className="w-full p-3 " placeholder="search by name" />
-          </View>
-          <View className="h-[60px]    flex flex-row gap-2   items-center  ">
-            <TouchableOpacity className="border bg-red-400  border-slate-300 rounded-md p-2 flex flex-row items-center">
-              <Text className="text-white">All</Text>
-            </TouchableOpacity>
-            {/* <TouchableOpacity className="border border-slate-300 rounded-md p-2 flex flex-row items-center">
-              <Text>Popularity</Text>
-            </TouchableOpacity> */}
-            {/* <TouchableOpacity className="border border-slate-300 rounded-md p-2 flex flex-row items-center ">
-              <Text>Relevance</Text>
-            </TouchableOpacity> */}
-            <TouchableOpacity className="border border-slate-300 rounded-md p-2 flex flex-row items-center ">
-              <Text>Bookmarked</Text>
-            </TouchableOpacity>
-          </View>
-
-          {loading ? (
-            <Loader />
-          ) : recipes.length > 0 ? (
-            <View className="mt-3 rounded-md mb-5">
-              <FlatList
-                nestedScrollEnabled
-                showsVerticalScrollIndicator={false}
-                data={recipes}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => <RecipeItem item={item} />}
-              />
-            </View>
-          ) : (
-            <View className="flex-col items-center justify-center mt-52">
-              <Text>No recipes available</Text>
-            </View>
-          )}
-        </ScrollView>
+        <View className="flex-1">
+          <FlatList
+            nestedScrollEnabled
+            showsVerticalScrollIndicator={false}
+            data={recipes}
+            keyExtractor={(item) => item.id}
+            ListHeaderComponent={
+              <>
+                <View className="mt-[30px] mx-5">
+                  <View className="flex flex-row justify-between">
+                    <Text
+                      style={{ fontFamily: "Nunito_700Bold" }}
+                      className="text-3xl"
+                    >
+                      Recipes
+                    </Text>
+                    <Ionicons
+                      onPress={() => router.push("/(routes)/create-recipe")}
+                      name="add"
+                      size={30}
+                      color="black"
+                    />
+                  </View>
+                  <View className="border border-slate-300 rounded-full flex flex-row items-center mt-3 px-2">
+                    <AntDesign name="search1" size={24} color="black" />
+                    <TextInput
+                      className="w-full p-3 "
+                      placeholder="search by name"
+                    />
+                  </View>
+                  <View className="h-[60px] flex flex-row gap-2 items-center mt-3">
+                    <TouchableOpacity className="border bg-red-400 border-slate-300 rounded-md p-2 flex flex-row items-center">
+                      <Text className="text-white">All</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity className="border border-slate-300 rounded-md p-2 flex flex-row items-center">
+                      <Text>Bookmarked</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                {loading && <Loader />}
+                {!loading && recipes.length === 0 && (
+                  <View className="flex-col items-center justify-center mt-52">
+                    <Text>No recipes available</Text>
+                  </View>
+                )}
+              </>
+            }
+            renderItem={({ item }) => <RecipeItem item={item} />}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }} // Add bottom padding here
+            ListFooterComponent={<View style={{ height: 60 }} />} // Add extra space at the bottom
+          />
+        </View>
       </LinearGradient>
     </SafeAreaView>
   );

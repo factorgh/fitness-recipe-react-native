@@ -2,29 +2,56 @@ import React, { useState } from "react";
 import { SpeedDial } from "@rneui/base";
 import { Alert, View } from "react-native";
 import { router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { SERVER_URL } from "@/utils/utils";
+import axios from "axios";
+import { Toast } from "react-native-toast-notifications";
 
 export default function SpeedDialItem({ item }: { item: any }) {
   const [open, setOpen] = useState(false);
 
-  const showAlert = () =>
+  console.log("<--recipeDetail", item.id);
+
+  // Handle delete alert
+  const deleteItem = async (itemId: any) => {
+    /////Get access token
+    const token = await AsyncStorage.getItem("access_token");
+    // Perform your delete operation here (e.g., API call, state update)
+    await axios
+      .delete(
+        `${SERVER_URL}/api/v1/recipe/delete/recipe/`,
+
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${token}`,
+          },
+        }
+      )
+      .then((res) => Toast.show("Item deleted successfully"))
+      .catch((err) => Toast.show("Error deleting item"));
+  };
+
+  // Function to show the confirmation alert
+  const showDeleteAlert = (itemId: any) => {
     Alert.alert(
-      "Delete recipe",
-      "Are sure you want to delete this recipe",
+      "Delete Item",
+      "Are you sure you want to delete this item?",
       [
         {
           text: "Cancel",
-          onPress: () => Alert.alert("Cancel Pressed"),
+          onPress: () => console.log("Delete cancelled"),
           style: "cancel",
         },
+        {
+          text: "Delete",
+          onPress: () => deleteItem(itemId),
+          style: "destructive",
+        },
       ],
-      {
-        cancelable: true,
-        onDismiss: () =>
-          Alert.alert(
-            "This alert was dismissed by tapping outside of the alert dialog."
-          ),
-      }
+      { cancelable: false }
     );
+  };
   return (
     <SpeedDial
       overlayColor="transparent"
@@ -45,14 +72,14 @@ export default function SpeedDialItem({ item }: { item: any }) {
         onPress={() =>
           router.push({
             pathname: "/(routes)/update-recipe",
-            params: { recipe: JSON.stringify(item) },
+            params: { recipe_id: JSON.stringify(item?.id) },
           })
         }
       />
       <SpeedDial.Action
         icon={{ name: "delete", color: "#fff" }}
         title="Delete"
-        onPress={showAlert}
+        onPress={() => showDeleteAlert(item.id)}
       />
     </SpeedDial>
   );

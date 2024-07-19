@@ -26,11 +26,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Toast } from "react-native-toast-notifications";
 import { Recipe } from "@/types/Recipe";
 import { AdvancedImage } from "cloudinary-react-native";
-import { thumbnail } from "@cloudinary/url-gen/actions/resize";
 
 export default function UpdateRecipeScreen() {
   const [inputValue, setInputValue] = useState("");
-  const [inputList, setInputList] = useState("");
+  const [inputList, setInputList] = useState<string>("");
   const [image, setImage] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [recipe, setRecipe] = useState<Recipe>();
@@ -68,15 +67,15 @@ export default function UpdateRecipeScreen() {
 
   // Handle meal plan generation
   useEffect(() => {
-    if (recipe) {
+    if (mealDetails) {
       setMealPlanInfo({
-        description: recipe?.description,
-        name: recipe?.name,
-        procedures: recipe?.procedures,
+        description: mealDetails.recipe.description,
+        name: mealDetails.recipe.name,
+        procedures: mealDetails.recipe.procedures,
       });
-      setInputList(recipe?.ingredients);
+      setInputList(mealDetails.recipe?.ingredients);
     }
-  }, [recipe]);
+  }, [mealDetails]);
 
   const handleAddInput = () => {
     if (inputValue.trim() !== "") {
@@ -113,13 +112,27 @@ export default function UpdateRecipeScreen() {
 
     /////Get access token
     const token = await AsyncStorage.getItem("access_token");
-    ///Upload image to cloudinary
-    const response = await uploadImage(image);
-    // Update image
+    console.log(token);
 
-    let recipeDetails = {
+    // Initialize the imageUrl with the existing thumbnail
+    let imageUrl = mealDetails.recipe.thumbNail;
+
+    // Check if a new image has been selected
+    if (image && image !== mealDetails.recipe.thumbNail) {
+      try {
+        const response = await uploadImage(image);
+        imageUrl = response.public_id;
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        Toast.show("Error uploading image");
+        setIsLoading(false);
+        return;
+      }
+    }
+
+    const recipeDetails = {
       name: mealPlanInfo.name,
-      thumbNail: response.public_id,
+      thumbNail: imageUrl,
       ingredients: inputList,
       description: mealPlanInfo.description,
       procedures: mealPlanInfo.procedures,
@@ -127,9 +140,11 @@ export default function UpdateRecipeScreen() {
     };
     console.log("<----Meal plan body--->", recipeDetails);
 
+    const recipeId = mealDetails.recipe.id;
+    console.log(recipeId);
     ////Save to db
     await axios
-      .put(`${SERVER_URL}/api/v1/recipe/single/${recipe?.id}`, recipeDetails, {
+      .put(`${SERVER_URL}/api/v1/recipe/single/${recipeId}`, recipeDetails, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `${token}`,
@@ -154,13 +169,15 @@ export default function UpdateRecipeScreen() {
       })
       .catch((err) => {
         setIsLoading(false);
+        Toast.show("Error updating recipe");
+
         console.log(err);
       });
   };
 
   if (!fontLoaded && !fontError) return null;
 
-  const thumbNailImage = cld.image(recipe?.thumbNail);
+  const thumbNailImage = cld.image(mealDetails?.recipe?.thumbNail);
 
   return (
     <SafeAreaView>
@@ -192,13 +209,11 @@ export default function UpdateRecipeScreen() {
                 onPress={pickImage}
                 className="w-full rounded-md  h-[100px] flex "
               >
-                {image && (
-                  <Image
-                    style={styles.image}
-                    resizeMode="cover"
-                    source={{ uri: image }}
-                  />
-                )}
+                <Image
+                  style={styles.image}
+                  resizeMode="cover"
+                  source={{ uri: image }}
+                />
               </TouchableOpacity>
             ) : (
               <TouchableOpacity onPress={pickImage} className="gap-2">

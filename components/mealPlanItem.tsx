@@ -6,6 +6,9 @@ import { FontAwesome } from "@expo/vector-icons";
 
 import { format } from "date-fns";
 import { router } from "expo-router";
+import axios from "axios";
+import { SERVER_URL } from "@/utils/utils";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Define TypeScript types
 interface MealUser {
@@ -43,8 +46,42 @@ export default function MealPlanItem({ item }: { item: any }) {
     }
   }, [item.meal_users.user_id]);
 
-  const handleDelete = async () => {
-    Alert.alert("Confirm delete meal plan ", "Delete meal plan");
+  // Handle delete alert
+  const deleteItem = async (itemId: any) => {
+    /////Get access token
+    const token = await AsyncStorage.getItem("access_token");
+    // Perform your delete operation here (e.g., API call, state update)
+    await axios.delete(
+      `${SERVER_URL}/api/v1/mealplans/delete/trainer/meal/`,
+
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`,
+        },
+      }
+    );
+    console.log(`Item with id ${itemId} deleted`);
+  };
+  // Function to show the confirmation alert
+  const showDeleteAlert = (itemId: any) => {
+    Alert.alert(
+      "Delete Meal plan",
+      "Are you sure you want to delete this meal?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Delete cancelled"),
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          onPress: () => deleteItem(itemId),
+          style: "destructive",
+        },
+      ],
+      { cancelable: false }
+    );
   };
 
   const handleExpanded = () => {
@@ -92,7 +129,7 @@ export default function MealPlanItem({ item }: { item: any }) {
           {/* Buttons for meal plan */}
           <View className="flex flex-row gap-2 mt-2 justify-end">
             <TouchableOpacity
-              onPress={handleDelete}
+              onPress={() => showDeleteAlert(item.id)}
               className="border border-slate-300 rounded-md"
             >
               <Text className="text-slate-500 p-2">Delete</Text>

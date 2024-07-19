@@ -56,9 +56,10 @@ export default function AddTraineeToPlanScreen() {
   const recipeDetails = useMemo(() => {
     if (typeof recipe_id === "string") {
       try {
+        console.log("<---recipe_id----->", JSON.parse(recipe_id));
         return JSON.parse(recipe_id);
       } catch (error) {
-        console.error("Error parsing recipe:", error);
+        console.error("Error parsin recipe:", error);
         return null;
       }
     } else {

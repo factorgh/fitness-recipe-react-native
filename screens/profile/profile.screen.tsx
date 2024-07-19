@@ -8,6 +8,7 @@ import {
   FlatList,
   ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
@@ -29,18 +30,22 @@ import { AdvancedImage } from "cloudinary-react-native";
 import useUser from "@/hooks/useUser";
 import { SERVER_URL } from "@/utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Toast } from "react-native-toast-notifications";
+import Loader from "@/components/loader";
 
 // import useUser from "@/hooks/useUser";
 
 export default function ProfileScreen() {
+  const [isLoading, setIsLoading] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
   const [image, setImage] = useState<string | null>(null);
-  const [remoteImage, setRemoteImage] = useState<string | null>(null);
+
   const [userInfo, setUserInfo] = useState({
     phone: "",
     email: "",
   });
   const { user } = useUser();
+  console.log("<------user on profileScreen------->", user);
 
   // const [value, setValue] = useState("");
   // const [filteredValue, setFilteredValue] = useState<User[]>([]);
@@ -111,6 +116,7 @@ export default function ProfileScreen() {
 
   // Handle Image Upload
   const updateProfile = async () => {
+    setIsLoading(true);
     // Get token for updating
     const token = await AsyncStorage.getItem("access_token");
 
@@ -118,7 +124,7 @@ export default function ProfileScreen() {
     const response = await uploadImage(image!);
     console.log(response.public_id);
     // Set to remote image
-    setRemoteImage(response.public_id);
+
     // Create Update object
     const updateObject = {
       img_url: response.public_id,
@@ -133,13 +139,20 @@ export default function ProfileScreen() {
           Authorization: `${token}`,
         },
       })
-      .then((res) => {});
+      .then((res) => {
+        Toast.show("Profile updated successfully", { type: "success" });
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        Toast.show("Error updating profile", { type: "danger" });
+      });
   };
 
   let remoteCldImage;
-  if (remoteImage) {
-    remoteCldImage = cld.image(remoteImage);
-    remoteCldImage.resize(thumbnail().width(300).height(300));
+  if (user?.img_url) {
+    remoteCldImage = cld
+      .image(user.img_url)
+      .resize(thumbnail().width(300).height(300));
   }
 
   console.log("<-----------------all users------------------>", users[0]);
@@ -174,7 +187,7 @@ export default function ProfileScreen() {
                 />
               ) : remoteCldImage ? (
                 <AdvancedImage
-                  className="w-48 aspect-square self-center rounded-full "
+                  className="w-32 aspect-square self-center rounded-full absolute top-24 "
                   cldImg={remoteCldImage!}
                 />
               ) : (
@@ -235,50 +248,48 @@ export default function ProfileScreen() {
           >
             Information
           </Text>
-          <View
-            className="flex flex-col   items-center justify-between mx-3 mb-20 gap-2"
-            style={{ marginLeft: 20 }}
-          >
-            <View className="bg-slate-200 shadow-sm w-full h-16 p-3  rounded-md  flex-row items-center ">
-              <FontAwesome name="phone" size={24} color="gray" />
-              <View style={{ marginLeft: 10, width: "80%" }}>
-                <TextInput
-                  defaultValue={user?.phone}
-                  value={userInfo.phone}
-                  placeholder="tel ..."
-                  className="w-full border border-slate-300 p-2 rounded-l-md"
-                  onChangeText={(value) => {
-                    setUserInfo({ ...userInfo, phone: value });
-                  }}
-                />
-              </View>
+          <View className="flex flex-col   items-center justify-between space-x-2  mb-20 gap-2">
+            <View className="bg-slate-200 shadow-sm w-full h-16 mx-2  rounded-md  flex-row items-center justify-center ">
+              <TextInput
+                style={{ marginHorizontal: 10, width: "90%" }}
+                value={userInfo.phone}
+                defaultValue={user?.phone}
+                placeholder="mobile ..."
+                className="w-full border border-slate-300 p-2 rounded-md"
+                onChangeText={(value) => {
+                  setUserInfo({ ...userInfo, phone: value });
+                }}
+              />
             </View>
             {/* Full name */}
-            <View className="bg-slate-200 shadow-sm w-full h-16 p-3  rounded-md  flex-row items-center ">
-              <Fontisto name="email" size={24} color="black" />
-              <View style={{ marginLeft: 10, width: "80%" }}>
-                <TextInput
-                  value={userInfo.email}
-                  defaultValue={user?.email}
-                  placeholder="email ..."
-                  className="w-full border border-slate-300 p-2 rounded-l-md"
-                  onChangeText={(value) => {
-                    setUserInfo({ ...userInfo, email: value });
-                  }}
-                />
-              </View>
+            <View className="bg-slate-200 shadow-sm w-full h-16 mx-2  rounded-md  flex-row items-center justify-center">
+              <TextInput
+                style={{ marginHorizontal: 10, width: "90%" }}
+                value={userInfo.email}
+                defaultValue={user?.email}
+                placeholder="email ..."
+                className="w-full border border-slate-300 p-2 rounded-md"
+                onChangeText={(value) => {
+                  setUserInfo({ ...userInfo, email: value });
+                }}
+              />
             </View>
           </View>
+
           <TouchableOpacity
             onPress={updateProfile}
-            className="bg-red-500 items-center mt-5 mb-3 p-3 rounded-md mx-5"
+            className="bg-red-500 items-center mt-5 mb-3 p-3 rounded-md  mx-3"
           >
-            <Text
-              style={{ fontFamily: "Nunito_700Bold" }}
-              className="text-white text-xl  "
-            >
-              Update Profile
-            </Text>
+            {isLoading ? (
+              <ActivityIndicator size="small" color={"white"} />
+            ) : (
+              <Text
+                style={{ fontFamily: "Nunito_700Bold" }}
+                className="text-white text-xl  "
+              >
+                Update profile
+              </Text>
+            )}
           </TouchableOpacity>
         </ScrollView>
       </LinearGradient>

@@ -18,6 +18,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function TraineesScreen() {
   const [activeTab, setActiveTab] = useState("button1");
+  const [trainees, setTrainees] = useState([]);
 
   const active = `border border-red-500  bg-red-500 flex w-full h-1 mt-3`;
   const inactive = `border border-red-200  bg-red-500 flex w-[100%] mt-3`;
@@ -30,14 +31,22 @@ export default function TraineesScreen() {
   useEffect(() => {
     async function getTrainees() {
       const token = await AsyncStorage.getItem("access_token");
-      const res = await axios.post(`${SERVER_URL}/api/v1/mealplans`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${token}`,
-        },
-      });
+      const res = await axios
+        .post(`${SERVER_URL}/api/v1/trainer`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${token}`,
+          },
+        })
+        .then((res) => {
+          console.log(res.data.trainee);
+          setTrainees(res.data.trainee);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
-    getTrainees;
+    getTrainees();
   }, []);
 
   return (
