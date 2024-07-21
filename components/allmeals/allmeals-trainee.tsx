@@ -15,6 +15,8 @@ import useUser from "@/hooks/useUser";
 import { router } from "expo-router";
 import { Toast } from "react-native-toast-notifications";
 import TraineePlanItem from "../traineePlan";
+import { AnimatedView } from "react-native-reanimated/lib/typescript/reanimated2/component/View";
+import Animated, { FadeInDown } from "react-native-reanimated";
 
 // Uitlity function
 const setToMidnight = (date: Date) => {
@@ -65,7 +67,10 @@ export default function Allmeals({ date }: { date: any }) {
   );
 
   return (
-    <View style={styles.container}>
+    <Animated.View
+      entering={FadeInDown.duration(50).springify()}
+      style={styles.container}
+    >
       {loading ? (
         <ActivityIndicator size="large" color="blue" />
       ) : data.length === 0 ? (
@@ -83,7 +88,7 @@ export default function Allmeals({ date }: { date: any }) {
           contentContainerStyle={styles.listContent} // Added for styling
         />
       )}
-    </View>
+    </Animated.View>
   );
 }
 

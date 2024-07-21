@@ -19,8 +19,7 @@ import { router } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
-// import { SERVER_URL } from "@/utils/utils";
-// import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { thumbnail } from "@cloudinary/url-gen/actions/resize";
 import { Fontisto } from "@expo/vector-icons";
 
@@ -39,57 +38,20 @@ export default function ProfileScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
   const [image, setImage] = useState<string | null>(null);
+  const { user } = useUser();
 
   const [userInfo, setUserInfo] = useState({
     phone: "",
     email: "",
   });
-  const { user } = useUser();
+
+  useEffect(() => {
+    setUserInfo({ ...userInfo, phone: user?.phone!, email: user?.email! });
+  }, []);
+
   console.log("<------user on profileScreen------->", user);
 
-  // const [value, setValue] = useState("");
-  // const [filteredValue, setFilteredValue] = useState<User[]>([]);
-
-  //   const {user} = useUser();
-  //   console.log("<-------User on profile Screen------->",user)
-  //   useEffect(function () {
-  //     async function getAllUser() {
-  //       const token = await AsyncStorage.getItem("access_token");
-  //       axios
-  //         .get(`${SERVER_URL}/api/v1/users`, {
-  //           headers: {
-  //             Authorization: `${token}`,
-  //           },
-  //         })
-  //         .then((response) => setUsers(response.data.users))
-  //         .catch((err) => console.log(err.message));
-  //     }
-  //     getAllUser();
-  //   }, []);
-
-  // //   // Filter effect
-  //   useEffect(
-  //     function () {
-  //       // First filter
-  //       if (value === "") {
-  //         setFilteredValue([]);
-  //       } else if (value) {
-  //         const filtered = users?.filter((user) =>
-  //           user.username.toLowerCase().includes(value.toLowerCase())
-  //         );
-  //         setFilteredValue(filtered);
-  //       } else {
-  //         setFilteredValue(users);
-  //       }
-  //     },
-  //     [value, users]
-  //   );
-
-  // const handleTrainerSelect = (name: string)=>{
-  //   console.log(name)
-  //   setFilteredValue([])
-  // }
-
+  // Select image section
   const chooseImage = async () => {
     const permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -140,6 +102,7 @@ export default function ProfileScreen() {
         },
       })
       .then((res) => {
+        setIsLoading(false);
         Toast.show("Profile updated successfully", { type: "success" });
       })
       .catch((err) => {
@@ -155,7 +118,6 @@ export default function ProfileScreen() {
       .resize(thumbnail().width(300).height(300));
   }
 
-  console.log("<-----------------all users------------------>", users[0]);
   return (
     <SafeAreaView>
       <LinearGradient className="h-full" colors={["#E5ECF9", "#F6F7F9"]}>
@@ -253,7 +215,6 @@ export default function ProfileScreen() {
               <TextInput
                 style={{ marginHorizontal: 10, width: "90%" }}
                 value={userInfo.phone}
-                defaultValue={user?.phone}
                 placeholder="mobile ..."
                 className="w-full border border-slate-300 p-2 rounded-md"
                 onChangeText={(value) => {
@@ -266,7 +227,6 @@ export default function ProfileScreen() {
               <TextInput
                 style={{ marginHorizontal: 10, width: "90%" }}
                 value={userInfo.email}
-                defaultValue={user?.email}
                 placeholder="email ..."
                 className="w-full border border-slate-300 p-2 rounded-md"
                 onChangeText={(value) => {

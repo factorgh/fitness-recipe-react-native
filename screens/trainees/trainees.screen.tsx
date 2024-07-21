@@ -15,10 +15,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
 import { SERVER_URL } from "@/utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Animated, { FadeInLeft } from "react-native-reanimated";
+import useUser from "@/hooks/useUser";
+import { AdvancedImage } from "cloudinary-react-native";
+import { cld } from "@/lib/cloudinary";
+import { thumbnail } from "@cloudinary/url-gen/actions/resize";
 
 export default function TraineesScreen() {
   const [activeTab, setActiveTab] = useState("button1");
   const [trainees, setTrainees] = useState([]);
+  const { user } = useUser();
 
   const active = `border border-red-500  bg-red-500 flex w-full h-1 mt-3`;
   const inactive = `border border-red-200  bg-red-500 flex w-[100%] mt-3`;
@@ -49,16 +55,54 @@ export default function TraineesScreen() {
     getTrainees();
   }, []);
 
+  let remoteCldImage;
+  if (user?.img_url) {
+    remoteCldImage = cld
+      .image(user.img_url)
+      .resize(thumbnail().width(100).height(100));
+  }
+
   return (
     <SafeAreaView>
       <LinearGradient colors={["#E5ECF9", "#F6F7F9"]}>
-        <View className="mt-[60px]">
-          <Text
-            style={{ fontFamily: "Nunito_700Bold" }}
-            className="mx-3 font-semibold text-3xl mb-5"
-          >
-            Trainees
-          </Text>
+        <View className="mt-[30px]">
+          <View className="flex-row justify-between mx-3 mb-3 ">
+            <Text
+              style={{ fontFamily: "Nunito_700Bold" }}
+              className=" font-semibold text-3xl mb-5"
+            >
+              Trainees
+            </Text>
+            <Animated.View
+              entering={FadeInLeft.duration(200).springify()}
+              style={{
+                width: 80,
+
+                height: 30,
+                display: "flex",
+                borderRadius: 15,
+                backgroundColor: "red",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                paddingHorizontal: 5,
+                gap: 5,
+              }}
+            >
+              {user?.img_url ? (
+                <AdvancedImage
+                  className="w-5 h-5 rounded-full"
+                  cldImg={remoteCldImage!}
+                />
+              ) : (
+                <View style={styles.notificationCircle} />
+              )}
+
+              <Text style={{ fontSize: 10, color: "white" }}>
+                {user?.role === 0 ? "Trainee" : "Trainer"}
+              </Text>
+            </Animated.View>
+          </View>
           {/* Fiter section */}
           <View className="flex flex-row w-[100%] ">
             <TouchableOpacity
@@ -106,4 +150,11 @@ export default function TraineesScreen() {
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  notificationCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 16,
+    backgroundColor: "#D1D5DB",
+  },
+});

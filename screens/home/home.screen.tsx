@@ -17,15 +17,15 @@ import { router } from "expo-router";
 import Allmeals from "@/components/allmeals/allmeals";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
+import useUser from "@/hooks/useUser";
+import { thumbnail } from "@cloudinary/url-gen/actions/resize";
+import { cld } from "@/lib/cloudinary";
+import { AdvancedImage } from "cloudinary-react-native";
+import Animated, { FadeInLeft } from "react-native-reanimated";
 
 export default function HomeScreen() {
   const [date, setDate] = useState("");
-  // let [fontLoaded, fontError] = useFonts({
-  //   Nunito_400Regular,
-  //   Nunito_700Bold,
-  // });
-
-  // if (!fontLoaded && !fontError) return null;
+  const { user } = useUser();
 
   const getGreeting = () => {
     const currentHour = new Date().getHours();
@@ -43,12 +43,23 @@ export default function HomeScreen() {
     setDate(dateSelected);
   };
   const greeting = getGreeting();
+
+  let remoteCldImage;
+  if (user?.img_url) {
+    remoteCldImage = cld
+      .image(user.img_url)
+      .resize(thumbnail().width(100).height(100));
+  }
+
   return (
     <SafeAreaView>
       <LinearGradient className="h-full" colors={["#E5ECF9", "#F6F7F9"]}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View className="w-full  mt-[15px] flex flex-row justify-between p-3 ">
-            <Text style={{ fontFamily: "Nunito_700Bold" }} className="text-2xl">
+            <Text
+              style={{ fontFamily: "Nunito_400Regular" }}
+              className="text-2xl"
+            >
               {greeting}
             </Text>
             <View className="flex flex-row gap-2 items-center">
@@ -58,11 +69,35 @@ export default function HomeScreen() {
                 <Entypo name="add-to-list" size={30} color="black" />
               </TouchableOpacity>
               <View>
-                <Ionicons
-                  name="notifications-circle"
-                  size={35}
-                  color="#747474"
-                />
+                <Animated.View
+                  entering={FadeInLeft.duration(200).springify()}
+                  style={{
+                    width: 80,
+
+                    height: 30,
+                    display: "flex",
+                    borderRadius: 15,
+                    backgroundColor: "red",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    paddingHorizontal: 5,
+                    gap: 5,
+                  }}
+                >
+                  {user?.img_url ? (
+                    <AdvancedImage
+                      className="w-5 h-5 rounded-full"
+                      cldImg={remoteCldImage!}
+                    />
+                  ) : (
+                    <View style={styles.notificationCircle} />
+                  )}
+
+                  <Text style={{ fontSize: 10, color: "white" }}>
+                    {user?.role === 0 ? "Trainee" : "Trainer"}
+                  </Text>
+                </Animated.View>
               </View>
               <Avatar
                 size={32}
@@ -95,4 +130,11 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  notificationCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 16,
+    backgroundColor: "#D1D5DB",
+  },
+});

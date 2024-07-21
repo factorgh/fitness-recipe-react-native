@@ -7,9 +7,8 @@ import {
   View,
   RefreshControl,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import { Nunito_400Regular, Nunito_700Bold } from "@expo-google-fonts/nunito";
-import { useFonts } from "@expo-google-fonts/raleway";
+import React, { useEffect, useState, useCallback } from "react";
+
 import RecipeItem from "@/components/RecipeItem";
 import { AntDesign } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -22,14 +21,26 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Recipe } from "@/types/Recipe";
 import { Toast } from "react-native-toast-notifications";
 import Loader from "@/components/loader";
+import Animated, {
+  FadeInDown,
+  FadeInLeft,
+  FadeInRight,
+  FadingTransition,
+} from "react-native-reanimated";
+import { AdvancedImage } from "cloudinary-react-native";
+import useUser from "@/hooks/useUser";
+import { cld } from "@/lib/cloudinary";
+import { thumbnail } from "@cloudinary/url-gen/actions/resize";
 
 export default function MealPlanScreen() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const onRefresh = React.useCallback(() => {
+  const { user } = useUser();
+
+  const onRefresh = useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
@@ -37,7 +48,6 @@ export default function MealPlanScreen() {
   }, []);
 
   useEffect(() => {
-    // Set loading to true
     setLoading(true);
 
     const fetchRecipes = async () => {
@@ -66,68 +76,142 @@ export default function MealPlanScreen() {
     fetchRecipes();
   }, [refreshing]);
 
-  console.log("<------recipe deatils-------->", recipes);
+  let remoteCldImage;
+  if (user?.img_url) {
+    remoteCldImage = cld
+      .image(user.img_url)
+      .resize(thumbnail().width(100).height(100));
+  }
+
   return (
-    <SafeAreaView>
-      <LinearGradient className="h-screen" colors={["#E5ECF9", "#F6F7F9"]}>
-        <View className="flex-1">
-          <FlatList
-            nestedScrollEnabled
-            showsVerticalScrollIndicator={false}
-            data={recipes}
-            keyExtractor={(item) => item.id}
-            ListHeaderComponent={
-              <>
-                <View className="mt-[30px] mx-5">
-                  <View className="flex flex-row justify-between">
-                    <Text
-                      style={{ fontFamily: "Nunito_700Bold" }}
-                      className="text-3xl"
-                    >
-                      Recipes
-                    </Text>
-                    <Ionicons
-                      onPress={() => router.push("/(routes)/create-recipe")}
-                      name="add"
-                      size={30}
-                      color="black"
-                    />
-                  </View>
-                  <View className="border border-slate-300 rounded-full flex flex-row items-center mt-3 px-2">
-                    <AntDesign name="search1" size={24} color="black" />
-                    <TextInput
-                      className="w-full p-3 "
-                      placeholder="search by name"
-                    />
-                  </View>
-                  <View className="h-[60px] flex flex-row gap-2 items-center mt-3">
-                    <TouchableOpacity className="border bg-red-400 border-slate-300 rounded-md p-2 flex flex-row items-center">
-                      <Text className="text-white">All</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity className="border border-slate-300 rounded-md p-2 flex flex-row items-center">
-                      <Text>Bookmarked</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-                {loading && <Loader />}
-                {!loading && recipes.length === 0 && (
-                  <View className="flex-col items-center justify-center mt-52">
-                    <Text>No recipes available</Text>
-                  </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <LinearGradient style={{ flex: 1 }} colors={["#E5ECF9", "#F6F7F9"]}>
+        <View style={{ flex: 1, margin: 20 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              marginBottom: 15,
+              marginTop: 15,
+            }}
+          >
+            <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 24 }}>
+              Recipes
+            </Text>
+            <View className="flex-row gap-2">
+              <Ionicons
+                onPress={() => router.push("/(routes)/create-recipe")}
+                name="add"
+                size={30}
+                color="black"
+              />
+              <Animated.View
+                entering={FadeInLeft.duration(200).springify()}
+                style={{
+                  width: 80,
+
+                  height: 30,
+                  display: "flex",
+                  borderRadius: 15,
+                  backgroundColor: "red",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  paddingHorizontal: 5,
+                  gap: 5,
+                }}
+              >
+                {user?.img_url ? (
+                  <AdvancedImage
+                    className="w-5 h-5 rounded-full"
+                    cldImg={remoteCldImage!}
+                  />
+                ) : (
+                  <View style={styles.notificationCircle} />
                 )}
-              </>
-            }
-            renderItem={({ item }) => <RecipeItem item={item} />}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-            contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }} // Add bottom padding here
-            ListFooterComponent={<View style={{ height: 60 }} />} // Add extra space at the bottom
-          />
+
+                <Text style={{ fontSize: 10, color: "white" }}>
+                  {user?.role === 0 ? "Trainee" : "Trainer"}
+                </Text>
+              </Animated.View>
+            </View>
+          </View>
+          <View
+            style={{
+              borderColor: "#ccc",
+              borderWidth: 1,
+              borderRadius: 50,
+              flexDirection: "row",
+              alignItems: "center",
+              paddingHorizontal: 10,
+              marginBottom: 10,
+            }}
+          >
+            <AntDesign name="search1" size={24} color="black" />
+            <TextInput
+              style={{ flex: 1, padding: 10 }}
+              placeholder="search by name"
+            />
+          </View>
+          <View style={{ flexDirection: "row", gap: 10, marginBottom: 10 }}>
+            <TouchableOpacity
+              style={{ backgroundColor: "#f44", borderRadius: 8, padding: 10 }}
+            >
+              <Text style={{ color: "white" }}>All</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                borderColor: "#ccc",
+                borderWidth: 1,
+                borderRadius: 8,
+                padding: 10,
+              }}
+            >
+              <Text>Bookmarked</Text>
+            </TouchableOpacity>
+          </View>
+          {loading ? (
+            <Loader />
+          ) : recipes.length > 0 ? (
+            <Animated.View
+              entering={FadeInDown.duration(100).springify()}
+              className="mt-3 mb-28"
+            >
+              <FlatList
+                showsVerticalScrollIndicator={false}
+                data={recipes}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => <RecipeItem item={item} />}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
+              />
+            </Animated.View>
+          ) : (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text>No recipes available</Text>
+            </View>
+          )}
         </View>
       </LinearGradient>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  notificationCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 16,
+    backgroundColor: "#D1D5DB",
+  },
+});
