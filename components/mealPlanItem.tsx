@@ -10,7 +10,7 @@ import axios from "axios";
 import { SERVER_URL } from "@/utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Toast } from "react-native-toast-notifications";
-
+import Animated, { FadeInLeft } from "react-native-reanimated";
 // Define TypeScript types
 interface MealUser {
   id: number;
@@ -99,7 +99,10 @@ export default function MealPlanItem({ item }: { item: any }) {
   }
 
   return (
-    <View className=" shadow-sm mt-5  bg-gray-300 p-5  mx-3 rounded-md w-[350px] h-[250px] mb-3">
+    <Animated.View
+      entering={FadeInLeft.duration(100).springify()}
+      className=" shadow-sm mt-5  bg-gray-300 p-5  mx-3 rounded-md w-[370px] h-[250px] mb-3"
+    >
       <TouchableOpacity>
         <View className="flex flex-row gap-[50px]">
           <MaterialCommunityIcons name="food-turkey" size={24} color="black" />
@@ -107,7 +110,7 @@ export default function MealPlanItem({ item }: { item: any }) {
             style={{ fontFamily: "Nunito_700Bold" }}
             className="text-xl font-mono"
           >
-            {item.recipe.name}
+            {item.recipe?.name}
           </Text>
         </View>
       </TouchableOpacity>
@@ -153,7 +156,7 @@ export default function MealPlanItem({ item }: { item: any }) {
       </View>
 
       {/* End of expanded section */}
-    </View>
+    </Animated.View>
   );
 }
 

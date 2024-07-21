@@ -49,10 +49,9 @@ export default function AddTraineeToPlanScreen() {
   const [searchInput, setSearchInput] = useState("");
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
-
+  const [isLoading, setIsLoading] = useState(false);
   const { recipe_id } = useLocalSearchParams();
 
-  const [isLoading, setIsLoading] = useState(false);
   const recipeDetails = useMemo(() => {
     if (typeof recipe_id === "string") {
       try {
@@ -68,6 +67,7 @@ export default function AddTraineeToPlanScreen() {
     }
   }, [recipe_id]);
 
+  console.log("<--recipeDetails-->", recipeDetails);
   useEffect(() => {
     const loadUsers = async () => {
       const token = await AsyncStorage.getItem("access_token");

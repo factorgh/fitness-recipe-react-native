@@ -24,7 +24,7 @@ export default function SpeedDialItem({ item }: { item: any }) {
           Authorization: `${token}`,
         },
         data: {
-          id: itemId, // Replace with the actual id you want to send
+          id: itemId,
         },
       })
       .then((res) => Toast.show("Item deleted successfully"))
@@ -63,7 +63,12 @@ export default function SpeedDialItem({ item }: { item: any }) {
       <SpeedDial.Action
         icon={{ name: "add", color: "#fff" }}
         title="Assign"
-        onPress={() => router.push("/(routes)/add-trainee-to-plan")}
+        onPress={() =>
+          router.push({
+            pathname: "/(routes)/add-trainee-to-plan",
+            params: { recipe_id: JSON.stringify(item?.id) },
+          })
+        }
       />
       <SpeedDial.Action
         icon={{ name: "update", color: "#fff" }}

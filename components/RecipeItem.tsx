@@ -18,10 +18,10 @@ export default function RecipeItem({ item }: { item: Recipe }) {
           params: { item: JSON.stringify(item) },
         })
       }
-      className="w-full h-[200px] border border-slate-300 shadow-sm rounded-md mt-5"
+      className="w-full h-[180px] border border-slate-300 shadow-sm rounded-md mt-5"
     >
       <AdvancedImage
-        className="w-full h-[120px] rounded-t-md "
+        className="w-full h-[100px] rounded-t-md "
         cldImg={thumbNailImage}
       />
 
@@ -33,9 +33,9 @@ export default function RecipeItem({ item }: { item: Recipe }) {
           </Text>
         </View>
         {/* Rating button */}
-        <View className="w-[80px] h-[40px]  flex flex-row  items-center rounded-md bg-orange-300 justify-between p-3">
-          <Text className="text-black">4.5</Text>
-          <AntDesign name="star" size={10} color="white" />
+        <View className="w-[80px] h-[40px]  flex flex-row  items-center rounded-full bg-orange-300 justify-center p-3">
+          <Text className="text-white mr-3 ">4.5</Text>
+          <AntDesign name="star" size={12} color="white" />
         </View>
       </View>
     </TouchableOpacity>

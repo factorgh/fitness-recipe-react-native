@@ -119,7 +119,7 @@ export default function MealDetailScreen() {
                 style={{ fontFamily: "Nunito_700Bold" }}
                 className="text-xl font-semibold"
               >
-                Procedures
+                Process
               </Text>
               <View className="bg-slate-900 h-1 rounded-md w-28 mb-2 "></View>
               <View>
