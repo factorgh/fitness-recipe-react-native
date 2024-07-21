@@ -155,7 +155,7 @@ export default function MealPlanScreen() {
           </View>
           <View style={{ flexDirection: "row", gap: 10, marginBottom: 10 }}>
             <TouchableOpacity
-              style={{ backgroundColor: "#f44", borderRadius: 8, padding: 10 }}
+              style={{ backgroundColor: "red", borderRadius: 8, padding: 10 }}
             >
               <Text style={{ color: "white" }}>All</Text>
             </TouchableOpacity>

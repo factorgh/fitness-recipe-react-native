@@ -10,7 +10,7 @@ import axios from "axios";
 import { SERVER_URL } from "@/utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Toast } from "react-native-toast-notifications";
-import Animated, { FadeInLeft } from "react-native-reanimated";
+import Animated, { FadeInDown, FadeInLeft } from "react-native-reanimated";
 // Define TypeScript types
 interface MealUser {
   id: number;
@@ -28,6 +28,7 @@ interface UserDetailsProps {
 }
 export default function MealPlanItem({ item }: { item: any }) {
   const [expanded, setExpanded] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [userDetails, setUserDetails] = useState<MealUser | undefined>(
     undefined
@@ -49,6 +50,7 @@ export default function MealPlanItem({ item }: { item: any }) {
 
   // Handle delete alert
   const deleteItem = async (itemId: any) => {
+    setIsLoading(true);
     /////Get access token
     const token = await AsyncStorage.getItem("access_token");
     // Perform your delete operation here (e.g., API call, state update)
@@ -62,8 +64,14 @@ export default function MealPlanItem({ item }: { item: any }) {
           id: itemId,
         },
       })
-      .then((res) => Toast.show("Item deleted successfully"))
-      .catch((err) => Toast.show("Error deleting item"));
+      .then((res) => {
+        setIsLoading(false);
+        Toast.show("Item deleted successfully");
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        Toast.show("Error deleting item");
+      });
   };
 
   // Function to show the confirmation alert
@@ -100,7 +108,7 @@ export default function MealPlanItem({ item }: { item: any }) {
 
   return (
     <Animated.View
-      entering={FadeInLeft.duration(100).springify()}
+      entering={FadeInDown.duration(100).delay(100).springify()}
       className=" shadow-sm mt-5  bg-gray-300 p-5  mx-3 rounded-md w-[370px] h-[250px] mb-3"
     >
       <TouchableOpacity>

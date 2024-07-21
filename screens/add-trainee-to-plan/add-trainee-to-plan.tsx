@@ -67,7 +67,7 @@ export default function AddTraineeToPlanScreen() {
     }
   }, [recipe_id]);
 
-  console.log("<--recipeDetails-->", recipeDetails);
+  console.log("<--recipeDetails2-->", recipeDetails);
   useEffect(() => {
     const loadUsers = async () => {
       const token = await AsyncStorage.getItem("access_token");
