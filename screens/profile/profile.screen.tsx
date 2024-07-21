@@ -31,6 +31,7 @@ import { SERVER_URL } from "@/utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Toast } from "react-native-toast-notifications";
 import Loader from "@/components/loader";
+import Animated, { FadeInUp } from "react-native-reanimated";
 
 // import useUser from "@/hooks/useUser";
 
@@ -46,8 +47,8 @@ export default function ProfileScreen() {
   });
 
   useEffect(() => {
-    setUserInfo({ ...userInfo, phone: user?.phone!, email: user?.email! });
-  }, []);
+    setUserInfo({ phone: user?.phone!, email: user?.email! });
+  }, [user]);
 
   console.log("<------user on profileScreen------->", user);
 
@@ -82,17 +83,29 @@ export default function ProfileScreen() {
     // Get token for updating
     const token = await AsyncStorage.getItem("access_token");
 
-    // Upload Image to cloudinary
-    const response = await uploadImage(image!);
-    console.log(response.public_id);
-    // Set to remote image
+    let img_url = user?.img_url; // Existing image URL
+
+    // Check if there is an image to upload
+    if (image) {
+      try {
+        // Upload Image to cloudinary
+        const response = await uploadImage(image);
+        console.log(response.public_id);
+        img_url = response.public_id; // Set to the new image URL
+      } catch (err) {
+        setIsLoading(false);
+        Toast.show("Error uploading image", { type: "danger" });
+        return;
+      }
+    }
 
     // Create Update object
     const updateObject = {
-      img_url: response.public_id,
+      img_url,
       phone: userInfo.phone,
       email: userInfo.email,
     };
+
     // Save to DB
     await axios
       .put(`${SERVER_URL}/api/v1/users/single`, updateObject, {
@@ -134,7 +147,7 @@ export default function ProfileScreen() {
               size={24}
               color="white"
             />
-            <View>
+            <Animated.View entering={FadeInUp.duration(50).springify()}>
               {image ? (
                 <Image
                   style={{
@@ -156,16 +169,16 @@ export default function ProfileScreen() {
                 <View
                   className="bg-slate-300"
                   style={{
-                    width: 100,
-                    height: 100,
-                    borderRadius: 50,
+                    width: 120,
+                    height: 120,
+                    borderRadius: 60,
                     position: "absolute",
                     top: 130,
                     left: 150,
                   }}
                 ></View>
               )}
-            </View>
+            </Animated.View>
           </ImageBackground>
           {/* user details section */}
           <View className="flex-col items-center mt-16 mb-5">

@@ -59,7 +59,7 @@ export default function MealPlanItem({ item }: { item: any }) {
           Authorization: `${token}`,
         },
         data: {
-          id: itemId, // Replace with the actual id you want to send
+          id: itemId,
         },
       })
       .then((res) => Toast.show("Item deleted successfully"))
@@ -99,7 +99,7 @@ export default function MealPlanItem({ item }: { item: any }) {
   }
 
   return (
-    <View className="border border-slate-400 shadow-sm mt-5  bg-slate-50 p-5  mx-3 rounded-md w-[350px] h-[250px] mb-3">
+    <View className=" shadow-sm mt-5  bg-gray-300 p-5  mx-3 rounded-md w-[350px] h-[250px] mb-3">
       <TouchableOpacity>
         <View className="flex flex-row gap-[50px]">
           <MaterialCommunityIcons name="food-turkey" size={24} color="black" />
@@ -126,16 +126,16 @@ export default function MealPlanItem({ item }: { item: any }) {
           <Text className="mb-3">Trainees</Text>
           <View className="flex flex-row items-center gap-2">
             <View className="flex flex-row">
-              <View className="rounded-full w-8 h-8 bg-slate-300"></View>
+              <View className="rounded-full w-8 h-8 bg-slate-50"></View>
             </View>
           </View>
           {/* Buttons for meal plan */}
           <View className="flex flex-row gap-2 mt-2 justify-end">
             <TouchableOpacity
               onPress={() => showDeleteAlert(item.id)}
-              className="border border-slate-300 rounded-md"
+              className="bg-red-400 rounded-md"
             >
-              <Text className="text-slate-500 p-2">Delete</Text>
+              <Text className="text-slate-50 p-2">Delete</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() =>

@@ -95,7 +95,7 @@ export default function MealPlanScreen() {
               marginTop: 15,
             }}
           >
-            <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 24 }}>
+            <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 30 }}>
               Recipes
             </Text>
             <View className="flex-row gap-2">

@@ -15,7 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
 import { SERVER_URL } from "@/utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Animated, { FadeInLeft } from "react-native-reanimated";
+import Animated, { FadeInDown, FadeInLeft } from "react-native-reanimated";
 import useUser from "@/hooks/useUser";
 import { AdvancedImage } from "cloudinary-react-native";
 import { cld } from "@/lib/cloudinary";
@@ -129,7 +129,10 @@ export default function TraineesScreen() {
             <AntDesign name="search1" size={24} color="black" />
             <TextInput className="w-full p-2 " placeholder="search by name" />
           </View>
-          <View className="mt-3">
+          <Animated.View
+            entering={FadeInDown.duration(100).springify()}
+            className="mt-3"
+          >
             <ScrollView>
               {activeTab === "button1" ? (
                 <>
@@ -143,7 +146,7 @@ export default function TraineesScreen() {
                 </>
               )}
             </ScrollView>
-          </View>
+          </Animated.View>
         </View>
       </LinearGradient>
     </SafeAreaView>

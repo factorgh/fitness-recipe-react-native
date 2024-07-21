@@ -32,7 +32,7 @@ export default function TraineePlanItem({ item }: { item: any }) {
           params: { item: JSON.stringify(item.recipe) },
         })
       }
-      className=" flex-1 flex-row w-[400px]  p-2 gap-5 border border-slate-300 shadow-sm rounded-md  mt-5"
+      className=" flex-1 flex-row w-[400px] bg-gray-200  p-2 gap-5 border border-slate-300 shadow-sm rounded-md  mt-5"
     >
       {/* Image section */}
 
