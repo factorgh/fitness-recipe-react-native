@@ -20,8 +20,10 @@ import useUser from "@/hooks/useUser";
 import { AdvancedImage } from "cloudinary-react-native";
 import { cld } from "@/lib/cloudinary";
 import { thumbnail } from "@cloudinary/url-gen/actions/resize";
+import useDisableSwipeBack from "@/hooks/useDisableSwipeBack";
 
 export default function TraineesScreen() {
+  useDisableSwipeBack();
   const [activeTab, setActiveTab] = useState("button1");
   const [trainees, setTrainees] = useState([]);
   const { user } = useUser();

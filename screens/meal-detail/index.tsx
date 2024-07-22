@@ -20,8 +20,10 @@ import { Colors } from "react-native/Libraries/NewAppScreen";
 import { AdvancedImage } from "cloudinary-react-native";
 import { cld } from "@/lib/cloudinary";
 import { Toast } from "react-native-toast-notifications";
+import useDisableSwipeBack from "@/hooks/useDisableSwipeBack";
 
 export default function MealDetailScreen() {
+  useDisableSwipeBack();
   const [rating, setRating] = useState(0);
   const [submit, setSubmit] = useState("");
   const [isBookmarked, setIsBookMarked] = useState(false);

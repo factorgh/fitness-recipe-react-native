@@ -23,8 +23,10 @@ import { uploadImage } from "@/lib/cloudinary";
 import axios from "axios";
 import { SERVER_URL } from "@/utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import useDisableSwipeBack from "@/hooks/useDisableSwipeBack";
 
 export default function CreateRecipeScreen() {
+  useDisableSwipeBack();
   const [inputValue, setInputValue] = useState("");
   const [inputList, setInputList] = useState("");
   const [image, setImage] = useState<string>("");

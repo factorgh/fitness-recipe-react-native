@@ -10,8 +10,10 @@ import { thumbnail } from "@cloudinary/url-gen/actions/resize";
 import useUser from "@/hooks/useUser";
 import Animated, { FadeInDown, FadeInLeft } from "react-native-reanimated";
 import { AdvancedImage } from "cloudinary-react-native";
+import useDisableSwipeBack from "@/hooks/useDisableSwipeBack";
 
 export default function MealPlanScreen() {
+  useDisableSwipeBack();
   const [date, setDate] = useState("");
   const { user } = useUser();
 

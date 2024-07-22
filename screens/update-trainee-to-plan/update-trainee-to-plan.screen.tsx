@@ -29,6 +29,7 @@ import { User } from "@/types/User";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { Toast } from "react-native-toast-notifications";
+import useDisableSwipeBack from "@/hooks/useDisableSwipeBack";
 
 // Uitlity function
 const setToMidnight = (date: Date) => {
@@ -38,6 +39,7 @@ const setToMidnight = (date: Date) => {
 };
 
 export default function UpdateTraineeToPlanScreen() {
+  useDisableSwipeBack();
   const [inputList, setInputList] = useState<string[]>([]);
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(new Date());

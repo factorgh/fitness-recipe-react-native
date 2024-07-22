@@ -21,8 +21,10 @@ import { useToast } from "react-native-toast-notifications";
 import axios from "axios";
 import { SERVER_URL } from "@/utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import useDisableSwipeBack from "@/hooks/useDisableSwipeBack";
 
 export default function LoginScreen() {
+  useDisableSwipeBack();
   let [fontLoaded, fontError] = useFonts({
     Nunito_400Regular,
     Nunito_700Bold,

@@ -22,8 +22,10 @@ import { thumbnail } from "@cloudinary/url-gen/actions/resize";
 import { cld } from "@/lib/cloudinary";
 import { AdvancedImage } from "cloudinary-react-native";
 import Animated, { FadeInLeft } from "react-native-reanimated";
+import useDisableSwipeBack from "@/hooks/useDisableSwipeBack";
 
 export default function HomeScreen() {
+  useDisableSwipeBack();
   const [date, setDate] = useState("");
   const { user } = useUser();
 

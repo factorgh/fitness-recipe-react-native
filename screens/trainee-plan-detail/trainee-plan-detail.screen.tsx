@@ -18,8 +18,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { cld } from "@/lib/cloudinary";
 import { AdvancedImage } from "cloudinary-react-native";
 import StarRating from "react-native-star-rating-widget";
+import useDisableSwipeBack from "@/hooks/useDisableSwipeBack";
 
 export default function MealDetailScreen() {
+  useDisableSwipeBack();
   const [isBookmarked, setIsBookMarked] = useState(false);
   const [open, setOpen] = useState(false);
   const [rating, setRating] = useState(0);

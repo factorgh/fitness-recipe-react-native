@@ -8,8 +8,10 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
+import useDisableSwipeBack from "@/hooks/useDisableSwipeBack";
 
 export default function TraineePendingDetailScreen() {
+  useDisableSwipeBack();
   const [expanded, setExpanded] = useState(false);
 
   const handleExpanded = () => {

@@ -31,8 +31,10 @@ import { AdvancedImage } from "cloudinary-react-native";
 import useUser from "@/hooks/useUser";
 import { cld } from "@/lib/cloudinary";
 import { thumbnail } from "@cloudinary/url-gen/actions/resize";
+import useDisableSwipeBack from "@/hooks/useDisableSwipeBack";
 
 export default function MealPlanScreen() {
+  useDisableSwipeBack();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

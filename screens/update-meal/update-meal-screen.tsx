@@ -26,8 +26,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Toast } from "react-native-toast-notifications";
 import { Recipe } from "@/types/Recipe";
 import { AdvancedImage } from "cloudinary-react-native";
+import useDisableSwipeBack from "@/hooks/useDisableSwipeBack";
 
 export default function UpdateRecipeScreen() {
+  useDisableSwipeBack();
   const [inputValue, setInputValue] = useState("");
   const [inputList, setInputList] = useState<string>("");
   const [image, setImage] = useState<string>("");

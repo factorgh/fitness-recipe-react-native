@@ -5,8 +5,10 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import NotificationItem from "@/components/notificationItem";
 import { router } from "expo-router";
+import useDisableSwipeBack from "@/hooks/useDisableSwipeBack";
 
 export default function NotificationsScreen() {
+  useDisableSwipeBack();
   return (
     <SafeAreaView>
       <LinearGradient className="h-screen " colors={["#E5ECF9", "#F6F7F9"]}>

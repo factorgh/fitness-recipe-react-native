@@ -32,10 +32,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Toast } from "react-native-toast-notifications";
 import Loader from "@/components/loader";
 import Animated, { FadeInUp } from "react-native-reanimated";
+import useDisableSwipeBack from "@/hooks/useDisableSwipeBack";
 
 // import useUser from "@/hooks/useUser";
 
 export default function ProfileScreen() {
+  useDisableSwipeBack();
   const [isLoading, setIsLoading] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
   const [image, setImage] = useState<string | null>(null);

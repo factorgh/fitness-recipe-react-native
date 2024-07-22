@@ -17,8 +17,10 @@ import { AntDesign } from "@expo/vector-icons";
 import { router } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
+import useDisableSwipeBack from "@/hooks/useDisableSwipeBack";
 
 export default function AddMealPlan() {
+  useDisableSwipeBack();
   const [inputValue, setInputValue] = useState("");
   const [inputList, setInputList] = useState<string[]>([]);
   const [image, setImage] = useState<string>("");
@@ -70,7 +72,7 @@ export default function AddMealPlan() {
       procedures: mealPlanInfo.procedures,
     };
     console.log("<----Meal plan body--->", recipeDetails);
-    router.back()
+    router.back();
   };
 
   if (!fontLoaded && !fontError) return null;

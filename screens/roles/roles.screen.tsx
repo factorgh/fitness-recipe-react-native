@@ -10,8 +10,10 @@ import axios from "axios";
 import { SERVER_URL } from "@/utils/utils";
 import { useToast } from "react-native-toast-notifications";
 import { LinearGradient } from "expo-linear-gradient";
+import useDisableSwipeBack from "@/hooks/useDisableSwipeBack";
 
 export default function RoleScreen() {
+  useDisableSwipeBack();
   const [activeButton, setActiveButton] = useState(null);
   const [checkBoxState1, setCheckBoxState1] = useState(false);
   const [checkBoxState2, setCheckBoxState2] = useState(false);

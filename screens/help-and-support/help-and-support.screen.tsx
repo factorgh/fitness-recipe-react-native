@@ -7,8 +7,10 @@ import { router } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { Fontisto } from "@expo/vector-icons";
 import FrequentlyAskedQuestions from "@/components/frequently-asked-questions";
+import useDisableSwipeBack from "@/hooks/useDisableSwipeBack";
 
 export default function HelpAndSupportScreen() {
+  useDisableSwipeBack();
   const list2 = [];
   return (
     <SafeAreaView>

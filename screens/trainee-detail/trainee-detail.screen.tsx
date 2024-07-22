@@ -16,8 +16,10 @@ import MealPlanItem from "@/components/mealPlanItem";
 import { LinearGradient } from "expo-linear-gradient";
 import TraineePendingCard from "@/components/trainee-pending-card";
 import TraineeCompletedCard from "@/components/trainee-completed-card";
+import useDisableSwipeBack from "@/hooks/useDisableSwipeBack";
 
 export default function TraineeDetailScreen() {
+  useDisableSwipeBack();
   const [activeTab, setActiveTab] = useState("button1");
 
   const active = `border border-red-500  bg-red-500 flex w-full h-1 mt-3`;

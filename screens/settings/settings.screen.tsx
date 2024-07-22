@@ -13,8 +13,10 @@ import Animated, { FadeInLeft } from "react-native-reanimated";
 import { AdvancedImage } from "cloudinary-react-native";
 import { cld } from "@/lib/cloudinary";
 import { thumbnail } from "@cloudinary/url-gen/actions/resize";
+import useDisableSwipeBack from "@/hooks/useDisableSwipeBack";
 
 export default function SettingsScreen() {
+  useDisableSwipeBack();
   const { user } = useUser();
 
   let remoteCldImage;
