@@ -38,9 +38,6 @@ export default function NotificationsScreen() {
           <NotificationItem />
           <NotificationItem />
           <NotificationItem />
-          <NotificationItem />
-          <NotificationItem />
-          <NotificationItem />
         </ScrollView>
       </LinearGradient>
     </SafeAreaView>

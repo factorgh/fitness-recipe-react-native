@@ -91,6 +91,7 @@ export default function MealPlanScreen() {
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
+              alignItems: "center",
               marginBottom: 15,
               marginTop: 15,
             }}
@@ -98,11 +99,12 @@ export default function MealPlanScreen() {
             <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 30 }}>
               Recipes
             </Text>
+
             <View className="flex-row gap-2">
-              <Ionicons
+              <AntDesign
                 onPress={() => router.push("/(routes)/create-recipe")}
-                name="add"
-                size={30}
+                name="pluscircleo"
+                size={27}
                 color="black"
               />
               <Animated.View
@@ -155,7 +157,7 @@ export default function MealPlanScreen() {
           </View>
           <View style={{ flexDirection: "row", gap: 10, marginBottom: 10 }}>
             <TouchableOpacity
-              style={{ backgroundColor: "red", borderRadius: 8, padding: 10 }}
+              style={{ backgroundColor: "red", borderRadius: 20, padding: 10 }}
             >
               <Text style={{ color: "white" }}>All</Text>
             </TouchableOpacity>
@@ -163,11 +165,21 @@ export default function MealPlanScreen() {
               style={{
                 borderColor: "#ccc",
                 borderWidth: 1,
-                borderRadius: 8,
+                borderRadius: 20,
                 padding: 10,
               }}
             >
               <Text>Bookmarked</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                borderColor: "#ccc",
+                borderWidth: 1,
+                borderRadius: 20,
+                padding: 10,
+              }}
+            >
+              <Text>Most Rated</Text>
             </TouchableOpacity>
           </View>
           {loading ? (

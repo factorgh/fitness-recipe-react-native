@@ -120,7 +120,7 @@ export default function AddMealScreen() {
     <SafeAreaView>
       <LinearGradient colors={["#E5ECF9", "#F6F7F9"]}>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View className="mt-[30px] mx-5">
+          <View className=" mx-5">
             {/* header section */}
             <View className="flex flex-row items-center justify-between mb-5">
               <Feather

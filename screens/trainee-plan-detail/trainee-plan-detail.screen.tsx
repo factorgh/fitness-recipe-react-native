@@ -56,12 +56,12 @@ export default function MealDetailScreen() {
               onPress={() => router.back()}
               style={{
                 position: "absolute",
-                top: 30,
+                top: 25,
                 left: 10,
                 padding: 8,
               }}
             >
-              <Feather name="arrow-left-circle" size={30} color="white" />
+              <Feather name="arrow-left-circle" size={30} color="black" />
             </TouchableOpacity>
             <View
               style={{
@@ -182,7 +182,7 @@ export default function MealDetailScreen() {
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => console.log("review submitted")}
-                  className="bg-blue-500 items-center mt-5 mb-3 p-3 rounded-md "
+                  className="bg-blue-500 items-center mb-3 p-3 rounded-md "
                 >
                   <Text
                     style={{ fontFamily: "Nunito_700Bold" }}

@@ -56,8 +56,6 @@ export default function Allmeals({ date }: { date: any }) {
             setLoading(false);
           })
           .catch((err) => {
-            Toast.show("No data Available");
-
             setLoading(false);
           });
       };

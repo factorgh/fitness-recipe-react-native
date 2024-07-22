@@ -114,7 +114,7 @@ export default function CreateRecipeScreen() {
 
   return (
     <SafeAreaView>
-      <LinearGradient colors={["#E5ECF9", "#F6F7F9"]}>
+      <LinearGradient className="flex-1" colors={["#E5ECF9", "#F6F7F9"]}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View className="mt-[30px] mx-5">
             {/* header section */}

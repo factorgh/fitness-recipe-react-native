@@ -1,6 +1,14 @@
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { thumbnail } from "@cloudinary/url-gen/actions/resize";
 
 import { FontAwesome } from "@expo/vector-icons";
 
@@ -11,6 +19,9 @@ import { SERVER_URL } from "@/utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Toast } from "react-native-toast-notifications";
 import Animated, { FadeInDown, FadeInLeft } from "react-native-reanimated";
+import { cld } from "@/lib/cloudinary";
+import { User } from "@/types/User";
+import { AdvancedImage } from "cloudinary-react-native";
 // Define TypeScript types
 interface MealUser {
   id: number;
@@ -29,8 +40,7 @@ interface UserDetailsProps {
 export default function MealPlanItem({ item }: { item: any }) {
   const [expanded, setExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  console.log("<-----mealPlanItem", item);
+  const [trainee, setTrainee] = useState<User | undefined>(undefined);
 
   const [userDetails, setUserDetails] = useState<MealUser | undefined>(
     undefined
@@ -40,11 +50,11 @@ export default function MealPlanItem({ item }: { item: any }) {
   useEffect(() => {
     const fetchUserDetails = async () => {
       const token = await AsyncStorage.getItem("access_token");
-      const userId = item.meal_users.user_id;
-      console.log(userId);
+      const userId =
+        item.meal_users.length > 0 ? item.meal_users[0].user_id : null;
       try {
         const response = await axios.get(
-          `${SERVER_URL}/api/v1/users/single/${userId}`,
+          `${SERVER_URL}/api/v1/users/${userId}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -52,7 +62,7 @@ export default function MealPlanItem({ item }: { item: any }) {
             },
           }
         );
-        setUserDetails(response.data);
+        setTrainee(response.data.user);
       } catch (error) {
         console.error("Error fetching user details:", error);
       }
@@ -60,21 +70,6 @@ export default function MealPlanItem({ item }: { item: any }) {
     fetchUserDetails();
   }, [item.meal_users.user_id]);
 
-  // Get user details
-  const getUserDetails = (userId: number): MealUser | undefined => {
-    return item.meal_users.find((user: any) => user.user_id === userId);
-  };
-
-  useEffect(() => {
-    const user = getUserDetails(item.meal_users.user_id);
-    if (user) {
-      setUserDetails(user);
-    } else {
-      console.log(`User with id ${item.meal_users.user_id} not found`);
-    }
-  }, [item.meal_users.user_id]);
-
-  // Handle delete alert
   const deleteItem = async (itemId: any) => {
     setIsLoading(true);
     /////Get access token
@@ -132,6 +127,15 @@ export default function MealPlanItem({ item }: { item: any }) {
     return format(date, "hh:mm:ss a"); // 'hh:mm:ss a' formats to 12-hour time with AM/PM
   }
 
+  // Handle Remote data
+
+  let remoteCldImage;
+  if (trainee?.img_url) {
+    remoteCldImage = cld
+      .image(trainee.img_url)
+      .resize(thumbnail().width(100).height(100));
+  }
+
   return (
     <Animated.View
       entering={FadeInDown.duration(100).delay(100).springify()}
@@ -160,20 +164,38 @@ export default function MealPlanItem({ item }: { item: any }) {
         </View>
         <View className="border border-slate-700 rounded-md h-[0px] mt-3 mb-3"></View>
         <View>
-          <Text className="mb-3">Trainees</Text>
+          <Text className="mb-3" style={{ fontFamily: "Nunito_700Bold" }}>
+            Trainees
+          </Text>
           <View className="flex flex-row items-center gap-2">
             <View className="flex flex-row">
-              <View className="rounded-full w-8 h-8 bg-slate-50"></View>
+              {trainee?.img_url ? (
+                <AdvancedImage
+                  className="w-10 h-10 rounded-full"
+                  cldImg={remoteCldImage!}
+                />
+              ) : (
+                <View className="rounded-full w-8 h-8 bg-slate-50"></View>
+              )}
             </View>
           </View>
           {/* Buttons for meal plan */}
-          <View className="flex flex-row gap-2 mt-2 justify-end">
-            <TouchableOpacity
-              onPress={() => showDeleteAlert(item.id)}
-              className="bg-red-400 rounded-md"
-            >
-              <Text className="text-slate-50 p-2">Delete</Text>
-            </TouchableOpacity>
+          <View className="flex flex-row gap-2  justify-end">
+            {isLoading ? (
+              <ActivityIndicator size={24} color="white" />
+            ) : (
+              <TouchableOpacity
+                onPress={() => showDeleteAlert(item.id)}
+                className="bg-red-400 rounded-md"
+              >
+                <Text
+                  style={{ fontFamily: "Nunito_400Regular" }}
+                  className="text-slate-50 p-2"
+                >
+                  Delete
+                </Text>
+              </TouchableOpacity>
+            )}
             <TouchableOpacity
               onPress={() =>
                 router.push({
@@ -183,7 +205,12 @@ export default function MealPlanItem({ item }: { item: any }) {
               }
               className="border border-slate-500 rounded-md  bg-blue-500"
             >
-              <Text className=" p-2 text-white">Update</Text>
+              <Text
+                style={{ fontFamily: "Nunito_400Regular" }}
+                className=" p-2 text-white"
+              >
+                Update
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
