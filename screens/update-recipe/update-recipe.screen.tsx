@@ -10,37 +10,90 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { Nunito_400Regular, Nunito_700Bold } from "@expo-google-fonts/nunito";
 import { useFonts, Raleway_700Bold } from "@expo-google-fonts/raleway";
 import { AntDesign, Feather } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { uploadImage } from "@/lib/cloudinary";
+import { cld, uploadImage } from "@/lib/cloudinary";
 import axios from "axios";
 import { SERVER_URL } from "@/utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Toast } from "react-native-toast-notifications";
+import { Recipe } from "@/types/Recipe";
+import { AdvancedImage } from "cloudinary-react-native";
 
 export default function UpdateRecipeScreen() {
   const [inputValue, setInputValue] = useState("");
-  const [inputList, setInputList] = useState("");
-  const [image, setImage] = useState<string>("");
+  const [inputList, setInputList] = useState<string>("");
+  const [image, setImage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const [mealPlanInfo, setMealPlanInfo] = useState({
-    imageUrl: "",
+  const [recipeInfo, setRecipeInfo] = useState({
     name: "",
     description: "",
     procedures: "",
+    thumbNail: "",
   });
+
+  const { recipe_id } = useLocalSearchParams();
+
+  const recipeId = useMemo(() => {
+    if (typeof recipe_id === "string") {
+      try {
+        return JSON.parse(recipe_id);
+      } catch (error) {
+        console.error("Error parsing recipe:", error);
+        return null;
+      }
+    } else {
+      Toast.show("Recipe not available");
+      return null;
+    }
+  }, [recipe_id]);
+
+  console.log("<---recipeDetails----->", recipeId);
   let [fontLoaded, fontError] = useFonts({
     Nunito_400Regular,
     Nunito_700Bold,
     Raleway_700Bold,
   });
+
+  // Get recipe based on ID
+
+  // Handle meal plan generation
+  useEffect(() => {
+    async function getRecipe() {
+      // Get token from storage
+      const token = await AsyncStorage.getItem("access_token");
+
+      // Fetch recipe with token based on recipe ID
+      await axios
+        .get(`${SERVER_URL}/api/v1/recipe/single/${recipeId}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${token}`,
+          },
+        })
+        .then((res) => {
+          console.log("<--- single Recipe----->", res.data.recipe);
+          setRecipeInfo({
+            thumbNail: res.data.recipe.thumbNail,
+            description: res.data.recipe.description,
+            name: res.data.recipe.name,
+            procedures: res.data.recipe.procedures,
+          });
+          setInputValue(res.data.recipe.ingredients);
+        })
+        .catch((err) => console.log(err));
+    }
+
+    getRecipe();
+  }, [recipeId]);
 
   const handleAddInput = () => {
     if (inputValue.trim() !== "") {
@@ -77,23 +130,38 @@ export default function UpdateRecipeScreen() {
 
     /////Get access token
     const token = await AsyncStorage.getItem("access_token");
-    ///Upload image to cloudinary
-    const response = await uploadImage(image);
-    // Update image
+    console.log(token);
 
-    let recipeDetails = {
-      name: mealPlanInfo.name,
-      thumbNail: response.public_id,
+    // Initialize the imageUrl with the existing thumbnail
+    let imageUrl = recipeInfo.thumbNail;
+
+    // Check if a new image has been selected
+    if (image && image !== recipeInfo.thumbNail) {
+      try {
+        const response = await uploadImage(image);
+        imageUrl = response.public_id;
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        Toast.show("Error uploading image");
+        setIsLoading(false);
+        return;
+      }
+    }
+
+    const recipeDetails = {
+      name: recipeInfo.name,
+      thumbNail: imageUrl,
       ingredients: inputList,
-      description: mealPlanInfo.description,
-      procedures: mealPlanInfo.procedures,
+      description: recipeInfo.description,
+      procedures: recipeInfo.procedures,
       rating: 0,
     };
     console.log("<----Meal plan body--->", recipeDetails);
 
+    console.log(recipeId);
     ////Save to db
     await axios
-      .post(`${SERVER_URL}/api/v1/recipe`, recipeDetails, {
+      .put(`${SERVER_URL}/api/v1/recipe/single/${recipeId}`, recipeDetails, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `${token}`,
@@ -101,16 +169,25 @@ export default function UpdateRecipeScreen() {
       })
       .then((res) => {
         console.log(res.data);
-        router.back();
+        Toast.show("recipe updated");
+
+        router.push({
+          pathname: "/(tabs)/mealplans",
+        });
+
         setIsLoading(false);
       })
       .catch((err) => {
         setIsLoading(false);
+        Toast.show("Error updating recipe");
+
         console.log(err);
       });
   };
 
   if (!fontLoaded && !fontError) return null;
+
+  const thumbNailImage = cld.image(recipeInfo?.thumbNail);
 
   return (
     <SafeAreaView>
@@ -120,7 +197,6 @@ export default function UpdateRecipeScreen() {
             {/* header section */}
             <View className="flex flex-row items-center justify-between mb-5">
               <Feather
-                style={{}}
                 onPress={() => router.back()}
                 name="corner-up-left"
                 size={24}
@@ -130,7 +206,7 @@ export default function UpdateRecipeScreen() {
                 className="text-2xl font-semibold"
                 style={{ fontFamily: "Nunito_700Bold" }}
               >
-                Update recipe
+                Update meal
               </Text>
               <Text></Text>
             </View>
@@ -143,19 +219,20 @@ export default function UpdateRecipeScreen() {
                 onPress={pickImage}
                 className="w-full rounded-md  h-[100px] flex "
               >
-                {image && (
-                  <Image
-                    style={styles.image}
-                    resizeMode="cover"
-                    source={{ uri: image }}
-                  />
-                )}
+                <Image
+                  style={styles.image}
+                  resizeMode="cover"
+                  source={{ uri: image || "" }}
+                />
               </TouchableOpacity>
             ) : (
               <TouchableOpacity onPress={pickImage} className="gap-2">
-                <View className="border-2 border-slate-300 w-full rounded-md  h-[100px] flex items-center justify-center">
-                  <AntDesign name="clouduploado" size={35} color="black" />
-                </View>
+                {thumbNailImage && (
+                  <AdvancedImage
+                    className="w-full h-[100px] rounded-md "
+                    cldImg={thumbNailImage!}
+                  />
+                )}
               </TouchableOpacity>
             )}
 
@@ -165,9 +242,9 @@ export default function UpdateRecipeScreen() {
               <View className="border-2 border-slate-300 w-full rounded-md  p-3 h-[50px] flex items-center justify-center">
                 <TextInput
                   onChangeText={(value) =>
-                    setMealPlanInfo({ ...mealPlanInfo, name: value })
+                    setRecipeInfo({ ...recipeInfo, name: value })
                   }
-                  value={mealPlanInfo.name}
+                  value={recipeInfo.name}
                   className="w-full h-full "
                 />
               </View>
@@ -178,13 +255,13 @@ export default function UpdateRecipeScreen() {
               <View className="border-2 border-slate-300 w-full rounded-md  h-[100px] p-2  flex items-center justify-center">
                 <TextInput
                   style={{ textAlignVertical: "top" }}
-                  value={mealPlanInfo.description}
+                  value={recipeInfo.description}
                   editable
                   multiline
                   numberOfLines={4}
                   className="w-[100%] h-[100%]"
                   onChangeText={(value) =>
-                    setMealPlanInfo({ ...mealPlanInfo, description: value })
+                    setRecipeInfo({ ...recipeInfo, description: value })
                   }
                 />
               </View>
@@ -221,17 +298,17 @@ export default function UpdateRecipeScreen() {
             </View>
             {/* Procedures*/}
             <View className="gap-2 mt-3">
-              <Text>Procedures</Text>
+              <Text>Process</Text>
               <View className="border-2 border-slate-300 w-full rounded-md  h-[100px] flex items-center justify-center p-2">
                 <TextInput
                   style={{ textAlignVertical: "top" }}
-                  value={mealPlanInfo.procedures}
+                  value={recipeInfo.procedures}
                   editable={true}
                   multiline
                   numberOfLines={6}
                   className="w-[100%] h-[100%]"
                   onChangeText={(value) =>
-                    setMealPlanInfo({ ...mealPlanInfo, procedures: value })
+                    setRecipeInfo({ ...recipeInfo, procedures: value })
                   }
                 />
               </View>

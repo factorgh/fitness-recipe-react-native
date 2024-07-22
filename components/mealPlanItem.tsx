@@ -30,9 +30,35 @@ export default function MealPlanItem({ item }: { item: any }) {
   const [expanded, setExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  console.log("<-----mealPlanItem", item);
+
   const [userDetails, setUserDetails] = useState<MealUser | undefined>(
     undefined
   );
+
+  // Get trainee details for this meal
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      const token = await AsyncStorage.getItem("access_token");
+      const userId = item.meal_users.user_id;
+      console.log(userId);
+      try {
+        const response = await axios.get(
+          `${SERVER_URL}/api/v1/users/single/${userId}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `${token}`,
+            },
+          }
+        );
+        setUserDetails(response.data);
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    };
+    fetchUserDetails();
+  }, [item.meal_users.user_id]);
 
   // Get user details
   const getUserDetails = (userId: number): MealUser | undefined => {
