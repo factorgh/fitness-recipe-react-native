@@ -125,6 +125,7 @@ export default function LoginScreen() {
           <View className="flex flex-row gap-2 border border-slate-300 rounded-md p-3 mt-5 items-center ">
             <Ionicons name="person-sharp" size={24} color="#747474" />
             <TextInput
+              placeholderTextColor="#888"
               keyboardType={"default"}
               value={userInfo.fullName}
               onChangeText={(value) =>
@@ -137,6 +138,7 @@ export default function LoginScreen() {
           <View className="flex flex-row gap-2 border border-slate-300 rounded-md p-3  mt-5 items-center ">
             <Fontisto name="person" size={24} color="#747474" />
             <TextInput
+              placeholderTextColor="#888"
               keyboardType={"default"}
               value={userInfo.username}
               onChangeText={(value) =>
@@ -149,6 +151,7 @@ export default function LoginScreen() {
           <View className="flex flex-row gap-2 border border-slate-300 rounded-md p-3 mt-5 items-center ">
             <FontAwesome5 name="phone" size={24} color="#747474" />
             <TextInput
+              placeholderTextColor="#888"
               keyboardType={"phone-pad"}
               value={userInfo.phoneNumber}
               onChangeText={(value) =>
@@ -161,6 +164,7 @@ export default function LoginScreen() {
           <View className="flex flex-row gap-2 border border-slate-300 rounded-md p-3  mt-5  items-center">
             <Fontisto name="email" size={24} color="#747474" />
             <TextInput
+              placeholderTextColor="#888"
               keyboardType={"email-address"}
               value={userInfo.email}
               onChangeText={(value) =>
@@ -173,6 +177,7 @@ export default function LoginScreen() {
           <View className="flex flex-row gap-2 border border-slate-300 rounded-md p-3  mt-5 ">
             <FontAwesome name="lock" size={24} color="#747474" />
             <TextInput
+              placeholderTextColor="#888"
               keyboardType={"default"}
               value={userInfo.password}
               onChangeText={(value) => {

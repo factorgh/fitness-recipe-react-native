@@ -108,6 +108,7 @@ export default function LoginScreen() {
           <View className="flex flex-row gap-2 border border-slate-300 rounded-md p-3 mt-5 ">
             <Fontisto name="person" size={24} color="#747474" />
             <TextInput
+              placeholderTextColor="#888"
               keyboardType={"email-address"}
               value={userInfo.username}
               onChangeText={(value) =>
@@ -120,6 +121,7 @@ export default function LoginScreen() {
           <View className="flex flex-row gap-2 border border-slate-300 rounded-md p-3  mt-5 ">
             <FontAwesome name="lock" size={24} color="black" />
             <TextInput
+              placeholderTextColor="#888"
               keyboardType={"default"}
               value={userInfo.password}
               onChangeText={(value) =>
