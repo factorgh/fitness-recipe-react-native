@@ -14,6 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import useUser from "@/hooks/useUser";
 import { router } from "expo-router";
 import { Toast } from "react-native-toast-notifications";
+import Animated, { FadeInDown } from "react-native-reanimated";
 
 // Uitlity function
 const setToMidnight = (date: Date) => {
@@ -62,7 +63,10 @@ export default function Allmeals({ date }: { date: any }) {
   );
 
   return (
-    <View>
+    <Animated.View
+      entering={FadeInDown.duration(50).springify()}
+      style={styles.container}
+    >
       {loading ? (
         <ActivityIndicator className="mt-10 " size="large" color="blue" />
       ) : data.length === 0 ? (
@@ -77,15 +81,29 @@ export default function Allmeals({ date }: { date: any }) {
         </View>
       ) : (
         <FlatList
-          horizontal
-          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
           data={data}
           keyExtractor={(item: any) => item.id.toString()}
           renderItem={({ item }: { item: any }) => <MealPlanItem item={item} />}
+          contentContainerStyle={styles.listContent}
         />
       )}
-    </View>
+    </Animated.View>
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 10,
+    justifyContent: "center",
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  listContent: {
+    paddingBottom: 20, // Adjust padding as needed
+  },
+});

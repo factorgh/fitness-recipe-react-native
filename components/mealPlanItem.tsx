@@ -7,21 +7,20 @@ import {
   View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
 import { thumbnail } from "@cloudinary/url-gen/actions/resize";
-
-import { FontAwesome } from "@expo/vector-icons";
-
 import { format } from "date-fns";
 import { router } from "expo-router";
 import axios from "axios";
 import { SERVER_URL } from "@/utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Toast } from "react-native-toast-notifications";
-import Animated, { FadeInDown, FadeInLeft } from "react-native-reanimated";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import { cld } from "@/lib/cloudinary";
-import { User } from "@/types/User";
 import { AdvancedImage } from "cloudinary-react-native";
+import { User } from "@/types/User";
+import { truncateText } from "@/utils/fomatters";
+
 // Define TypeScript types
 interface MealUser {
   id: number;
@@ -34,19 +33,15 @@ interface MealUser {
   meal_id: number;
 }
 
-interface UserDetailsProps {
-  userId: number;
+interface MealPlanItemProps {
+  item: any;
 }
-export default function MealPlanItem({ item }: { item: any }) {
+
+export default function MealPlanItem({ item }: MealPlanItemProps) {
   const [expanded, setExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [trainee, setTrainee] = useState<User | undefined>(undefined);
 
-  const [userDetails, setUserDetails] = useState<MealUser | undefined>(
-    undefined
-  );
-
-  // Get trainee details for this meal
   useEffect(() => {
     const fetchUserDetails = async () => {
       const token = await AsyncStorage.getItem("access_token");
@@ -58,7 +53,7 @@ export default function MealPlanItem({ item }: { item: any }) {
           {
             headers: {
               "Content-Type": "application/json",
-              Authorization: `${token}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
@@ -68,37 +63,33 @@ export default function MealPlanItem({ item }: { item: any }) {
       }
     };
     fetchUserDetails();
-  }, [item.meal_users.user_id]);
+  }, [item.meal_users]);
 
   const deleteItem = async (itemId: any) => {
     setIsLoading(true);
-    /////Get access token
     const token = await AsyncStorage.getItem("access_token");
-    // Perform your delete operation here (e.g., API call, state update)
-    await axios
-      .delete(`${SERVER_URL}/api/v1/mealplans/delete/trainer/meal/`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${token}`,
-        },
-        data: {
-          id: itemId,
-        },
-      })
-      .then((res) => {
-        setIsLoading(false);
-        Toast.show("Item deleted successfully");
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        Toast.show("Error deleting item");
-      });
+    try {
+      await axios.delete(
+        `${SERVER_URL}/api/v1/mealplans/delete/trainer/meal/`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          data: { id: itemId },
+        }
+      );
+      setIsLoading(false);
+      Toast.show("Item deleted successfully");
+    } catch (err) {
+      setIsLoading(false);
+      Toast.show("Error deleting item");
+    }
   };
 
-  // Function to show the confirmation alert
   const showDeleteAlert = (itemId: any) => {
     Alert.alert(
-      "Delete Meal plan",
+      "Delete Meal Plan",
       "Are you sure you want to delete this meal?",
       [
         {
@@ -116,84 +107,53 @@ export default function MealPlanItem({ item }: { item: any }) {
     );
   };
 
-  const handleExpanded = () => {
-    setExpanded((prevState) => !prevState);
+  const formatTime = (isoString: string) => {
+    const date = new Date(isoString);
+    return format(date, "hh:mm:ss a");
   };
 
-  // Convert time to human readable
-
-  function formatTime(isoString: any) {
-    const date = new Date(isoString);
-    return format(date, "hh:mm:ss a"); // 'hh:mm:ss a' formats to 12-hour time with AM/PM
-  }
-
-  // Handle Remote data
-
-  let remoteCldImage;
-  if (trainee?.img_url) {
-    remoteCldImage = cld
-      .image(trainee.img_url)
-      .resize(thumbnail().width(100).height(100));
-  }
+  const remoteCldImage = trainee?.img_url
+    ? cld.image(trainee.img_url).resize(thumbnail().width(100).height(100))
+    : null;
 
   return (
     <Animated.View
       entering={FadeInDown.duration(100).delay(100).springify()}
-      className=" shadow-sm mt-5  bg-gray-300 p-5  mx-3 rounded-md w-[370px] h-[250px] mb-3"
+      style={styles.container}
     >
-      <TouchableOpacity>
-        <View className="flex flex-row gap-[50px]">
-          <MaterialCommunityIcons name="food-turkey" size={24} color="black" />
-          <Text
-            style={{ fontFamily: "Nunito_700Bold" }}
-            className="text-xl font-mono"
-          >
-            {item.recipe?.name}
-          </Text>
-        </View>
-      </TouchableOpacity>
-      {/* Expanded Section */}
+      <View style={styles.header}>
+        <MaterialCommunityIcons name="food-turkey" size={24} color="black" />
+        <Text style={styles.recipeName}>{item.recipe?.name}</Text>
+      </View>
 
-      <View>
-        <View className="border border-slate-700 rounded-md h-[0px] mt-3 mb-3"></View>
-        <View className="flex flex-row items-center gap-10">
+      <View style={styles.details}>
+        <View style={styles.separator} />
+        <View style={styles.timeContainer}>
           <FontAwesome name="calendar-times-o" size={24} color="black" />
-          <Text style={{ fontFamily: "Nunito_700Bold" }}>
-            {formatTime(item.time_picked)}
-          </Text>
+          <Text style={styles.timeText}>{formatTime(item.time_picked)}</Text>
         </View>
-        <View className="border border-slate-700 rounded-md h-[0px] mt-3 mb-3"></View>
+        <View style={styles.separator} />
         <View>
-          <Text className="mb-3" style={{ fontFamily: "Nunito_700Bold" }}>
-            Trainees
-          </Text>
-          <View className="flex flex-row items-center gap-2">
-            <View className="flex flex-row">
-              {trainee?.img_url ? (
-                <AdvancedImage
-                  className="w-10 h-10 rounded-full"
-                  cldImg={remoteCldImage!}
-                />
-              ) : (
-                <View className="rounded-full w-8 h-8 bg-slate-50"></View>
-              )}
-            </View>
+          <Text style={styles.traineesTitle}>Trainees</Text>
+          <View style={styles.traineeImageContainer}>
+            {trainee?.img_url ? (
+              <AdvancedImage
+                style={styles.traineeImage}
+                cldImg={remoteCldImage!}
+              />
+            ) : (
+              <View style={styles.traineeImagePlaceholder} />
+            )}
           </View>
-          {/* Buttons for meal plan */}
-          <View className="flex flex-row gap-2  justify-end">
+          <View style={styles.buttonContainer}>
             {isLoading ? (
               <ActivityIndicator size={24} color="white" />
             ) : (
               <TouchableOpacity
                 onPress={() => showDeleteAlert(item.id)}
-                className="bg-red-400 rounded-md"
+                style={styles.deleteButton}
               >
-                <Text
-                  style={{ fontFamily: "Nunito_400Regular" }}
-                  className="text-slate-50 p-2"
-                >
-                  Delete
-                </Text>
+                <Text style={styles.buttonText}>Delete</Text>
               </TouchableOpacity>
             )}
             <TouchableOpacity
@@ -203,22 +163,94 @@ export default function MealPlanItem({ item }: { item: any }) {
                   params: { mealPlan: JSON.stringify(item) },
                 })
               }
-              className="border border-slate-500 rounded-md  bg-blue-500"
+              style={styles.updateButton}
             >
-              <Text
-                style={{ fontFamily: "Nunito_400Regular" }}
-                className=" p-2 text-white"
-              >
-                Update
-              </Text>
+              <Text style={styles.buttonText}>Update</Text>
             </TouchableOpacity>
           </View>
         </View>
       </View>
-
-      {/* End of expanded section */}
     </Animated.View>
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "#f0f0f0",
+    padding: 15,
+    marginHorizontal: 15,
+    marginBottom: 15,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  recipeName: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 18,
+    marginLeft: 10,
+  },
+  details: {
+    marginTop: 10,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: "#ddd",
+    marginVertical: 10,
+  },
+  timeContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  timeText: {
+    fontFamily: "Nunito_400Regular",
+    marginLeft: 5,
+  },
+  traineesTitle: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  traineeImageContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  traineeImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  traineeImagePlaceholder: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#e0e0e0",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    gap: 10,
+  },
+  deleteButton: {
+    backgroundColor: "#ff4d4d",
+    borderRadius: 5,
+    padding: 10,
+  },
+  updateButton: {
+    backgroundColor: "#007bff",
+    borderRadius: 5,
+    padding: 10,
+  },
+  buttonText: {
+    color: "#fff",
+    fontFamily: "Nunito_400Regular",
+  },
+});

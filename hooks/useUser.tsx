@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { SERVER_URL } from "@/utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -8,30 +8,34 @@ export default function useUser() {
   const [user, setUser] = useState<User>();
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(function () {
-    const getMe = async () => {
-      setIsLoading(true);
+  // Fetch user data
+  const fetchUser = useCallback(async () => {
+    setIsLoading(true);
+    try {
       const user_token = await AsyncStorage.getItem("access_token");
-      await axios
-        .get(`${SERVER_URL}/api/v1/users/single`, {
-          headers: {
-            Authorization: `${user_token}`,
-          },
-        })
-        .then((res) => {
-          console.log("<------accesTokenBeforeGetMe------>", user_token);
-          console.log("<---------getMeData-------->", res.data.user);
-          setUser(res.data.user);
-          setIsLoading(false);
-        })
-        .catch((err) => {
-          console.log(err.message);
-
-          setIsLoading(false);
-        });
-    };
-    getMe();
+      const response = await axios.get(`${SERVER_URL}/api/v1/users/single`, {
+        headers: {
+          Authorization: `${user_token}`,
+        },
+      });
+      console.log("<------accesTokenBeforeGetMe------>", user_token);
+      console.log("<---------getMeData-------->", response.data.user);
+      setUser(response.data.user);
+    } catch (error: any) {
+      console.log(error.message);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
-  return { user, isLoading };
+  useEffect(() => {
+    fetchUser(); // Fetch user data on component mount
+  }, [fetchUser]);
+
+  // Manually refetch user data
+  const refetchUser = async () => {
+    await fetchUser();
+  };
+
+  return { user, isLoading, refetchUser };
 }

@@ -5,24 +5,17 @@ import {
   Image,
   ImageBackground,
   TextInput,
-  FlatList,
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import { AntDesign, Feather } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
-import { FontAwesome } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
-
-import { thumbnail } from "@cloudinary/url-gen/actions/resize";
-import { Fontisto } from "@expo/vector-icons";
-
 import { User } from "@/types/User";
 import { cld, uploadImage } from "@/lib/cloudinary";
 import { AdvancedImage } from "cloudinary-react-native";
@@ -34,14 +27,13 @@ import Loader from "@/components/loader";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import useDisableSwipeBack from "@/hooks/useDisableSwipeBack";
 
-// import useUser from "@/hooks/useUser";
+import { thumbnail } from "@cloudinary/url-gen/actions/resize";
 
 export default function ProfileScreen() {
   useDisableSwipeBack();
   const [isLoading, setIsLoading] = useState(false);
-  const [users, setUsers] = useState<User[]>([]);
   const [image, setImage] = useState<string | null>(null);
-  const { user } = useUser();
+  const { user, refetchUser } = useUser(); // Destructure refetchUser
 
   const [userInfo, setUserInfo] = useState({
     phone: "",
@@ -49,10 +41,10 @@ export default function ProfileScreen() {
   });
 
   useEffect(() => {
-    setUserInfo({ phone: user?.phone!, email: user?.email! });
+    if (user) {
+      setUserInfo({ phone: user.phone || "", email: user.email || "" });
+    }
   }, [user]);
-
-  console.log("<------user on profileScreen------->", user);
 
   // Select image section
   const chooseImage = async () => {
@@ -71,10 +63,8 @@ export default function ProfileScreen() {
       quality: 1,
     });
 
-    console.log(result);
     if (!result.canceled) {
       const sourceUri = result.assets[0].uri;
-      console.log("<---------imagepath------------>", sourceUri);
       setImage(sourceUri);
     }
   };
@@ -82,7 +72,6 @@ export default function ProfileScreen() {
   // Handle Image Upload
   const updateProfile = async () => {
     setIsLoading(true);
-    // Get token for updating
     const token = await AsyncStorage.getItem("access_token");
 
     let img_url = user?.img_url; // Existing image URL
@@ -90,9 +79,7 @@ export default function ProfileScreen() {
     // Check if there is an image to upload
     if (image) {
       try {
-        // Upload Image to cloudinary
         const response = await uploadImage(image);
-        console.log(response.public_id);
         img_url = response.public_id; // Set to the new image URL
       } catch (err) {
         setIsLoading(false);
@@ -101,29 +88,26 @@ export default function ProfileScreen() {
       }
     }
 
-    // Create Update object
     const updateObject = {
       img_url,
       phone: userInfo.phone,
       email: userInfo.email,
     };
 
-    // Save to DB
-    await axios
-      .put(`${SERVER_URL}/api/v1/users/single`, updateObject, {
+    try {
+      await axios.put(`${SERVER_URL}/api/v1/users/single`, updateObject, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `${token}`,
         },
-      })
-      .then((res) => {
-        setIsLoading(false);
-        Toast.show("Profile updated successfully", { type: "success" });
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        Toast.show("Error updating profile", { type: "danger" });
       });
+      setIsLoading(false);
+      Toast.show("Profile updated successfully", { type: "success" });
+      refetchUser(); // Refetch user data to update across the app
+    } catch (err) {
+      setIsLoading(false);
+      Toast.show("Error updating profile", { type: "danger" });
+    }
   };
 
   let remoteCldImage;
@@ -136,7 +120,6 @@ export default function ProfileScreen() {
   return (
     <SafeAreaView>
       <LinearGradient className="h-full" colors={["#E5ECF9", "#F6F7F9"]}>
-        {/* First view */}
         <ScrollView showsVerticalScrollIndicator={false}>
           <ImageBackground
             source={require("@/assets/images/bg_profile.jpg")}
@@ -182,7 +165,6 @@ export default function ProfileScreen() {
               )}
             </Animated.View>
           </ImageBackground>
-          {/* user details section */}
           <View className="flex-col items-center mt-16 mb-5">
             <Text
               className="text-slate-500"
@@ -197,7 +179,6 @@ export default function ProfileScreen() {
               {user?.email}
             </Text>
           </View>
-          {/* Change profile pic section */}
           <TouchableOpacity onPress={chooseImage}>
             <Text
               style={{ fontFamily: "Nunito_400Regular" }}
@@ -206,7 +187,6 @@ export default function ProfileScreen() {
               Change profile
             </Text>
           </TouchableOpacity>
-          {/* Line break through  */}
           <View
             style={{
               height: 1,
@@ -215,18 +195,14 @@ export default function ProfileScreen() {
               marginBottom: 10,
             }}
           ></View>
-
-          {/* Update trainer section  */}
-
-          {/* Other details */}
           <Text
             className="text-slate-900 text-lg ml-5 mb-3 mt-10"
             style={{ fontFamily: "Nunito_700Bold" }}
           >
             Information
           </Text>
-          <View className="flex flex-col   items-center justify-between space-x-2  mb-20 gap-2">
-            <View className="bg-slate-200 shadow-sm w-full h-16 mx-2  rounded-md  flex-row items-center justify-center ">
+          <View className="flex flex-col items-center justify-between space-x-2 mb-20 gap-2">
+            <View className="bg-slate-200 shadow-sm w-full h-16 mx-2 rounded-md flex-row items-center justify-center">
               <TextInput
                 style={{ marginHorizontal: 10, width: "90%" }}
                 value={userInfo.phone}
@@ -237,8 +213,7 @@ export default function ProfileScreen() {
                 }}
               />
             </View>
-            {/* Full name */}
-            <View className="bg-slate-200 shadow-sm w-full h-16 mx-2  rounded-md  flex-row items-center justify-center">
+            <View className="bg-slate-200 shadow-sm w-full h-16 mx-2 rounded-md flex-row items-center justify-center">
               <TextInput
                 style={{ marginHorizontal: 10, width: "90%" }}
                 value={userInfo.email}
@@ -250,17 +225,16 @@ export default function ProfileScreen() {
               />
             </View>
           </View>
-
           <TouchableOpacity
             onPress={updateProfile}
-            className="bg-red-500 items-center mt-5 mb-3 p-3 rounded-md  mx-3"
+            className="bg-red-500 items-center mt-5 mb-3 p-3 rounded-md mx-3"
           >
             {isLoading ? (
               <ActivityIndicator size="small" color={"white"} />
             ) : (
               <Text
                 style={{ fontFamily: "Nunito_700Bold" }}
-                className="text-white text-xl  "
+                className="text-white text-xl"
               >
                 Update profile
               </Text>
