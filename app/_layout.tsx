@@ -20,14 +20,7 @@ const _layout = () => {
         <Stack.Screen name="(routes)/update-recipe/index" />
         <Stack.Screen name="(routes)/update-meal/index" />
         <Stack.Screen name="(routes)/new-user/index" />
-        <Stack.Screen
-          options={{
-            headerBackTitle: "Back",
-            title: "Notifications",
-            headerShown: true,
-          }}
-          name="(routes)/notifications/index"
-        />
+        <Stack.Screen name="(routes)/notifications/index" />
         <Stack.Screen name="(routes)/trainee-completed-detail/index" />
         <Stack.Screen name="(routes)/trainee-pending-detail/index" />
         <Stack.Screen name="(routes)/help-and-support/index" />
