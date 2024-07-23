@@ -24,7 +24,6 @@
         "backgroundColor": "#FFBF46"
       },
       "package": "com.facctorgh.fitnessrecipe"
-      
     },
     "web": {
       "bundler": "metro",
@@ -34,7 +33,6 @@
     "plugins": [
       "expo-router",
       "expo-build-properties"
-     
     ],
     "experiments": {
       "typedRoutes": true
@@ -44,9 +42,8 @@
         "origin": false
       },
       "eas": {
-        "projectId": "541667c8-a699-484f-b624-a9afed211460"
+        "projectId": "d3cc4070-985b-46fc-84a7-2b213541a6b9"
       }
-    },
-    "owner": "dukeparku"
+    }
   }
 }

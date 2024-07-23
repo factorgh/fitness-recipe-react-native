@@ -159,7 +159,7 @@ export default function MealPlanItem({ item }: MealPlanItemProps) {
                 <Text style={styles.buttonText}>Delete</Text>
               </TouchableOpacity>
             )}
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={() =>
                 router.push({
                   pathname: "/(routes)/update-meal",
@@ -169,7 +169,7 @@ export default function MealPlanItem({ item }: MealPlanItemProps) {
               style={styles.updateButton}
             >
               <Text style={styles.buttonText}>Update</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </View>
       </View>

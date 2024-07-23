@@ -126,13 +126,13 @@ export default function TraineeDetailScreen() {
               </ScrollView>
             </View>
 
-            <FAB
+            {/* <FAB
               size="large"
               onPress={() => router.push("/(routes)/assign-meal")}
               placement="right"
               title="+"
               color="red"
-            />
+            /> */}
           </View>
         </ScrollView>
       </LinearGradient>
