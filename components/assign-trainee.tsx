@@ -6,7 +6,7 @@ import { cld } from "@/lib/cloudinary";
 import { thumbnail } from "@cloudinary/url-gen/actions/resize";
 import { AdvancedImage } from "cloudinary-react-native";
 
-export default function Trainee({ trainee }: { trainee: any }) {
+export default function AssignedTrainee({ trainee }: { trainee: any }) {
   let remoteCldImage;
   if (trainee?.img_url) {
     remoteCldImage = cld
@@ -47,7 +47,7 @@ export default function Trainee({ trainee }: { trainee: any }) {
       </View>
 
       {/* Update assigned date */}
-      <Text style={styles.date}>Active</Text>
+      <Text style={styles.date}>Today</Text>
 
       {/* Divider */}
       <View style={styles.divider}></View>
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
 
     padding: 15,
-    backgroundColor: "#fff",
+    backgroundColor: "#f0f0f0",
     borderRadius: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },

@@ -9,81 +9,46 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
-import { AntDesign } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
-
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import axios from "axios";
 import { SERVER_URL } from "@/utils/utils";
-import { Platform } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { User } from "@/types/User";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 import { Toast } from "react-native-toast-notifications";
 import useDisableSwipeBack from "@/hooks/useDisableSwipeBack";
+import { User } from "@/types/User";
 
-// Uitlity function
+// Utility function
 const setToMidnight = (date: Date) => {
   const newDate = new Date(date);
   newDate.setUTCHours(0, 0, 0, 0);
   return newDate;
 };
 
-export default function UpdateTraineeToPlanScreen() {
+export default function AddTraineeToPlanScreen() {
   useDisableSwipeBack();
-  const [inputList, setInputList] = useState<string[]>([]);
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
 
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
-
   const [searchInput, setSearchInput] = useState("");
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
-
-  const { recipe_id } = useLocalSearchParams();
-
   const [isLoading, setIsLoading] = useState(false);
-  const recipeDetails = useMemo(() => {
-    if (typeof recipe_id === "string") {
-      try {
-        console.log("<---recipe_id----->", JSON.parse(recipe_id));
-        return JSON.parse(recipe_id);
-      } catch (error) {
-        console.error("Error parsin recipe:", error);
-        return null;
-      }
-    } else {
-      Toast.show("Recipe not available");
-      return null;
-    }
-  }, [recipe_id]);
+  const [mealPlan, setMealPlan] = useState<any>(null); // To hold existing meal plan details
+  const { recipe_id } = useLocalSearchParams();
+  const [mealPlanId, setMealPlanId] = useState(null);
 
-  useEffect(() => {
-    if (recipeDetails) {
-      setDate(new Date(recipeDetails.date));
-      setTime(new Date(recipeDetails.time));
-      setSelectedUsers(
-        recipeDetails.meal_users.map((user: { id: any }) => user.id)
-      );
-    }
-  }, [recipeDetails]);
+  console.log("<---what----->", mealPlan);
 
   useEffect(() => {
     const loadUsers = async () => {
       const token = await AsyncStorage.getItem("access_token");
-      console.log("<------tokenForUsers", token);
       try {
         const res = await axios.get(`${SERVER_URL}/api/v1/users`, {
           headers: {
@@ -92,37 +57,67 @@ export default function UpdateTraineeToPlanScreen() {
           },
         });
         setUsers(res.data.users);
-        setFilteredUsers(res.data.users);
       } catch (err) {
         console.log(err);
       }
     };
+
     loadUsers();
   }, []);
+
+  useEffect(() => {
+    const fetchMealPlan = async () => {
+      if (recipe_id && users.length > 0) {
+        try {
+          const recipeIdString = Array.isArray(recipe_id)
+            ? recipe_id[0]
+            : recipe_id;
+          const parsedRecipe = JSON.parse(recipeIdString);
+          setDate(new Date(parsedRecipe.date_picked));
+          setTime(new Date(parsedRecipe.time_picked));
+          console.log(parsedRecipe.meal_users);
+          setSelectedUsers(
+            users.filter((user) => parsedRecipe.meal_users.includes(user.id))
+          );
+          setMealPlanId(parsedRecipe.meal_id);
+          setMealPlan(parsedRecipe);
+        } catch (error) {
+          console.error("Error parsing recipe:", error);
+          Toast.show("Failed to parse recipe data");
+        }
+      }
+    };
+
+    fetchMealPlan();
+  }, [recipe_id, users]);
 
   const handleSearch = useCallback(
     (text: string) => {
       setSearchInput(text);
       if (text) {
-        const filtered = users.filter((user) =>
-          user.username.toLowerCase().includes(text.toLowerCase())
+        const filtered = users.filter(
+          (user) =>
+            user.role === 0 &&
+            user.username.toLowerCase().includes(text.toLowerCase())
         );
         setFilteredUsers(filtered);
       } else {
-        setFilteredUsers(users);
+        setFilteredUsers([]);
       }
     },
     [users]
   );
 
-  const handleSelectUser = useCallback(
-    (user: User) => {
-      setSelectedUsers((prevSelectedUsers) => [...prevSelectedUsers, user]);
-      setSearchInput("");
-      setFilteredUsers(users);
-    },
-    [users]
-  );
+  const handleSelectUser = useCallback((user: User) => {
+    setSelectedUsers((prevSelectedUsers) => {
+      if (!prevSelectedUsers.some((u) => u.id === user.id)) {
+        return [...prevSelectedUsers, user];
+      }
+      return prevSelectedUsers;
+    });
+    setSearchInput("");
+    setFilteredUsers([]);
+  }, []);
 
   const handleDelete = useCallback((item: User) => {
     setSelectedUsers((prevSelectedUsers) =>
@@ -133,38 +128,44 @@ export default function UpdateTraineeToPlanScreen() {
   const handlePlan = async () => {
     setIsLoading(true);
     const token = await AsyncStorage.getItem("access_token");
+    const userIds = selectedUsers.map((user) => user.id);
 
-    const updatedDate =
-      date !== new Date(recipeDetails.date) ? date : recipeDetails.date;
-    const updatedTime =
-      time !== new Date(recipeDetails.time) ? time : recipeDetails.time;
-    const updatedUsers =
-      selectedUsers.length > 0
-        ? selectedUsers.map((user) => user.id)
-        : recipeDetails.meal_users.map((user: { id: any }) => user.id);
-
-    const mealPlan = {
-      recipe: recipeDetails.id,
-      date_picked: updatedDate,
-      time_picked: updatedTime,
-      users: updatedUsers,
+    const mealPlanData = {
+      recipe: mealPlan.id,
+      date_picked: date,
+      time_picked: time,
+      meal_users: userIds,
     };
-    console.log("<---mealplan----->", mealPlan);
 
     try {
-      const res = await axios.post(`${SERVER_URL}/api/v1/mealplans`, mealPlan, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${token}`,
-        },
-      });
-      console.log(res.data);
+      if (mealPlan) {
+        // Update existing plan
+        await axios.put(
+          `${SERVER_URL}/api/v1/mealplans/${mealPlanId}`,
+          mealPlanData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `${token}`,
+            },
+          }
+        );
+        Toast.show("Meal plan updated", { type: "success" });
+      } else {
+        // Create new plan
+        await axios.post(`${SERVER_URL}/api/v1/mealplans`, mealPlanData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${token}`,
+          },
+        });
+        Toast.show("Meal plan created", { type: "success" });
+      }
       router.push("/(tabs)");
-      Toast.show("Meal plan created ");
-      setIsLoading(false);
     } catch (err: any) {
       Toast.show(err.message);
       console.log(err);
+    } finally {
       setIsLoading(false);
     }
   };
@@ -173,8 +174,7 @@ export default function UpdateTraineeToPlanScreen() {
     (event: any, selectedDate: Date | undefined) => {
       setShowDatePicker(false);
       if (selectedDate) {
-        const midnightDate = setToMidnight(selectedDate);
-        setDate(midnightDate);
+        setDate(setToMidnight(selectedDate));
       }
     },
     []
@@ -197,7 +197,9 @@ export default function UpdateTraineeToPlanScreen() {
           <TouchableOpacity onPress={() => router.back()}>
             <AntDesign name="close" size={24} color="black" />
           </TouchableOpacity>
-          <Text className="text-xl font-semibold">complete meal plan</Text>
+          <Text className="text-xl font-semibold">
+            {mealPlan ? "Update Meal Plan" : "Complete Meal Plan"}
+          </Text>
           <Text>2/2</Text>
         </View>
         <Text className="font-semibold">Add Date</Text>
@@ -245,7 +247,7 @@ export default function UpdateTraineeToPlanScreen() {
           />
         )}
         <View className="gap-2 mt-3">
-          <Text className="font-semibold">Add trainee</Text>
+          <Text className="font-semibold">Add Trainee</Text>
           <View style={styles.form}>
             <TextInput
               style={styles.input}
@@ -254,11 +256,11 @@ export default function UpdateTraineeToPlanScreen() {
               onChangeText={handleSearch}
             />
           </View>
-          <View className="border border-slate-300 ps-2">
-            {filteredUsers.length > 0 && (
+          {filteredUsers.length > 0 && (
+            <View className="border border-slate-300 ps-2">
               <FlatList
                 data={filteredUsers}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => (
                   <TouchableOpacity onPress={() => handleSelectUser(item)}>
                     <Text style={styles.userItem}>{item.username}</Text>
@@ -266,8 +268,8 @@ export default function UpdateTraineeToPlanScreen() {
                 )}
                 style={styles.searchResults}
               />
-            )}
-          </View>
+            </View>
+          )}
           <FlatList
             showsHorizontalScrollIndicator={false}
             horizontal
@@ -275,95 +277,65 @@ export default function UpdateTraineeToPlanScreen() {
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }: { item: User }) => (
               <View className="border flex flex-row items-center justify-between border-slate-300 p-2 rounded-md ml-1 w-[100px] flex-wrap">
-                <Text style={styles.listItemText}>{item.username}</Text>
-                <AntDesign
-                  name="close"
-                  size={15}
-                  color="black"
-                  onPress={() => handleDelete(item)}
-                />
+                <Text style={styles.listItem}>{item.username}</Text>
+                <TouchableOpacity onPress={() => handleDelete(item)}>
+                  <AntDesign name="close" size={20} color="black" />
+                </TouchableOpacity>
               </View>
             )}
-          />
-        </View>
-        <View>
-          <TouchableOpacity
-            onPress={handlePlan}
-            className="bg-red-500 items-center mt-5 mb-3 p-3 rounded-md"
-          >
-            {isLoading ? (
-              <ActivityIndicator size="small" color={"white"} />
-            ) : (
-              <Text
-                style={{ fontFamily: "Nunito_700Bold" }}
-                className="text-white text-xl"
-              >
-                Complete plan
+            ListEmptyComponent={() => (
+              <Text className="text-center text-slate-500">
+                No users selected
               </Text>
             )}
-          </TouchableOpacity>
+            style={styles.userList}
+          />
         </View>
+        <TouchableOpacity
+          onPress={handlePlan}
+          style={styles.submitButton}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <ActivityIndicator color="#ffffff" />
+          ) : (
+            <Text className="text-white font-semibold">Save Changes</Text>
+          )}
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-  },
   form: {
-    flexDirection: "row",
-    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    padding: 5,
   },
   input: {
-    flex: 1,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    padding: 10,
-    marginRight: 10,
-    borderRadius: 5,
-  },
-  image: {
-    width: "100%",
-    height: 100,
-    borderRadius: 8,
-  },
-  listItem: {
-    padding: 10,
-    borderBottomColor: "#ccc",
-    borderBottomWidth: 1,
-  },
-  listItemText: {
-    fontSize: 16,
-  },
-  suggestionsContainer: {
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 5,
-    marginTop: 10,
-  },
-  suggestionItem: {
-    padding: 10,
-    borderBottomColor: "#ccc",
-    borderBottomWidth: 1,
-  },
-  suggestionText: {
-    fontSize: 16,
-  },
-  searchResults: {
-    maxHeight: 150, // Adjust as needed
+    height: 40,
+    paddingHorizontal: 10,
   },
   userItem: {
     padding: 10,
-    borderBottomColor: "gray",
-    borderBottomWidth: 1,
   },
-  selectedUsersContainer: {
+  searchResults: {
+    maxHeight: 200,
+  },
+  userList: {
+    maxHeight: 100,
+    marginTop: 10,
+  },
+  listItem: {
+    fontSize: 16,
+  },
+  submitButton: {
+    backgroundColor: "#007BFF",
+    borderRadius: 5,
+    padding: 15,
     marginTop: 20,
-  },
-  selectedUserItem: {
-    padding: 5,
+    alignItems: "center",
   },
 });

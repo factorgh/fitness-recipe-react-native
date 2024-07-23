@@ -58,7 +58,7 @@ export default function UpdateRecipeScreen() {
     }
   }, [mealPlan]);
 
-  console.log("<---recipeDetails----->", mealDetails);
+  console.log("<---MealDetails----->", mealDetails);
   let [fontLoaded, fontError] = useFonts({
     Nunito_400Regular,
     Nunito_700Bold,
@@ -154,15 +154,16 @@ export default function UpdateRecipeScreen() {
       })
       .then((res) => {
         console.log(res.data);
-        Toast.show("recipe updated");
+        Toast.show("recipe updated", { type: "success" });
         const traineeSec = {
+          meal_id: mealDetails.id,
           id: mealDetails.recipe.id,
           date_picked: mealDetails.date_picked,
           time_picked: mealDetails.time_picked,
           meal_users: mealDetails.meal_users,
         };
         router.push({
-          pathname: "/(routes)/add-trainee-to-plan",
+          pathname: "/(routes)/update-trainee-to-plan",
           params: {
             recipe_id: JSON.stringify(traineeSec),
           },

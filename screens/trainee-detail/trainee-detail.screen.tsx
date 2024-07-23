@@ -10,17 +10,32 @@ import React, { useState } from "react";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Entypo } from "@expo/vector-icons";
-import { router } from "expo-router";
-import { FAB } from "@rneui/base";
+import { router, useLocalSearchParams } from "expo-router";
+import { Avatar, FAB } from "@rneui/base";
 import MealPlanItem from "@/components/mealPlanItem";
 import { LinearGradient } from "expo-linear-gradient";
 import TraineePendingCard from "@/components/trainee-pending-card";
 import TraineeCompletedCard from "@/components/trainee-completed-card";
 import useDisableSwipeBack from "@/hooks/useDisableSwipeBack";
+import { AdvancedImage } from "cloudinary-react-native";
+import { cld } from "@/lib/cloudinary";
+import { thumbnail } from "@cloudinary/url-gen/actions/resize";
 
 export default function TraineeDetailScreen() {
   useDisableSwipeBack();
   const [activeTab, setActiveTab] = useState("button1");
+  const { traineeDetail } = useLocalSearchParams();
+  let trainee;
+  if (typeof traineeDetail === "string") {
+    try {
+      trainee = JSON.parse(traineeDetail);
+      console.log(trainee);
+    } catch (err) {
+      console.log("error parsing data", err);
+    }
+  } else {
+    console.log("An error occured");
+  }
 
   const active = `border border-red-500  bg-red-500 flex w-full h-1 mt-3`;
   const inactive = `border border-red-200  bg-red-500 flex w-[100%] mt-3`;
@@ -28,6 +43,13 @@ export default function TraineeDetailScreen() {
   const handlePress = (tab: any) => {
     setActiveTab(tab);
   };
+
+  let remoteCldImage;
+  if (trainee?.img_url) {
+    remoteCldImage = cld
+      .image(trainee.img_url)
+      .resize(thumbnail().width(100).height(100));
+  }
   return (
     <SafeAreaView>
       <LinearGradient className="h-screen" colors={["#E5ECF9", "#F6F7F9"]}>
@@ -42,12 +64,22 @@ export default function TraineeDetailScreen() {
                   size={24}
                   color="black"
                 />
-                <View className="rounded-full w-12 h-12 bg-slate-300"></View>
+                {trainee?.img_url ? (
+                  <AdvancedImage
+                    className="w-12 h-12 rounded-full"
+                    cldImg={remoteCldImage!}
+                  />
+                ) : (
+                  <Image
+                    source={require("@/assets/images/blank-profile.png")} // Local asset image
+                    style={styles.avatar} // Apply styles to make it look like an Avatar
+                  />
+                )}
                 <Text
                   style={{ fontFamily: "Nunito_700Bold" }}
-                  className="text-slate-500 "
+                  className="text-slate-800 text-lg"
                 >
-                  Smith
+                  {trainee.name}
                 </Text>
               </View>
               <Entypo name="dots-three-vertical" size={20} color="black" />
@@ -107,3 +139,12 @@ export default function TraineeDetailScreen() {
     </SafeAreaView>
   );
 }
+const styles = StyleSheet.create({
+  avatar: {
+    width: 40, // Size of the avatar
+    height: 40, // Size of the avatar
+    borderRadius: 50, // Rounded corners
+    borderWidth: 2, // Border width
+    borderColor: "#ccc", // Border color
+  },
+});
