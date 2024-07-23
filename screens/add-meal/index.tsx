@@ -9,6 +9,8 @@ import {
   FlatList,
   Image,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import React, { useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
@@ -28,7 +30,7 @@ import useDisableSwipeBack from "@/hooks/useDisableSwipeBack";
 export default function AddMealScreen() {
   useDisableSwipeBack();
   const [inputValue, setInputValue] = useState("");
-  const [inputList, setInputList] = useState("");
+  const [inputList, setInputList] = useState<string[]>([]);
   const [image, setImage] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -38,6 +40,7 @@ export default function AddMealScreen() {
     description: "",
     procedures: "",
   });
+
   let [fontLoaded, fontError] = useFonts({
     Nunito_400Regular,
     Nunito_700Bold,
@@ -45,18 +48,14 @@ export default function AddMealScreen() {
   });
 
   const handleAddInput = () => {
-    if (inputValue.trim() !== "") {
-      const updatedList = inputList
-        ? `${inputList}, ${inputValue}`
-        : inputValue;
-      setInputList(updatedList);
+    if (inputValue.trim() !== "" && !inputList.includes(inputValue)) {
+      setInputList((prevList) => [...prevList, inputValue]);
       setInputValue("");
     }
   };
 
   const handleDelete = (item: string) => {
-    const inputArray = inputList.split(", ").filter((tab) => tab !== item);
-    setInputList(inputArray.join(", "));
+    setInputList((prevList) => prevList.filter((i) => i !== item));
   };
 
   ///Handle Image Upload
@@ -86,7 +85,7 @@ export default function AddMealScreen() {
     let recipeDetails = {
       name: mealPlanInfo.name,
       thumbNail: response.public_id,
-      ingredients: inputList,
+      ingredients: inputList.join(", "),
       description: mealPlanInfo.description,
       procedures: mealPlanInfo.procedures,
       rating: 0,
@@ -119,162 +118,216 @@ export default function AddMealScreen() {
   if (!fontLoaded && !fontError) return null;
 
   return (
-    <SafeAreaView>
-      <LinearGradient colors={["#E5ECF9", "#F6F7F9"]}>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View className=" mx-5">
-            {/* header section */}
-            <View className="flex flex-row items-center justify-between mb-5">
-              <Feather
-                style={{}}
-                onPress={() => router.back()}
-                name="corner-up-left"
-                size={24}
-                color="black"
-              />
-              <Text
-                className="text-2xl font-semibold"
-                style={{ fontFamily: "Nunito_700Bold" }}
-              >
-                Add recipe
-              </Text>
-              <Text></Text>
-            </View>
-            {/* End of header section */}
-            {/* Thumbnail */}
-
-            <Text className="mb-3">Add thumbnail image</Text>
-            {image ? (
-              <TouchableOpacity
-                onPress={pickImage}
-                className="w-full rounded-md  h-[100px] flex "
-              >
-                {image && (
-                  <Image
-                    style={styles.image}
-                    resizeMode="cover"
-                    source={{ uri: image }}
-                  />
-                )}
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity onPress={pickImage} className="gap-2">
-                <View className="border-2 border-slate-300 w-full rounded-md  h-[100px] flex items-center justify-center">
-                  <AntDesign name="clouduploado" size={35} color="black" />
-                </View>
-              </TouchableOpacity>
-            )}
-
-            {/* End of thumbnail */}
-            <View className="gap-2 mt-3">
-              <Text>Enter recipe name</Text>
-              <View className="border-2 border-slate-300 w-full rounded-md  p-3 h-[50px] flex items-center justify-center">
-                <TextInput
-                  onChangeText={(value) =>
-                    setMealPlanInfo({ ...mealPlanInfo, name: value })
-                  }
-                  value={mealPlanInfo.name}
-                  className="w-full h-full "
+    <SafeAreaView style={{ flex: 1 }}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        <LinearGradient colors={["#E5ECF9", "#F6F7F9"]} style={{ flex: 1 }}>
+          <ScrollView
+            contentContainerStyle={{ flexGrow: 1 }}
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.container}>
+              {/* header section */}
+              <View style={styles.headerSection}>
+                <Feather
+                  onPress={() => router.back()}
+                  name="corner-up-left"
+                  size={24}
+                  color="black"
                 />
+                <Text style={styles.headerText}>Add recipe</Text>
+                <Text></Text>
               </View>
-            </View>
-            {/* End of meal name */}
-            <View className="gap-2 mt-3">
-              <Text>Nutritional Information</Text>
-              <View className="border-2 border-slate-300 w-full rounded-md  h-[100px] p-2  flex items-center justify-center">
-                <TextInput
-                  style={{ textAlignVertical: "top" }}
-                  value={mealPlanInfo.description}
-                  editable
-                  multiline
-                  numberOfLines={4}
-                  className="w-[100%] h-[100%]"
-                  onChangeText={(value) =>
-                    setMealPlanInfo({ ...mealPlanInfo, description: value })
-                  }
-                />
-              </View>
-            </View>
-            {/* End of descitpion */}
-            <View className="gap-2 mt-3">
-              <Text>Add recipe ingredients</Text>
-              <View style={styles.form}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter ingredients"
-                  value={inputValue}
-                  onChangeText={setInputValue}
-                />
-                <Button title="Add" onPress={handleAddInput} />
-              </View>
-              <FlatList
-                showsHorizontalScrollIndicator={false}
-                horizontal
-                data={inputList ? inputList.split(", ") : []}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => (
-                  <View className="border flex flex-row items-center justify-between border-slate-300 p-2 rounded-md ml-1 w-[100px] flex-wrap">
-                    <Text style={styles.listItemText}>{item}</Text>
-                    <AntDesign
-                      name="close"
-                      size={15}
-                      color="black"
-                      onPress={() => handleDelete(item)}
+              {/* End of header section */}
+              {/* Thumbnail */}
+              <Text style={styles.label}>Add thumbnail image</Text>
+              {image ? (
+                <TouchableOpacity onPress={pickImage} style={styles.thumbnail}>
+                  {image && (
+                    <Image
+                      style={styles.image}
+                      resizeMode="cover"
+                      source={{ uri: image }}
                     />
+                  )}
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={pickImage}
+                  style={styles.addThumbnail}
+                >
+                  <View style={styles.uploadIconContainer}>
+                    <AntDesign name="clouduploado" size={35} color="black" />
                   </View>
-                )}
-              />
-            </View>
-            {/* Procedures*/}
-            <View className="gap-2 mt-3">
-              <Text>Process</Text>
-              <View className="border-2 border-slate-300 w-full rounded-md  h-[100px] flex items-center justify-center p-2">
-                <TextInput
-                  style={{ textAlignVertical: "top" }}
-                  value={mealPlanInfo.procedures}
-                  editable={true}
-                  multiline
-                  numberOfLines={6}
-                  className="w-[100%] h-[100%]"
-                  onChangeText={(value) =>
-                    setMealPlanInfo({ ...mealPlanInfo, procedures: value })
-                  }
+                </TouchableOpacity>
+              )}
+              {/* End of thumbnail */}
+              <View style={styles.inputContainer}>
+                <Text>Enter recipe name</Text>
+                <View style={styles.inputBox}>
+                  <TextInput
+                    onChangeText={(value) =>
+                      setMealPlanInfo({ ...mealPlanInfo, name: value })
+                    }
+                    value={mealPlanInfo.name}
+                    style={styles.textInput}
+                  />
+                </View>
+              </View>
+              {/* End of meal name */}
+              <View style={styles.inputContainer}>
+                <Text>Nutritional Information</Text>
+                <View style={styles.textArea}>
+                  <TextInput
+                    style={styles.textAreaInput}
+                    value={mealPlanInfo.description}
+                    editable
+                    multiline
+                    numberOfLines={4}
+                    onChangeText={(value) =>
+                      setMealPlanInfo({ ...mealPlanInfo, description: value })
+                    }
+                  />
+                </View>
+              </View>
+              {/* End of description */}
+              <View style={styles.inputContainer}>
+                <Text>Add recipe ingredients</Text>
+                <View style={styles.form}>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Enter ingredients"
+                    value={inputValue}
+                    onChangeText={setInputValue}
+                  />
+                  <Button title="Add" onPress={handleAddInput} />
+                </View>
+                <FlatList
+                  showsHorizontalScrollIndicator={false}
+                  horizontal
+                  data={inputList}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={({ item }) => (
+                    <View style={styles.listItemContainer}>
+                      <Text style={styles.listItemText}>{item}</Text>
+                      <AntDesign
+                        name="close"
+                        size={15}
+                        color="black"
+                        onPress={() => handleDelete(item)}
+                      />
+                    </View>
+                  )}
                 />
               </View>
+              {/* Procedures*/}
+              <View style={styles.inputContainer}>
+                <Text>Process</Text>
+                <View style={styles.textArea}>
+                  <TextInput
+                    style={styles.textAreaInput}
+                    value={mealPlanInfo.procedures}
+                    editable
+                    multiline
+                    numberOfLines={6}
+                    onChangeText={(value) =>
+                      setMealPlanInfo({ ...mealPlanInfo, procedures: value })
+                    }
+                  />
+                </View>
+              </View>
+              {/* End of procedures*/}
+              {/* Next button */}
+              <TouchableOpacity
+                onPress={handleCreate}
+                style={styles.nextButton}
+              >
+                {isLoading ? (
+                  <ActivityIndicator size="small" color={"white"} />
+                ) : (
+                  <Text style={styles.nextButtonText}>Proceed with plan</Text>
+                )}
+              </TouchableOpacity>
             </View>
-            {/* End of procedures*/}
-            {/* Next button */}
-
-            <TouchableOpacity
-              onPress={handleCreate}
-              className="bg-red-500 items-center mt-5 mb-3 p-3 rounded-md "
-            >
-              {isLoading ? (
-                <ActivityIndicator size="small" color={"white"} />
-              ) : (
-                <Text
-                  style={{ fontFamily: "Nunito_700Bold" }}
-                  className="text-white text-xl  "
-                >
-                  Proceed with plan
-                </Text>
-              )}
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </LinearGradient>
+          </ScrollView>
+        </LinearGradient>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 20,
+  },
+  headerSection: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 20,
+  },
+  headerText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    fontFamily: "Nunito_700Bold",
+  },
+  label: {
+    marginBottom: 10,
+  },
+  thumbnail: {
+    width: "100%",
+    height: 100,
+    borderRadius: 10,
+    marginBottom: 20,
+  },
+  addThumbnail: {
+    width: "100%",
+    height: 100,
+    borderColor: "#ccc",
+    borderWidth: 2,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  uploadIconContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 10,
+  },
+  inputContainer: {
+    marginBottom: 20,
+  },
+  inputBox: {
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 10,
+  },
+  textInput: {
+    width: "100%",
+  },
+  textArea: {
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 10,
+    height: 100,
+  },
+  textAreaInput: {
+    width: "100%",
+    height: "100%",
+    textAlignVertical: "top",
   },
   form: {
     flexDirection: "row",
-    marginBottom: 20,
+    marginBottom: 10,
   },
   input: {
     flex: 1,
@@ -284,17 +337,28 @@ const styles = StyleSheet.create({
     marginRight: 10,
     borderRadius: 5,
   },
-  image: {
-    width: "100%",
-    height: 100,
-    borderRadius: 8,
-  },
-  listItem: {
+  listItemContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 5,
     padding: 10,
-    borderBottomColor: "#ccc",
-    borderBottomWidth: 1,
+    marginRight: 10,
   },
   listItemText: {
-    fontSize: 16,
+    marginRight: 10,
+  },
+  nextButton: {
+    backgroundColor: "red",
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  nextButtonText: {
+    color: "white",
+    fontSize: 18,
+    fontFamily: "Nunito_700Bold",
   },
 });

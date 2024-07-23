@@ -9,29 +9,19 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
-import { AntDesign } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
-
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import axios from "axios";
 import { SERVER_URL } from "@/utils/utils";
-import { Platform } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { User } from "@/types/User";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 import { Toast } from "react-native-toast-notifications";
 import useDisableSwipeBack from "@/hooks/useDisableSwipeBack";
+import { User } from "@/types/User";
 
-// Uitlity function
+// Utility function
 const setToMidnight = (date: Date) => {
   const newDate = new Date(date);
   newDate.setUTCHours(0, 0, 0, 0);
@@ -40,14 +30,12 @@ const setToMidnight = (date: Date) => {
 
 export default function AddTraineeToPlanScreen() {
   useDisableSwipeBack();
-  const [inputList, setInputList] = useState<string[]>([]);
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
 
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
-
   const [searchInput, setSearchInput] = useState("");
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
@@ -57,10 +45,9 @@ export default function AddTraineeToPlanScreen() {
   const recipeDetails = useMemo(() => {
     if (typeof recipe_id === "string") {
       try {
-        console.log("<---recipe_id----->", JSON.parse(recipe_id));
         return JSON.parse(recipe_id);
       } catch (error) {
-        console.error("Error parsin recipe:", error);
+        console.error("Error parsing recipe:", error);
         return null;
       }
     } else {
@@ -69,11 +56,9 @@ export default function AddTraineeToPlanScreen() {
     }
   }, [recipe_id]);
 
-  console.log("<--recipeDetails2-->", recipeDetails);
   useEffect(() => {
     const loadUsers = async () => {
       const token = await AsyncStorage.getItem("access_token");
-      console.log("<------tokenForUsers", token);
       try {
         const res = await axios.get(`${SERVER_URL}/api/v1/users`, {
           headers: {
@@ -82,7 +67,6 @@ export default function AddTraineeToPlanScreen() {
           },
         });
         setUsers(res.data.users);
-        setFilteredUsers(res.data.users);
       } catch (err) {
         console.log(err);
       }
@@ -94,25 +78,29 @@ export default function AddTraineeToPlanScreen() {
     (text: string) => {
       setSearchInput(text);
       if (text) {
-        const filtered = users.filter((user) =>
-          user.username.toLowerCase().includes(text.toLowerCase())
+        const filtered = users.filter(
+          (user) =>
+            user.role === 0 &&
+            user.username.toLowerCase().includes(text.toLowerCase())
         );
         setFilteredUsers(filtered);
       } else {
-        setFilteredUsers(users);
+        setFilteredUsers([]);
       }
     },
     [users]
   );
 
-  const handleSelectUser = useCallback(
-    (user: User) => {
-      setSelectedUsers((prevSelectedUsers) => [...prevSelectedUsers, user]);
-      setSearchInput("");
-      setFilteredUsers(users);
-    },
-    [users]
-  );
+  const handleSelectUser = useCallback((user: User) => {
+    setSelectedUsers((prevSelectedUsers) => {
+      if (!prevSelectedUsers.some((u) => u.id === user.id)) {
+        return [...prevSelectedUsers, user];
+      }
+      return prevSelectedUsers;
+    });
+    setSearchInput("");
+    setFilteredUsers([]);
+  }, []);
 
   const handleDelete = useCallback((item: User) => {
     setSelectedUsers((prevSelectedUsers) =>
@@ -124,7 +112,6 @@ export default function AddTraineeToPlanScreen() {
     setIsLoading(true);
     const token = await AsyncStorage.getItem("access_token");
     const userIds = selectedUsers.map((user) => user.id);
-    console.log("<----IDS--->", userIds);
 
     const mealPlan = {
       recipe: recipeDetails,
@@ -132,7 +119,6 @@ export default function AddTraineeToPlanScreen() {
       time_picked: time,
       users: userIds,
     };
-    console.log("<---mealplan----->", mealPlan);
 
     try {
       const res = await axios.post(`${SERVER_URL}/api/v1/mealplans`, mealPlan, {
@@ -141,13 +127,12 @@ export default function AddTraineeToPlanScreen() {
           Authorization: `${token}`,
         },
       });
-      console.log(res.data);
       router.push("/(tabs)");
       Toast.show("Meal plan created ");
-      setIsLoading(false);
     } catch (err: any) {
       Toast.show(err.message);
       console.log(err);
+    } finally {
       setIsLoading(false);
     }
   };
@@ -156,8 +141,7 @@ export default function AddTraineeToPlanScreen() {
     (event: any, selectedDate: Date | undefined) => {
       setShowDatePicker(false);
       if (selectedDate) {
-        const midnightDate = setToMidnight(selectedDate);
-        setDate(midnightDate);
+        setDate(setToMidnight(selectedDate));
       }
     },
     []
@@ -237,11 +221,11 @@ export default function AddTraineeToPlanScreen() {
               onChangeText={handleSearch}
             />
           </View>
-          <View className="border border-slate-300 ps-2">
-            {filteredUsers.length > 0 && (
+          {filteredUsers.length > 0 && (
+            <View className="border border-slate-300 ps-2">
               <FlatList
                 data={filteredUsers}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => (
                   <TouchableOpacity onPress={() => handleSelectUser(item)}>
                     <Text style={styles.userItem}>{item.username}</Text>
@@ -249,8 +233,8 @@ export default function AddTraineeToPlanScreen() {
                 )}
                 style={styles.searchResults}
               />
-            )}
-          </View>
+            </View>
+          )}
           <FlatList
             showsHorizontalScrollIndicator={false}
             horizontal
@@ -316,6 +300,7 @@ const styles = StyleSheet.create({
   listItem: {
     padding: 10,
     borderBottomColor: "#ccc",
+
     borderBottomWidth: 1,
   },
   listItemText: {
