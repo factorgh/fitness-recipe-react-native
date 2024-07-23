@@ -41,22 +41,25 @@ export default function MealPlanItem({ item }: MealPlanItemProps) {
   const [expanded, setExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [trainee, setTrainee] = useState<User | undefined>(undefined);
+  console.log(item);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
       const token = await AsyncStorage.getItem("access_token");
       const userId =
         item.meal_users.length > 0 ? item.meal_users[0].user_id : null;
+      console.log(userId);
       try {
         const response = await axios.get(
           `${SERVER_URL}/api/v1/users/${userId}`,
           {
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
+              Authorization: `${token}`,
             },
           }
         );
+        console.log(response.data);
         setTrainee(response.data.user);
       } catch (error) {
         console.error("Error fetching user details:", error);
@@ -178,7 +181,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "#f0f0f0",
     padding: 15,
-    marginHorizontal: 15,
+    marginHorizontal: 5,
     marginBottom: 15,
     borderRadius: 10,
     shadowColor: "#000",
@@ -190,7 +193,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 5,
   },
   recipeName: {
     fontFamily: "Nunito_700Bold",

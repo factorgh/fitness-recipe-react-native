@@ -171,7 +171,7 @@ export default function UpdateRecipeScreen() {
       })
       .then((res) => {
         console.log(res.data);
-        Toast.show("recipe updated");
+        Toast.show("recipe updated", { type: "success" });
 
         router.push({
           pathname: "/(tabs)/mealplans",

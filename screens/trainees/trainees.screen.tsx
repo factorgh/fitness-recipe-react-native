@@ -131,14 +131,11 @@ export default function TraineesScreen() {
             <AntDesign name="search1" size={24} color="black" />
             <TextInput className="w-full p-2 " placeholder="search by name" />
           </View>
-          <Animated.View
-            entering={FadeInDown.duration(100).springify()}
-            className="mt-3"
-          >
+          <Animated.View entering={FadeInDown.duration(100).springify()}>
             <ScrollView>
               {activeTab === "button1" ? (
                 <>
-                  <View className="mx-3">
+                  <View className="">
                     <Trainee />
                   </View>
                 </>

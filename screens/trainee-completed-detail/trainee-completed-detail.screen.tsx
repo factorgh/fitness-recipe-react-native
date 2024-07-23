@@ -12,136 +12,204 @@ import useDisableSwipeBack from "@/hooks/useDisableSwipeBack";
 
 export default function TraineeCompletedDetailScreen() {
   useDisableSwipeBack();
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(null); // Track which section is expanded
 
-  const handleExpanded = () => {
-    setExpanded((prevState) => !prevState);
+  const handleToggle = (section: any) => {
+    setExpanded(expanded === section ? null : section);
   };
-  const expandedStyle = `  bg-slate-300 border border-slate-300 mt-5  p-5  mx-3 rounded-md h-[250px]  `;
-  const closedStyle = `   bg-slate-300 h-16 rounded-md p-2 flex-row items-center justify-center  mx-5 mt-5 `;
+
   return (
-    <SafeAreaView>
-      <LinearGradient className="h-screen" colors={["#E5ECF9", "#F6F7F9"]}>
-        <View className="mt-16 flex-row pl-5 items-center ">
+    <SafeAreaView style={styles.safeArea}>
+      <LinearGradient colors={["#E5ECF9", "#F6F7F9"]} style={styles.gradient}>
+        <View style={styles.header}>
           <AntDesign
             onPress={() => router.back()}
             name="left"
             size={24}
             color="black"
           />
-          <Text
-            className="ml-10 text-xl text-slate-800"
-            style={{ fontFamily: "Nunito_700Bold" }}
-          >
-            Vegetable Salads
-          </Text>
+          <Text style={styles.title}>Vegetable Salads</Text>
         </View>
+
         {/* Divider */}
-        <View className="border border-slate-200  bg-slate-400 flex w-full  mt-8 "></View>
+        <View style={styles.divider}></View>
 
         {/* Meal content */}
-        <View className="bg-slate-300 h-16 rounded-md p-2 flex-row items-center justify-center mx-5 mt-5 ">
-          <Text
-            className="mr-3 text-md"
-            style={{ fontFamily: "Nunito_400Regular" }}
-          >
-            10:30 AM{" "}
-          </Text>
-          <Text>|</Text>
-          <Text
-            className="ml-3 text-md"
-            style={{ fontFamily: "Nunito_400Regular" }}
-          >
-            {" "}
-            Today
-          </Text>
+        <View style={styles.mealContent}>
+          <Text style={styles.mealTime}>10:30 AM</Text>
+          <Text style={styles.separator}>|</Text>
+          <Text style={styles.mealDate}>Today</Text>
         </View>
+
         {/* Drop Down for Ingredients */}
-        <View className={expanded ? expandedStyle : closedStyle}>
+        <View
+          style={
+            expanded === "ingredients"
+              ? styles.expandedSection
+              : styles.closedSection
+          }
+        >
           <TouchableOpacity
-            className="flex-row items-center justify-between"
-            onPress={handleExpanded}
+            style={styles.dropdownHeader}
+            onPress={() => handleToggle("ingredients")}
           >
-            <Text
-              style={{ fontFamily: "Nunito_400Regular" }}
-              className="text-md mr-32 "
-            >
-              Ingredients
-            </Text>
-            {expanded ? (
-              <AntDesign name="down" size={15} color="black" />
-            ) : (
-              <AntDesign name="down" size={15} color="black" />
-            )}
+            <Text style={styles.dropdownText}>Ingredients</Text>
+            <AntDesign
+              name={expanded === "ingredients" ? "up" : "down"}
+              size={15}
+              color="black"
+            />
           </TouchableOpacity>
-          {/* Expanded Section */}
-          {expanded && (
-            <View>
-              <View className="border border-slate-800 rounded-md h-[0px] mt-3 mb-3"></View>
-              <View>
-                <Text className="mb-3">Trainees</Text>
-                <View className="flex flex-row items-center gap-2">
-                  <View className="flex flex-row"></View>
-                  <Text>and 22 others</Text>
-                </View>
-                {/* Buttons for meal plan */}
+          {expanded === "ingredients" && (
+            <View style={styles.expandedContent}>
+              <Text style={styles.subTitle}>Trainees</Text>
+              <View style={styles.contentRow}>
+                <Text>and 22 others</Text>
               </View>
+              {/* Additional content for ingredients */}
             </View>
           )}
-          {/* End of expanded section */}
         </View>
-        {/* End of dropdown for ingredients */}
-        {/* Dropdown for procedures */}
-        <View className={expanded ? expandedStyle : closedStyle}>
+
+        {/* Dropdown for Procedures */}
+        <View
+          style={
+            expanded === "procedures"
+              ? styles.expandedSection
+              : styles.closedSection
+          }
+        >
           <TouchableOpacity
-            className="flex-row items-center justify-between"
-            onPress={handleExpanded}
+            style={styles.dropdownHeader}
+            onPress={() => handleToggle("procedures")}
           >
-            <Text
-              style={{ fontFamily: "Nunito_400Regular" }}
-              className="text-md mr-32 "
-            >
-              Procedures
-            </Text>
-            {expanded ? (
-              <AntDesign name="down" size={15} color="black" />
-            ) : (
-              <AntDesign name="down" size={15} color="black" />
-            )}
+            <Text style={styles.dropdownText}>Procedures</Text>
+            <AntDesign
+              name={expanded === "procedures" ? "up" : "down"}
+              size={15}
+              color="black"
+            />
           </TouchableOpacity>
-          {/* Expanded Section */}
-          {expanded && (
-            <View>
-              <View className="border border-slate-800 rounded-md h-[0px] mt-3 mb-3"></View>
-              <View>
-                <Text className="mb-3">Trainees</Text>
-                <View className="flex flex-row items-center gap-2">
-                  <View className="flex flex-row"></View>
-                  <Text>and 22 others</Text>
-                </View>
-                {/* Buttons for meal plan */}
+          {expanded === "procedures" && (
+            <View style={styles.expandedContent}>
+              <Text style={styles.subTitle}>Trainees</Text>
+              <View style={styles.contentRow}>
+                <Text>and 22 others</Text>
               </View>
+              {/* Additional content for procedures */}
             </View>
           )}
-          {/* End of expanded section */}
         </View>
-        <View className="flex-row items-center mt-5 mx-5 font-semibold">
-          <Text
-            style={{ fontFamily: "Nunito_400Regular" }}
-            className="textslate-800 text-md"
-          >
-            Status :
-          </Text>
-          <Text
-            style={{ fontFamily: "Nunito_400Regular" }}
-            className="text-orange-500 pl-2"
-          >
-            Completed
-          </Text>
+
+        {/* Status */}
+        <View style={styles.statusContainer}>
+          <Text style={styles.statusLabel}>Status:</Text>
+          <Text style={styles.statusValue}>Completed</Text>
         </View>
       </LinearGradient>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
+  gradient: {
+    flex: 1,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 16,
+    marginTop: 16,
+  },
+  title: {
+    marginLeft: 16,
+    fontSize: 24,
+    fontFamily: "Nunito_700Bold",
+    color: "#333",
+  },
+  divider: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+    marginVertical: 16,
+  },
+  mealContent: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 16,
+    backgroundColor: "#F6F7F9",
+    borderRadius: 8,
+    marginHorizontal: 16,
+  },
+  mealTime: {
+    fontSize: 16,
+    fontFamily: "Nunito_400Regular",
+    color: "#333",
+  },
+  separator: {
+    marginHorizontal: 8,
+    color: "#333",
+  },
+  mealDate: {
+    fontSize: 16,
+    fontFamily: "Nunito_400Regular",
+    color: "#333",
+  },
+  expandedSection: {
+    backgroundColor: "#E5ECF9",
+    borderRadius: 8,
+    padding: 16,
+    marginHorizontal: 16,
+    marginTop: 16,
+  },
+  closedSection: {
+    backgroundColor: "#E5ECF9",
+    borderRadius: 8,
+    padding: 8,
+    marginHorizontal: 16,
+    marginTop: 16,
+  },
+  dropdownHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  dropdownText: {
+    fontSize: 16,
+    fontFamily: "Nunito_400Regular",
+    color: "#333",
+  },
+  expandedContent: {
+    marginTop: 16,
+  },
+  subTitle: {
+    fontSize: 18,
+    fontFamily: "Nunito_700Bold",
+    color: "#333",
+    marginBottom: 8,
+  },
+  contentRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  statusContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    margin: 16,
+  },
+  statusLabel: {
+    fontSize: 16,
+    fontFamily: "Nunito_400Regular",
+    color: "#333",
+  },
+  statusValue: {
+    fontSize: 16,
+    fontFamily: "Nunito_400Regular",
+    color: "#4CAF50", // Green color for "Completed" status
+    marginLeft: 8,
+  },
+});

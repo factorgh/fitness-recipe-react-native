@@ -128,7 +128,7 @@ export default function AddTraineeToPlanScreen() {
         },
       });
       router.push("/(tabs)");
-      Toast.show("Meal plan created ");
+      Toast.show("Meal plan created ", { type: "success" });
     } catch (err: any) {
       Toast.show(err.message);
       console.log(err);
