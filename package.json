@@ -19,7 +19,7 @@
     "@expo-google-fonts/raleway": "^0.2.3",
     "@expo/vector-icons": "^14.0.0",
     "@gorhom/bottom-sheet": "^4.6.3",
-    "@react-native-async-storage/async-storage": "^1.23.1",
+    "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/datetimepicker": "8.0.1",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/stack": "^6.4.1",
@@ -81,5 +81,11 @@
     "tailwindcss": "^3.3.2",
     "typescript": "~5.3.3"
   },
-  "private": true
+  "private": true,
+  "overrides": {
+    "expo-modules-autolinking": "~1.11.0",
+    "@expo/config-plugins": "~8.0.0",
+    "@expo/prebuild-config": "~7.0.0",
+    "@expo/metro-config": "~0.18.0"
+  }
 }
