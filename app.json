@@ -12,7 +12,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -28,7 +30,10 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": ["expo-router", "expo-build-properties"],
+    "plugins": [
+      "expo-router",
+      "expo-build-properties"
+    ],
     "experiments": {
       "typedRoutes": true
     },
@@ -37,7 +42,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "d3cc4070-985b-46fc-84a7-2b213541a6b9"
+        "projectId": "5dae5ed5-8eef-4165-9d4c-55a4028c5003"
       }
     }
   }

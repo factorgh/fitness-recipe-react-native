@@ -39,10 +39,13 @@ export default function NotificationProvider({ children }: { children: any }) {
       });
 
     return () => {
-      notificationListener.current &&
-        Notifications.removeNotificationSubscription(
-          notificationListener.current
-        );
+      if (notificationListener.current)
+        notificationListener.current &&
+          Notifications.removeNotificationSubscription(
+            notificationListener.current
+          );
+      if (responseListener.current)
+        Notifications.removeNotificationSubscription(responseListener.current);
     };
   }, []);
 
@@ -70,10 +73,12 @@ export default function NotificationProvider({ children }: { children: any }) {
           },
         }
       )
-      .then((res) => {
+      .then((res: { data: any }) => {
         console.log(res.data);
       })
-      .catch((err) => Toast.show("Invalid push token", { type: "danger" }));
+      .catch((err: any) =>
+        Toast.show("Invalid push token", { type: "danger" })
+      );
   };
 
   return children;
