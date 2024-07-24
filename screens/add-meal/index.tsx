@@ -58,7 +58,7 @@ export default function AddMealScreen() {
     setInputList((prevList) => prevList.filter((i) => i !== item));
   };
 
-  ///Handle Image Upload
+  ///Handle Image Uploa
   const pickImage = async () => {
     let results = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
